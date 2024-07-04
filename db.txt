@@ -1,0 +1,33 @@
+CREATE TABLE festivalList (
+    eventSeq INT UNSIGNED NOT NULL
+    , hit INT UNSIGNED
+    , recommendationPoint INT UNSIGNED
+    , notRecommandationPoint INT UNSIGNED 
+    , contents MEDIUMTEXT
+    , placeCdNm VARCHAR(100) 
+    , targetCdNm VARCHAR(100) 
+    , managementCdNm VARCHAR(100)
+    , themeCdNm VARCHAR(100) 
+    , title VARCHAR(100) 
+    , beginDt VARCHAR(100) 
+    , endDt VARCHAR(100) 
+    , themeCd VARCHAR(100)
+    , placeCd VARCHAR(100) 
+    , imageLink VARCHAR(100)
+    , recommendationYn VARCHAR(100) 
+    , hotYn VARCHAR(100) 
+    , useYn VARCHAR(100) 
+    , beginTm VARCHAR(100) 
+    , endTm VARCHAR(100) 
+    , targetCd VARCHAR(100) 
+    , managementCd VARCHAR(100) 
+    , placeDetail VARCHAR(100) 
+    , dataStnDt VARCHAR(100) 
+    , opmtnInstt VARCHAR(100) 
+    , chargeInfo VARCHAR(100)
+    , eventTm VARCHAR(100) 
+    , prpleHoldYn VARCHAR(100) 
+    , homepageAdd VARCHAR(100) 
+);
+
+ALTER TABLE festivalList CONVERT TO CHARSET utf8;
