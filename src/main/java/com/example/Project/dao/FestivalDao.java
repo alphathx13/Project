@@ -55,10 +55,37 @@ public interface FestivalDao {
 
 	@Update("""
 			UPDATE festivalList
-				SET dataStnDt = #{dataStnDt}
-				where eventSeq = #{eventSeq};
+				SET contents = #{contents}
+					, placeCdNm = #{placeCdNm}
+					, targetCdNm = #{targetCdNm}
+					, managementCdNm = #{managementCdNm}
+					, themeCdNm = #{themeCdNm}
+					, title = #{title}
+					, beginDt = #{beginDt}
+					, endDt = #{endDt}
+					, themeCd = #{themeCd}
+					, placeCd = #{placeCd}
+					, imageLink = #{imageLink}
+					, recommendationYn = #{recommendationYn}
+					, hotYn = #{hotYn}
+					, useYn = #{useYn}
+					, hit = #{hit}
+					, beginTm = #{beginTm}
+					, endTm = #{endTm}
+					, recommendationPoint = #{recommendationPoint}
+					, notRecommandationPoint = #{notRecommandationPoint}
+					, targetCd = #{targetCd}
+					, managementCd = #{managementCd}
+					, placeDetail = #{placeDetail}
+					, dataStnDt = #{dataStnDt}
+					, opmtnInstt = #{opmtnInstt}
+					, chargeInfo = #{chargeInfo}
+					, eventTm = #{eventTm}
+					, prpleHoldYn = #{prpleHoldYn}
+					, homepageAdd = #{homepageAdd}
+				WHERE eventSeq = ${eventSeq}
 			""")
-	public void update(int eventSeq, String dataStnDt);
+	public void update(Festival festival);
 
 	@Select("""
 			SELECT * FROM festivalList

@@ -24,16 +24,8 @@ public class FestivalService {
 		festivalDao.insert(festival);
 	}
 
-	public void update(int eventSeq, String dataStnDt) {
-		festivalDao.update(eventSeq, dataStnDt);
-	}
-
-	public void detailInsert(int eventSeq) {
-		// TODO Auto-generated method stub
-	}
-
-	public void detailUpdate(int eventSeq) {
-		// TODO Auto-generated method stub
+	public void update(Festival festival) {
+		festivalDao.update(festival);
 	}
 
 	public  List<Festival> festivalList(int number) {

@@ -31,3 +31,77 @@ CREATE TABLE festivalList (
 );
 
 ALTER TABLE festivalList CONVERT TO CHARSET utf8;
+
+
+
+
+CREATE TABLE endFestivalList (
+    eventSeq INT UNSIGNED NOT NULL
+    , hit INT UNSIGNED
+    , recommendationPoint INT UNSIGNED
+    , notRecommandationPoint INT UNSIGNED 
+    , contents MEDIUMTEXT
+    , placeCdNm VARCHAR(100) 
+    , targetCdNm VARCHAR(100) 
+    , managementCdNm VARCHAR(100)
+    , themeCdNm VARCHAR(100) 
+    , title VARCHAR(100) 
+    , beginDt VARCHAR(100) 
+    , endDt VARCHAR(100) 
+    , themeCd VARCHAR(100)
+    , placeCd VARCHAR(100) 
+    , imageLink VARCHAR(100)
+    , recommendationYn VARCHAR(100) 
+    , hotYn VARCHAR(100) 
+    , useYn VARCHAR(100) 
+    , beginTm VARCHAR(100) 
+    , endTm VARCHAR(100) 
+    , targetCd VARCHAR(100) 
+    , managementCd VARCHAR(100) 
+    , placeDetail VARCHAR(100) 
+    , dataStnDt VARCHAR(100) 
+    , opmtnInstt VARCHAR(100) 
+    , chargeInfo VARCHAR(100)
+    , eventTm VARCHAR(100) 
+    , prpleHoldYn VARCHAR(100) 
+    , homepageAdd VARCHAR(100) 
+);
+
+ALTER TABLE endFestivalList CONVERT TO CHARSET utf8;
+
+
+CREATE TABLE `WeatherRain` (
+	`rnSt3Am`	INT(3)	NOT NULL,
+	`rnSt3Pm`	INT(3)	NOT NULL,
+	`rnSt4Am`	INT(3)	NOT NULL,
+	`rnSt4Pm`	INT(3)	NOT NULL,
+	`rnSt5Am`	INT(3)	NOT NULL,
+	`rnSt5Pm`	INT(3)	NOT NULL,
+	`rnSt6Am`	INT(3)	NOT NULL,
+	`rnSt6Pm`	INT(3)	NOT NULL,
+	`rnSt7Am`	INT(3)	NOT NULL,
+	`rnSt7Pm`	INT(3)	NOT NULL,
+	`wf3Am`	INT(3)	NOT NULL,
+	`wf3Pm`	INT(3)	NOT NULL,
+	`wf4Am`	INT(3)	NOT NULL,
+	`wf4Pm`	INT(3)	NOT NULL,
+	`wf5Am`	INT(3)	NOT NULL,
+	`wf5Pm`	INT(3)	NOT NULL,
+	`wf6Am`	INT(3)	NOT NULL,
+	`wf6Pm`	INT(3)	NOT NULL,
+	`wf7Am`	INT(3)	NOT NULL,
+	`wf7Pm`	INT(3)	NOT NULL
+);
+
+CREATE TABLE `WeatherTemp` (
+	`taMin3`	INT(4)	NOT NULL,
+	`taMax3`	INT(4)	NOT NULL,
+	`taMin4`	INT(4)	NOT NULL,
+	`taMax4`	INT(4)	NOT NULL,
+	`taMin5`	INT(4)	NOT NULL,
+	`taMax5`	INT(4)	NOT NULL,
+	`taMin6`	INT(4)	NOT NULL,
+	`taMax6`	INT(4)	NOT NULL,
+	`taMin7`	INT(4)	NOT NULL,
+	`taMax7`	INT(4)	NOT NULL
+);

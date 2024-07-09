@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Festival {
+	
 	private int eventSeq;
 	private String contents;
 	private String placeCdNm;
@@ -40,6 +41,4 @@ public class Festival {
 	private String eventTm;
 	private String prpleHoldYn;
 	private String homepageAdd;
-	
-	
 }

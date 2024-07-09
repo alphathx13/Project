@@ -29,7 +29,7 @@
 			      			<tr>
 						        <td>${festival.eventSeq } </td>
 						        <td>${festival.themeCdNm } </td>
-						        <td><a href="/detail?eventSeq=${festival.eventSeq}">${festival.title }</a></td>
+						        <td><a href="/festivalDetail?eventSeq=${festival.eventSeq}">${festival.title }</a></td>
 			        			<td>${festival.beginDt }</td>
 			        			<td>${festival.endDt }</td>
 			      			</tr>
