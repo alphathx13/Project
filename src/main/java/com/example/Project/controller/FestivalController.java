@@ -17,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.Project.service.FestivalService;
-import com.example.Project.service.WeatherService;
 import com.example.Project.util.Util;
 import com.example.Project.vo.Festival;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,25 +36,25 @@ public class FestivalController {
 	@Value("${custom.kakao.key}")
 	private String kakaoKey;
 	
-	@GetMapping("/festivalList")
+	@GetMapping("/user/festival/list")
 	public String list(Model model) {
 		model.addAttribute("festivalList", festivalService.festivalList(500));
 		model.addAttribute("today", Util.today());
-		return "/list";
+		return "/user/festival/list";
 	}
 	
-	@GetMapping("/festivalDetail")
+	@GetMapping("/user/festival/detail")
 	public String detail(Model model, int eventSeq) {
 		model.addAttribute("festival", festivalService.festivalDetail(eventSeq));
 		model.addAttribute("kakaoKey", kakaoKey);
 		model.addAttribute("weatherMid", (eventSeq));
-		return "/detail";
+		return "/user/festival/detail";
 	}
 	
-	@GetMapping("/festivalUpdate")
+	@GetMapping("/user/festival/festivalUpdate")
 	public String festivalUpdate() throws IOException, ParseException {
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/6300000/eventDataService/eventDataListJson"); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("serviceKey=","UTF-8") + apiKey); /*Service Key*/
+        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + apiKey); /*Service Key*/
         urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("500", "UTF-8")); /**/
         urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /**/
         URL url = new URL(urlBuilder.toString());
@@ -75,7 +74,7 @@ public class FestivalController {
         }
         rd.close();
         conn.disconnect();
-
+        
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(sb.toString());
         
@@ -96,7 +95,7 @@ public class FestivalController {
         		// 이미 존재하는 행사에서 데이터기준일 변경 => 변경된 정보가 있으니 업데이트
         	}
         }
-        return "/home";
+        return "/user/home/main";
 	}
 	
 }

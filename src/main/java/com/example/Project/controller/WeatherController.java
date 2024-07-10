@@ -48,7 +48,7 @@ public class WeatherController {
 	@Value("${custom.api.key}")
 	private String apiKey;
 	
-	@GetMapping("/weatherMidUpdate")
+	@GetMapping("/user/weatherMidUpdate")
 	public String weatherMidUpdate() throws IOException, ParseException {
 		// 강수 업데이트
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"); 
@@ -110,7 +110,7 @@ public class WeatherController {
         weatherService.weatherMidRainUpdate(weatherMidRain);
         weatherService.weatherMidTempUpdate(weatherMidTemp);
         
-        return "/home";
+        return "/user/home/main";
 	}
 	
 	@GetMapping("/weatherShortUpdate")
@@ -176,7 +176,7 @@ public class WeatherController {
         	}
         }
         
-        return "/home";
+        return "/user/home/main";
 	}
 	
 	@GetMapping("/weatherMidView")

@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<%@ include file="common/head.jsp" %>  
+<%@ include file="../../common/head.jsp" %>  
 
 <c:set var="pageTitle" value="행사 소개" />
 	<section class="mt-8 text-lg text-center">
@@ -185,7 +185,7 @@
 					var dataNum = 0;
 					for (var num = 6; num <= 18; num+=3) {
 						$('.' + num).html(`
-								<td>6시</td>
+								<td>\${num}시</td>
 								<td>\${data[dataNum].fcstValue}도/\${data[dataNum+2].fcstValue}%/\${data[dataNum+1].fcstValue}</td>
 								<td>\${data[dataNum+15].fcstValue}도/\${data[dataNum+17].fcstValue}%/\${data[dataNum+16].fcstValue}</td>
 								<td>\${data[dataNum+30].fcstValue}도/\${data[dataNum+32].fcstValue}%/\${data[dataNum+31].fcstValue}</td>
@@ -245,12 +245,4 @@
   		
   	</script>
 		
-<%@ include file="common/foot.jsp" %>  
-
-<!--  					$('.temp').html(`
-						<th>\${data.taMin3} 도 / \${data.taMax3} 도</th>
-						<th>\${data.taMin4} 도 / \${data.taMax4} 도</th>
-						<th>\${data.taMin5} 도 / \${data.taMax5} 도</th>
-						<th>\${data.taMin6} 도 / \${data.taMax6} 도</th>
-						<th>\${data.taMin7} 도 / \${data.taMax7} 도</th>
-							`); -->
+<%@ include file="../../common/foot.jsp" %>  

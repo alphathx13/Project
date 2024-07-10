@@ -34,7 +34,6 @@
 
 </head>
 <body>
-	<!-- 로그인파트 
 	<div class="h-20 flex container mx-auto text-3xl text-sky-500">
 		<div class="logo text-6xl">
 			<a href="#" class="h-full flex items-center"><i class="fa-solid fa-cloud"></i></a>
@@ -49,7 +48,7 @@
 					  		<div class="modal-box">
 					    		<h3 class="text-lg font-bold">Login</h3>
 					    		<div class="container mx-auto px-3 w-72">
-									<form action="/usr/member/doLogin" method="post" onsubmit="check(this); return false;">
+									<form action="/user/member/doLogin" method="post" onsubmit="check(this); return false;">
 										<label class="input input-bordered flex items-center gap-2">
 											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
 												fill="currentColor" class="h-4 w-4 opacity-70">
@@ -74,7 +73,7 @@
 										</div>
 									</form>
 									<div class="mt-4 font-bold text-xs"><a href="#" class = "hover:text-sky-500 font-extrabold">비밀번호를 잊어버리셨나요?</a></div>
-									<div class="mt-4 font-bold text-xs"><a href="/usr/member/join" class = "hover:text-sky-500 font-extrabold">계정이 없으신가요?</a></div>
+									<div class="mt-4 font-bold text-xs"><a href="/user/member/join" class = "hover:text-sky-500 font-extrabold">계정이 없으신가요?</a></div>
 								</div>
 					      		<form method="dialog">
 					        		<button class="btn">Close</button>
@@ -93,8 +92,8 @@
 						<ul tabindex="0"
 							class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 shadow w-24">
 							<li><div>  </div></li>
-							<li><button class="h-full flex items-center" onclick="location.href='/usr/member/myPage'"> 마이 페이지 </button></li>
-							<li><button class="h-full flex items-center" onclick="if(confirm('로그아웃 하시겠습니까?') == false) return false; location.href='/usr/member/doLogout'">로그아웃</button></li>
+							<li><button class="h-full flex items-center" onclick="location.href='/user/member/myPage'"> 마이 페이지 </button></li>
+							<li><button class="h-full flex items-center" onclick="if(confirm('로그아웃 하시겠습니까?') == false) return false; location.href='/user/member/doLogout'">로그아웃</button></li>
 						</ul>
 					</div>
 				</c:otherwise>
@@ -102,10 +101,6 @@
 
 			<li class="hover:underline p-4 ml-4"><a
 				class="h-full px-3 flex items-center" href="/"><span>HOME</span></a>
-			<li class="hover:underline p-4"><a
-				class="h-full px-3 flex items-center" href="/usr/article/list?boardId=1"><span>NOTICE</span></a>
-			<li class="hover:underline p-4"><a
-				class="h-full px-3 flex items-center" href="/usr/article/list?boardId=2"><span>FREE</span></a>
 		</ul>
 	</div>
 
@@ -144,8 +139,5 @@
 				$('.notSee').css('display', 'none');
 			}
 		})
-
 		
 	</script>
-	-->
-	

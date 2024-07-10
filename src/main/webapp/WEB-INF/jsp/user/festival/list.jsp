@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<%@ include file="common/head.jsp" %>  
+<%@ include file="../../common/head.jsp" %>  
 
 <c:set var="pageTitle" value="Main Page" />
   
@@ -53,7 +53,7 @@
 						        </td>
 						        <td>${festival.eventSeq } </td>
 						        <td>${festival.themeCdNm } </td>
-						        <td><a href="/festivalDetail?eventSeq=${festival.eventSeq}">${festival.title }</a></td>
+						        <td><a href="detail?eventSeq=${festival.eventSeq}">${festival.title }</a></td>
 			        			<td>${festival.beginDt }</td>
 			        			<td>${festival.endDt }</td>
 			      			</tr>
@@ -64,4 +64,4 @@
 		</div>
 	</section>
 
-<%@ include file="common/foot.jsp" %>  
+<%@ include file="../../common/foot.jsp" %>  

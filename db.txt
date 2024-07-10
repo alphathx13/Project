@@ -115,8 +115,67 @@ CREATE TABLE WeatherShortFcst (
 	baseTime VARCHAR(6) NOT NULL,
 	category VARCHAR(3) NOT NULL,
 	fcstDate VARCHAR(8) NOT NULL,
-	fcstTime VARCHAR(3) NOT NULL,
-	fcstValue VARCHAR(2) NOT NULL
-)
+	fcstTime VARCHAR(4) NOT NULL,
+	fcstValue VARCHAR(4) NOT NULL
+);
 
-ALTER TABLE WeatherMidFcst CONVERT TO CHARSET utf8;
+ALTER TABLE WeatherShortFcst CONVERT TO CHARSET utf8;
+
+
+CREATE TABLE `member`(
+    id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
+    , regDate DATETIME NOT NULL
+    , updateDate DATETIME NOT NULL
+    , loginId VARCHAR(20) NOT NULL
+    , loginPw VARCHAR(100) NOT NULL
+    , `name` VARCHAR(20) NOT NULL
+    , nickname VARCHAR(20) NOT NULL
+    , cellphone VARCHAR(20) NOT NULL
+    , email VARCHAR(50) NOT NULL
+    , authLevel INT UNSIGNED NOT NULL DEFAULT 2 COMMENT '권한 레벨 (일반 = 2, 관리자 = 1)'
+    , delStatus INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '탈퇴 여부 (탈퇴 전 = 0, 탈퇴 후 = 1)'
+    , delDate DATETIME COMMENT '탈퇴 날짜'
+);
+
+ALTER TABLE `member` CONVERT TO CHARSET utf8;
+
+INSERT INTO `member`
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , loginId = 'admin'
+        , loginPw = 'admin'
+        , `name` = '관리자'
+        , nickname = 'admin'
+        , cellphone = '010-0000-0000'
+        , email = 'admin@site.com'
+        , authLevel = 1;
+        
+INSERT INTO `member`
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , loginId = 'user1'
+        , loginPw = 'user1'
+        , `name` = '유저1'
+        , nickname = 'user1'
+        , cellphone = '010-1311-1111'
+        , email = 'user1@site.com';
+
+INSERT INTO `member`
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , loginId = 'user2'
+        , loginPw = 'user2'
+        , `name` = '유저2'
+        , nickname = 'user2'
+        , cellphone = '010-1111-1111'
+        , email = 'user2@site.com';
+
+INSERT INTO `member`
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , loginId = 'user3'
+        , loginPw = 'user3'
+        , `name` = '유저3'
+        , nickname = 'user3'
+        , cellphone = '010-1112-1111'
+        , email = 'user3@site.com';
