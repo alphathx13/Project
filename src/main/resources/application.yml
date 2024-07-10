@@ -13,3 +13,8 @@ spring:
 
 server:
   port: 8000
+custom:
+  api:
+    key: FHg5mCrqdD%2BYDOCHquhjUh7gSK%2BL0t5flP55KwHHGcZ%2BwSb0kPWFGWJwgsqFcO8mBUXY8KdVSqu4yul5tdcKZA%3D%3D
+  kakao:
+    key: 45c9a06d40a4e3bff0f18e6318a5b541

@@ -89,7 +89,7 @@ public interface FestivalDao {
 
 	@Select("""
 			SELECT * FROM festivalList
-				ORDER BY eventSeq DESC
+				ORDER BY beginDt DESC
 				LIMIT #{number};
 			""")
 	public List<Festival> festivalList(int number);

@@ -70,7 +70,8 @@ CREATE TABLE endFestivalList (
 ALTER TABLE endFestivalList CONVERT TO CHARSET utf8;
 
 
-CREATE TABLE `WeatherRain` (
+CREATE TABLE WeatherMidFcst (
+    updateTime  VARCHAR(20) NOT NULL,
 	`rnSt3Am`	INT(3)	NOT NULL,
 	`rnSt3Pm`	INT(3)	NOT NULL,
 	`rnSt4Am`	INT(3)	NOT NULL,
@@ -81,20 +82,17 @@ CREATE TABLE `WeatherRain` (
 	`rnSt6Pm`	INT(3)	NOT NULL,
 	`rnSt7Am`	INT(3)	NOT NULL,
 	`rnSt7Pm`	INT(3)	NOT NULL,
-	`wf3Am`	INT(3)	NOT NULL,
-	`wf3Pm`	INT(3)	NOT NULL,
-	`wf4Am`	INT(3)	NOT NULL,
-	`wf4Pm`	INT(3)	NOT NULL,
-	`wf5Am`	INT(3)	NOT NULL,
-	`wf5Pm`	INT(3)	NOT NULL,
-	`wf6Am`	INT(3)	NOT NULL,
-	`wf6Pm`	INT(3)	NOT NULL,
-	`wf7Am`	INT(3)	NOT NULL,
-	`wf7Pm`	INT(3)	NOT NULL
-);
-
-CREATE TABLE `WeatherTemp` (
-	`taMin3`	INT(4)	NOT NULL,
+	`wf3Am`	VARCHAR(10)	NOT NULL,
+	`wf3Pm`	VARCHAR(10)	NOT NULL,
+	`wf4Am`	VARCHAR(10)	NOT NULL,
+	`wf4Pm`	VARCHAR(10)	NOT NULL,
+	`wf5Am`	VARCHAR(10)	NOT NULL,
+	`wf5Pm` VARCHAR(10)	NOT NULL,
+	`wf6Am`	VARCHAR(10)	NOT NULL,
+	`wf6Pm`	VARCHAR(10)	NOT NULL,
+	`wf7Am`	VARCHAR(10)	NOT NULL,
+	`wf7Pm`	VARCHAR(10)	NOT NULL,
+    `taMin3`	INT(4)	NOT NULL,
 	`taMax3`	INT(4)	NOT NULL,
 	`taMin4`	INT(4)	NOT NULL,
 	`taMax4`	INT(4)	NOT NULL,
@@ -105,3 +103,20 @@ CREATE TABLE `WeatherTemp` (
 	`taMin7`	INT(4)	NOT NULL,
 	`taMax7`	INT(4)	NOT NULL
 );
+
+INSERT INTO WeatherMidFcst
+    SET updateTime = '3';
+
+ALTER TABLE WeatherMidFcst CONVERT TO CHARSET utf8;
+
+
+CREATE TABLE WeatherShortFcst (	
+	baseDate VARCHAR(8) NOT NULL,
+	baseTime VARCHAR(6) NOT NULL,
+	category VARCHAR(3) NOT NULL,
+	fcstDate VARCHAR(8) NOT NULL,
+	fcstTime VARCHAR(3) NOT NULL,
+	fcstValue VARCHAR(2) NOT NULL
+)
+
+ALTER TABLE WeatherMidFcst CONVERT TO CHARSET utf8;

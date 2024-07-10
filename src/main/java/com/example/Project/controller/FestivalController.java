@@ -11,11 +11,13 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.Project.service.FestivalService;
+import com.example.Project.service.WeatherService;
 import com.example.Project.util.Util;
 import com.example.Project.vo.Festival;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,22 +31,31 @@ public class FestivalController {
 		this.festivalService = festivalService;
 	}
 	
+	@Value("${custom.api.key}")
+	private String apiKey;
+	
+	@Value("${custom.kakao.key}")
+	private String kakaoKey;
+	
 	@GetMapping("/festivalList")
 	public String list(Model model) {
-		model.addAttribute("festivalList", festivalService.festivalList(100));
+		model.addAttribute("festivalList", festivalService.festivalList(500));
+		model.addAttribute("today", Util.today());
 		return "/list";
 	}
 	
 	@GetMapping("/festivalDetail")
 	public String detail(Model model, int eventSeq) {
 		model.addAttribute("festival", festivalService.festivalDetail(eventSeq));
+		model.addAttribute("kakaoKey", kakaoKey);
+		model.addAttribute("weatherMid", (eventSeq));
 		return "/detail";
 	}
 	
 	@GetMapping("/festivalUpdate")
 	public String festivalUpdate() throws IOException, ParseException {
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/6300000/eventDataService/eventDataListJson"); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=FHg5mCrqdD%2BYDOCHquhjUh7gSK%2BL0t5flP55KwHHGcZ%2BwSb0kPWFGWJwgsqFcO8mBUXY8KdVSqu4yul5tdcKZA%3D%3D"); /*Service Key*/
+        urlBuilder.append("?" + URLEncoder.encode("serviceKey=","UTF-8") + apiKey); /*Service Key*/
         urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("500", "UTF-8")); /**/
         urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /**/
         URL url = new URL(urlBuilder.toString());

@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
+<%@ include file="common/head.jsp" %>  
+
 <c:set var="pageTitle" value="Main Page" />
   
 	<section class="mt-8 text-lg text-center">
@@ -9,14 +11,16 @@
 			<div class="flex">
 				<table class="table">
 					<colgroup>
-						<col width="10"/>
-						<col width="10"/>
+						<col width="100"/>
+						<col width="80"/>
+						<col width="80"/>
 						<col width=""/>
 						<col width="200"/>
 						<col width="200"/>
 					</colgroup>
 				    <thead>
 			     		<tr>
+			        		<th>진행 여부</th>
 			        		<th>행사 번호</th>
 			        		<th>행사 내용</th>
 					        <th>행사 제목</th>
@@ -27,6 +31,26 @@
 			    	<tbody>
 			    		<c:forEach var="festival" items="${festivalList }">
 			      			<tr>
+						        <td>
+					        	  	<script>
+								  		function dateCheck() {
+								
+								  			var today = new Date('${today}');
+								  			var beginDt = new Date('${festival.beginDt}');
+								  			var endDt = new Date('${festival.endDt}');
+								  		
+								  			if (endDt.getTime() < today.getTime()) {
+								  				document.write('종료 행사');
+								  			} else if (today.getTime() < beginDt.getTime()) {
+								  				document.write('예정 행사');
+								  			} else {
+								  				document.write('진행중');
+								  			}
+								  		}
+								  		
+								  		dateCheck();
+								  	</script>
+						        </td>
 						        <td>${festival.eventSeq } </td>
 						        <td>${festival.themeCdNm } </td>
 						        <td><a href="/festivalDetail?eventSeq=${festival.eventSeq}">${festival.title }</a></td>
@@ -39,3 +63,5 @@
 			</div>
 		</div>
 	</section>
+
+<%@ include file="common/foot.jsp" %>  
