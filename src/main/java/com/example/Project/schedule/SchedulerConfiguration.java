@@ -1,4 +1,4 @@
-package com.example.Project.controller;
+package com.example.Project.schedule;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,55 +9,102 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+import com.example.Project.service.FestivalService;
 import com.example.Project.service.WeatherService;
-import com.example.Project.vo.WeatherMid;
+import com.example.Project.util.Util;
+import com.example.Project.vo.Festival;
 import com.example.Project.vo.WeatherMidRain;
 import com.example.Project.vo.WeatherMidTemp;
 import com.example.Project.vo.WeatherShort;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Controller
-public class WeatherController {
+@Component
+public class SchedulerConfiguration {
 	
-	private String updateTime;
-	
-	{
-		updateTime = "20240710";
-	}
-	
+	private FestivalService festivalService;
 	private WeatherService weatherService;
+	private String date;
 
-	public WeatherController(WeatherService weatherService) {
+	public SchedulerConfiguration(FestivalService festivalService, WeatherService weatherService) {
+		this.festivalService = festivalService;
 		this.weatherService = weatherService;
 	}
-//	
-//	@GetMapping("/weatherList")
-//	public String list(Model model) {
-//		model.addAttribute("festivalList", weatherController.weatherList());
-//		return "/list";
-//	}
 	
+	{
+		date = Util.today();
+	}
+
 	@Value("${custom.api.key}")
 	private String apiKey;
 	
-	@GetMapping("/user/weatherMidUpdate")
-	public String weatherMidUpdate() throws IOException, ParseException {
-		// 강수 업데이트
+	@Scheduled(cron = "5 0 0 * * *")
+	public void dateUpdate() {
+		date = Util.today();
+	}
+
+	@Scheduled(cron = "5 0 5 * * *")
+	public void festivalUpdate() throws IOException, ParseException {
+		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/6300000/eventDataService/eventDataListJson"); 
+        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + apiKey); 
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("500", "UTF-8")); 
+        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); 
+        URL url = new URL(urlBuilder.toString());
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-type", "application/json");
+        BufferedReader rd;
+        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        } else {
+            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+        }
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+        	sb.append(line);
+        }
+        rd.close();
+        conn.disconnect();
+        
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(sb.toString());
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Festival> festivalList = objectMapper.readValue(jsonObject.get("msgBody").toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, Festival.class));
+        
+        for (Festival festival : festivalList) {
+        	if (festival.getEndDt().compareTo(Util.today()) < 0) {
+        		continue;
+        	}
+
+        	String dataStnDtCheck = festivalService.dataStnDtCheck(festival.getEventSeq());
+        	if (dataStnDtCheck == null) {
+        		festivalService.insert(festival);
+        		// 이전에 기록이 없는 새로운 행사인 경우, 목록조회 DB에 추가
+        	} else if (dataStnDtCheck != festival.getDataStnDt()) {
+        		festivalService.update(festival);
+        		// 이미 존재하는 행사에서 데이터기준일 변경 => 변경된 정보가 있으니 업데이트
+        	}
+        }
+    }
+    
+    @Scheduled(cron = "0 5 6 * * *")
+	public void weatherMidUpdate() throws IOException, ParseException {
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"); 
         urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + apiKey); 
         urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); 
         urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("500", "UTF-8")); 
         urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8"));
         urlBuilder.append("&" + URLEncoder.encode("regId","UTF-8") + "=" + URLEncoder.encode("11C20000", "UTF-8")); 
-        urlBuilder.append("&" + URLEncoder.encode("tmFc","UTF-8") + "=" + URLEncoder.encode(updateTime, "UTF-8") + URLEncoder.encode("0600", "UTF-8"));
+        urlBuilder.append("&" + URLEncoder.encode("tmFc","UTF-8") + "=" + URLEncoder.encode(date, "UTF-8") + URLEncoder.encode("0600", "UTF-8"));
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -78,7 +125,7 @@ public class WeatherController {
         JsonNode rootNode = objectMapper.readTree(sb.toString());
         JsonNode itemNode = rootNode.path("response").path("body").path("items").path("item");
         WeatherMidRain weatherMidRain = objectMapper.treeToValue(itemNode.get(0), WeatherMidRain.class);
-        weatherMidRain.setUpdateTime(updateTime);
+        weatherMidRain.setUpdateTime(date);
         
         // 기온 업데이트
         urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa"); 
@@ -87,7 +134,7 @@ public class WeatherController {
         urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("500", "UTF-8"));
         urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); 
         urlBuilder.append("&" + URLEncoder.encode("regId","UTF-8") + "=" + URLEncoder.encode("11C20401", "UTF-8")); 
-        urlBuilder.append("&" + URLEncoder.encode("tmFc","UTF-8") + "=" + URLEncoder.encode(updateTime, "UTF-8") + URLEncoder.encode("0600", "UTF-8")); 
+        urlBuilder.append("&" + URLEncoder.encode("tmFc","UTF-8") + "=" + URLEncoder.encode(date, "UTF-8") + URLEncoder.encode("0600", "UTF-8")); 
         url = new URL(urlBuilder.toString());
         conn = (HttpURLConnection) url.openConnection();
         if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
@@ -105,16 +152,15 @@ public class WeatherController {
         rootNode = objectMapper.readTree(sb.toString());
         itemNode = rootNode.path("response").path("body").path("items").path("item");
         WeatherMidTemp weatherMidTemp = objectMapper.treeToValue(itemNode.get(0), WeatherMidTemp.class);
-        weatherMidTemp.setUpdateTime(updateTime);
+        weatherMidTemp.setUpdateTime(date);
         
         weatherService.weatherMidRainUpdate(weatherMidRain);
         weatherService.weatherMidTempUpdate(weatherMidTemp);
         
-        return "/user/home/main";
 	}
 	
-	@GetMapping("/weatherShortUpdate")
-	public String weatherShortUpdate() throws IOException, ParseException {
+    @Scheduled(cron = "0 5 5 * * *")
+	public void weatherShortUpdate() throws IOException, ParseException {
 		String[] category = {"TMP", "SKY", "POP"};
 //		String[] category = {"TMP", "SKY", "POP", "PCP", "SNO"};
 		
@@ -123,7 +169,7 @@ public class WeatherController {
         urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); 
         urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8"));
         urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8"));
-        urlBuilder.append("&" + URLEncoder.encode("base_date","UTF-8") + "=" + URLEncoder.encode(updateTime, "UTF-8")); 
+        urlBuilder.append("&" + URLEncoder.encode("base_date","UTF-8") + "=" + URLEncoder.encode(date, "UTF-8")); 
         urlBuilder.append("&" + URLEncoder.encode("base_time","UTF-8") + "=" + URLEncoder.encode("0500", "UTF-8"));
         urlBuilder.append("&" + URLEncoder.encode("nx","UTF-8") + "=" + URLEncoder.encode("67", "UTF-8"));
         urlBuilder.append("&" + URLEncoder.encode("ny","UTF-8") + "=" + URLEncoder.encode("100", "UTF-8"));
@@ -175,19 +221,6 @@ public class WeatherController {
         		}
         	}
         }
-        
-        return "/user/home/main";
 	}
 	
-	@GetMapping("/user/weather/weatherMidView")
-	@ResponseBody
-	public WeatherMid weatherMidView(){
-		return weatherService.weatherMidView();
-	}
-
-	@GetMapping("/user/weather/weatherShortView")
-	@ResponseBody
-	public List<WeatherShort> weatherShortView(){
-		return weatherService.weatherShortView();
-	}
 }

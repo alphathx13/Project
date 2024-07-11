@@ -49,6 +49,7 @@
 					    		<h3 class="text-lg font-bold">Login</h3>
 					    		<div class="container mx-auto px-3 w-72">
 									<form action="/user/member/doLogin" method="post" onsubmit="check(this); return false;">
+										<input type="hidden" class="uri" name="uri"/>
 										<label class="input input-bordered flex items-center gap-2">
 											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
 												fill="currentColor" class="h-4 w-4 opacity-70">
@@ -93,7 +94,7 @@
 							class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 shadow w-24">
 							<li><div>  </div></li>
 							<li><button class="h-full flex items-center" onclick="location.href='/user/member/myPage'"> 마이 페이지 </button></li>
-							<li><button class="h-full flex items-center" onclick="if(confirm('로그아웃 하시겠습니까?') == false) return false; location.href='/user/member/doLogout'">로그아웃</button></li>
+							<li><button class="h-full flex items-center" onclick="if(confirm('로그아웃 하시겠습니까?') == false) return false; logout();">로그아웃</button></li>
 						</ul>
 					</div>
 				</c:otherwise>
@@ -109,6 +110,13 @@
 	</div>
 
 	<script>
+		var currentPageUrl = window.location.href;
+		$('.uri').val(currentPageUrl);
+		
+		function logout() {
+			location.href='/user/member/doLogout?uri=' + currentPageUrl;
+		}
+		
 		function check(form) {
 			let id = form.id.value.trim();
 			let pw = form.pw.value.trim();

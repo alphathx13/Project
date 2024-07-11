@@ -88,15 +88,30 @@ public interface FestivalDao {
 	public void update(Festival festival);
 
 	@Select("""
-			SELECT * FROM festivalList
-				ORDER BY beginDt DESC
-				LIMIT #{number};
+			SELECT f.*, IFNULL(SUM(l.point), 0) `likePoint`
+				FROM festivalList f
+				LEFT OUTER JOIN likePoint l
+					ON f.eventSeq = l.relId AND l.relTypeCode = 'festival'
+                GROUP BY f.eventSeq
+                ORDER BY f.eventSeq DESC
+                LIMIT 0, #{number}
 			""")
 	public List<Festival> festivalList(int number);
 
 	@Select("""
-			SELECT * FROM festivalList
+			SELECT f.*, IFNULL(SUM(l.point), 0) `likePoint`
+				FROM festivalList f
+				LEFT OUTER JOIN likePoint l
+					ON f.eventSeq = l.relId AND l.relTypeCode = 'festival' 
 				WHERE eventSeq = #{eventSeq}
+				GROUP BY f.eventSeq
 			""")
 	public Festival festivalDetail(int eventSeq);
+
+	@Update("""
+			UPDATE FestivalList
+				set viewCount = viewCount+1
+				where eventSeq = #{eventSeq};
+			""")
+	public void viewCountPlus(int eventSeq);
 }

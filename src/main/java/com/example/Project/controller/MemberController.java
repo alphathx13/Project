@@ -43,7 +43,7 @@ public class MemberController {
 	
 	@PostMapping("/user/member/doLogin")
 	@ResponseBody
-	public String doLogin(String id, String pw) {
+	public String doLogin(String id, String pw, String uri) {
 		
 		Member member = memberService.getMemberByLoginId(id);
 		
@@ -54,19 +54,25 @@ public class MemberController {
 		if (!member.getLoginPw().equals(pw)) { 
 			return Util.jsBack(String.format("비밀번호가 일치하지 않습니다."));
 		}
+		
+		if (member.getDelStatus() != 0) { 
+			return Util.jsBack(String.format("해당 계정은 탈퇴진행중인 계정입니다."));
+		}
 
 		rq.login(member);
 		
-		return Util.jsReplace(String.format("%s 님의 로그인을 환영합니다.", member.getNickname()), "/");
+		return Util.jsReplace(String.format("%s 님의 로그인을 환영합니다.", member.getNickname()), uri);
 	}
 	
 	@GetMapping("/user/member/doLogout")
 	@ResponseBody
-	public String doLogout(String loginId, String loginPw) {
+	public String doLogout(String uri) {
 	
+		System.out.println(uri);
+		
 		rq.logout();
 		
-		return Util.jsReplace("정상적으로 로그아웃 되었습니다.", "/");
+		return Util.jsReplace("정상적으로 로그아웃 되었습니다.", uri);
 	}
 	
 	@PostMapping("/user/member/passCheck")

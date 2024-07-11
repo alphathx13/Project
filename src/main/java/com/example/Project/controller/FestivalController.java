@@ -15,11 +15,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.util.WebUtils;
 
 import com.example.Project.service.FestivalService;
 import com.example.Project.util.Util;
 import com.example.Project.vo.Festival;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class FestivalController {
@@ -44,10 +49,25 @@ public class FestivalController {
 	}
 	
 	@GetMapping("/user/festival/detail")
-	public String detail(Model model, int eventSeq) {
+	public String detail(HttpServletRequest request, HttpServletResponse response, Model model, int eventSeq) {
+		
+		boolean isViewed = false;	
+		
+		if (WebUtils.getCookie(request, "viewedFestival_"+ eventSeq) != null) {
+			isViewed = true;
+		}
+
+		if (!isViewed) {
+			festivalService.viewCountPlus(eventSeq);
+			Cookie cookie = new Cookie("viewedFestival_" + eventSeq, "true");
+			cookie.setMaxAge(5);
+			response.addCookie(cookie);
+		}
+		
 		model.addAttribute("festival", festivalService.festivalDetail(eventSeq));
 		model.addAttribute("kakaoKey", kakaoKey);
-		model.addAttribute("weatherMid", (eventSeq));
+		model.addAttribute("weatherMid", eventSeq);
+		
 		return "/user/festival/detail";
 	}
 	
@@ -97,5 +117,7 @@ public class FestivalController {
         }
         return "/user/home/main";
 	}
+	
+	
 	
 }

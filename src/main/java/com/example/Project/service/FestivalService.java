@@ -36,4 +36,8 @@ public class FestivalService {
 		return festivalDao.festivalDetail(eventSeq);
 	}
 
+	public void viewCountPlus(int eventSeq) {
+		festivalDao.viewCountPlus(eventSeq);
+	}
+
 }

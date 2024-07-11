@@ -17,6 +17,8 @@
 						<col width=""/>
 						<col width="200"/>
 						<col width="200"/>
+						<col width="100"/>
+						<col width="100"/>
 					</colgroup>
 				    <thead>
 			     		<tr>
@@ -26,6 +28,8 @@
 					        <th>행사 제목</th>
 					        <th>시작 날짜</th>
 					        <th>종료 날짜</th>
+					        <th>추천수</th>
+					        <th>조회수</th>
 			   			</tr>
 			    	</thead>
 			    	<tbody>
@@ -56,6 +60,8 @@
 						        <td><a href="detail?eventSeq=${festival.eventSeq}">${festival.title }</a></td>
 			        			<td>${festival.beginDt }</td>
 			        			<td>${festival.endDt }</td>
+			        			<td>${festival.likePoint }</td>
+			        			<td>${festival.viewCount }</td>
 			      			</tr>
 			   			</c:forEach>  
 			    	</tbody>

@@ -7,15 +7,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Member {
+public class Reply {
 	private int id;
+	private int memberId;
+	private int eventSeq;
+	private String replyBody;
 	private String regDate;
 	private String updateDate;
-	private String loginId;
-	private String loginPw;
-	private String name;
 	private String nickname;
-	private String cellphone;
-	private String email;
-	private int delStatus;
+	private int likePoint;
+
+	public String getBody() {
+		return this.replyBody.replaceAll("\n", "<br/>");
+	}
 }

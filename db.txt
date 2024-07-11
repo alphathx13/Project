@@ -28,6 +28,7 @@ CREATE TABLE festivalList (
     , eventTm VARCHAR(100) 
     , prpleHoldYn VARCHAR(100) 
     , homepageAdd VARCHAR(100) 
+    , views INT UNSIGNED NOT NULL DEFAULT 0
 );
 
 ALTER TABLE festivalList CONVERT TO CHARSET utf8;
@@ -179,3 +180,35 @@ INSERT INTO `member`
         , nickname = 'user3'
         , cellphone = '010-1112-1111'
         , email = 'user3@site.com';
+        
+        
+        
+        
+CREATE TABLE `Reply` (
+	`id` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	`memberId`	INT UNSIGNED	NOT NULL,
+    relTypeCode VARCHAR(20) NOT NULL COMMENT '관련 데이터 타입 코드',
+    relId INT UNSIGNED NOT NULL COMMENT '관련 데이터 번호',
+	`replyBody`	TEXT	NOT NULL,
+	`regDate`	DATETIME	NOT NULL,
+	`updateDate`	DATETIME	NOT NULL
+);
+
+ALTER TABLE `member` CONVERT TO CHARSET utf8;
+
+INSERT INTO reply
+    SET memberId = 2
+        , relTypeCode = 'festival'
+        , relId = 13030
+        , replyBody = '추천합니다.'
+        , regDate = NOW()
+        , updateDate = NOW()
+        
+        
+CREATE TABLE likePoint(
+    id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
+    , memberId INT UNSIGNED NOT NULL
+    , relTypeCode VARCHAR(20) NOT NULL COMMENT '관련 데이터 타입 코드'
+    , relId INT UNSIGNED NOT NULL COMMENT '관련 데이터 번호'
+    , `point` INT NOT NULL DEFAULT 1
+);
