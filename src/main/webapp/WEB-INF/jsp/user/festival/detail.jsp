@@ -126,23 +126,18 @@
 						},
 						dataType : 'json',
 						success : function(result) {
-							console.log(result);
 							if (result.resultCode == "S-1") {
-								$('.festivalLikeBtn').html(`
-										<i class="festivalStar star fa-solid fa-star"></i>
-										<div class="festivalLikePoint">${festival.likePoint }</div>
-										`);
 								$('.festivalLikeTooltip').attr('data-tip', '추천취소');
 								$('.festivalLikeBtn').html(`
 										<i class="festivalStar star fa-solid fa-star"></i>
 										<div class="festivalLikePoint">${festival.likePoint }</div>
 										`);
 							} else {
+								$('.festivalLikeTooltip').attr('data-tip', '추천하기');
 								$('.festivalLikeBtn').html(`
 										<i class="festivalStar star fa-regular fa-star"></i>
 										<div class="festivalLikePoint">${festival.likePoint }</div>
 										`);
-								$('.festivalLikeTooltip').attr('data-tip', '추천하기');
 							}
 						},
 						error : function(xhr, status, error) {
@@ -328,7 +323,7 @@
 	<script>
 		$(document).ready(function(){
 			replyLoad('festival', ${festival.eventSeq });
-			
+			replyLikeLoad();
 		})
 		
 		// 댓글 불러오기
@@ -381,7 +376,7 @@
 									<tr>
 										<td>
 											<div class="replyLikeTooltip tooltip w-20 h-full" data-tip="">
-												<button class="replyLikeBtn btn btn-outline w-full h-full text-xl" onclick = "replyLikeBtnChange();" type="button">
+												<button check="\${item.id}" class="replyLikeBtn btn btn-outline w-full h-full text-xl" onclick = "replyLikeBtnChange();" type="button">
 													<i class="replyStar"><div class="replyLikePoint text-xl">\${item.likePoint }</div></i>
 												</button>
 											</div>
@@ -412,10 +407,86 @@
 			})
 		}
 		
+		// 댓글 좋아요 불러오기
+		const replyLikeLoad = function(relTypeCode, relId) {
+			if (${rq.loginMemberNumber == 0 }) {
+				$('.replyLikeTooltip').attr('data-tip', '추천수');
+				$('.replyStar').addClass('fa-solid fa-splotch');
+			} else {
+				$('.replyLikeBtn').each(function() {
+					var reply = $(this);
+					$.ajax({
+						url : '../likePoint/likeCheck',
+						type : 'GET',
+						data : {
+							relTypeCode : 'reply',
+							relId : $(this).attr('check')
+						},
+						dataType : 'json',
+						success : function(result) {
+							if (result.resultCode == "S-1") {
+								reply.html(`
+										<i class="replyStar star fa-solid fa-star"></i>
+										<div class="replyLikePoint">\${result.data }</div>
+										`);
+								reply.parent().attr('data-tip', '추천취소');
+							} else {
+								reply.html(`
+										<i class="replyStar star fa-regular fa-star"></i>
+										<div class="replyLikePoint">\${result.data }</div>
+										`);
+								reply.parent().attr('data-tip', '추천하기');
+							}
+						},
+						error : function(xhr, status, error) {
+							console.log(error);
+						}
+					})
+				})
+			}
+		}
+		
+		// 댓글 좋아요 / 좋아요취소
+		const replyLikeBtnChange = function() {
+			var $button = $(event.target);
+			
+			if(${rq.loginMemberNumber != 0}) {
+				let likeCheck = true;
+				if($button.children('i.replyStar').hasClass('fa-regular')) {
+					likeCheck = false;
+				}
+				
+				$.ajax({
+					url : '../likePoint/doLike',
+					type : 'GET',
+					data : {
+						relTypeCode : 'reply',
+						relId : $button.attr('check'),
+						likeCheck : likeCheck
+					},
+					dataType : 'json',
+					success : function(result) {
+						$button.children('div.replyLikePoint').text(result.data);
+						if (result.resultCode == 'undoLike') {
+							$button.children('i.replyStar').attr('class','replyStar star fa-regular fa-star');
+							$button.parent().attr('data-tip', '추천하기');
+						} else {
+							$button.children('i.replyStar').attr('class','replyStar star fa-solid fa-star');
+							$button.parent().attr('data-tip', '추천취소');
+						}
+					},
+					error : function(xhr, status, error) {
+						console.log(error);
+					}
+				})
+			}
+			
+			
+		}
+		
 		// 댓글 수정란
 		const replyModify = function(id) {
 			let body;
-			
 			$.ajax({
 				url : '../reply/getReplyBody',
 				type : 'POST',
@@ -425,7 +496,6 @@
 				dataType : 'text',
 				success : function(result) {
 					body = result;
-					
 					if(!$('div.' + id).hasClass('replyModifyOpen')) {
 						replyFormClose('replyModifyOpen');
 						
@@ -464,7 +534,6 @@
 				data : data,
 				dataType : 'json',
 				success : function(result) {
-					console.log('hell');
 					location.href='/user/festival/detail?eventSeq=${festival.eventSeq}';
 				},
 				error : function(xhr, status, error) {
@@ -551,3 +620,7 @@
 	<button onclick="history.back()" class="btn btn-outline btn-info mt-4">뒤로 가기</button>	
 	
 <%@ include file="../../common/foot.jsp" %>  
+
+<!-- 
+
+ -->

@@ -25,11 +25,14 @@ public interface ReplyDao {
 	public void writeReply(int loginMemberNumber, String replyBody, String relTypeCode, int relId);
 	
 	@Select("""
-			SELECT r.*, m.nickname `nickname`
+			SELECT r.*, m.nickname `nickname`, IFNULL(SUM(l.point), 0) `likePoint`
 				FROM reply r
 				LEFT JOIN `member` m
-					on r.memberId = m.id
+					ON r.memberId = m.id
+				LEFT JOIN likePoint l
+                    ON r.id = l.relId
 				WHERE r.relTypeCode = #{relTypeCode} AND r.relID = #{relId}
+                GROUP BY r.id
 			""")
 	public List<Reply> viewReply(String relTypeCode, int relId);
 
