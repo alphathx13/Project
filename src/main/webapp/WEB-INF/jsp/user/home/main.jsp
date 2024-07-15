@@ -14,5 +14,8 @@
 	<button onclick="location.href='/weatherShortUpdate'" class="btn btn-outline btn-info mt-4">단기 날씨 가져오기</button>	
 	<br/><br/>
 	
+	<button onclick="location.href='/chat/rooms'" class="btn btn-outline btn-info mt-4">채팅방</button>	
+	<br/><br/>
+	
 <%@ include file="../../common/foot.jsp" %>  
 	

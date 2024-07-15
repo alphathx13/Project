@@ -620,7 +620,3 @@
 	<button onclick="history.back()" class="btn btn-outline btn-info mt-4">뒤로 가기</button>	
 	
 <%@ include file="../../common/foot.jsp" %>  
-
-<!-- 
-
- -->

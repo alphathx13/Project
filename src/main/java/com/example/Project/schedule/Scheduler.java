@@ -27,13 +27,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class SchedulerConfiguration {
+public class Scheduler {
 	
 	private FestivalService festivalService;
 	private WeatherService weatherService;
 	private String date;
 
-	public SchedulerConfiguration(FestivalService festivalService, WeatherService weatherService) {
+	public Scheduler(FestivalService festivalService, WeatherService weatherService) {
 		this.festivalService = festivalService;
 		this.weatherService = weatherService;
 	}
