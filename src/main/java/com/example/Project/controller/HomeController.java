@@ -16,4 +16,9 @@ public class HomeController {
 		return "redirect:/user/home/main";
 	}
 	
+	@GetMapping("/chat")
+	public String chat() {
+		return "/chat/rooms";
+	}
+	
 }
