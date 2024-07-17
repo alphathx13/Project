@@ -71,7 +71,7 @@
 			messageListElement.insertBefore(li, messageListElement.firstChild);
 		}
 
-		// 연결시 sub 연결하고 pub로 연결알리기
+		// 채팅방 접속시 pub로 연결알리기
 		function connect() {
 			ws.connect({}, function(frame) {
 				ws.subscribe("/sub/chat/room/" + roomId, function(message) {

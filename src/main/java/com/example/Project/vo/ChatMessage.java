@@ -1,5 +1,7 @@
 package com.example.Project.vo;
 
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,5 +15,6 @@ public class ChatMessage {
     private MessageType type; 
     private String roomId;
     private String sender; 
-    private String message; 
+    private String message;
+    private LocalDateTime timestamp; 
 }
