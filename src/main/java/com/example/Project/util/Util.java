@@ -1,6 +1,7 @@
 package com.example.Project.util;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Util{
@@ -8,6 +9,11 @@ public class Util{
 	public static String today() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		return LocalDate.now().format(formatter);
+	}
+	
+	public static String Now() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		return LocalDateTime.now().format(formatter);
 	}
 	
 	public static boolean isEmpty(String str) {

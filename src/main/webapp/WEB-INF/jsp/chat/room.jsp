@@ -7,7 +7,7 @@
 <head>
 </head>
 <body>
-  <div class="container" id="app" v-cloak>
+  <div class="container" id="app">
       <div class="row">
           <div class="col-md-12">
               <h3>채팅방 리스트</h3>
@@ -46,7 +46,7 @@
               },
               dataType: "json",
               success: function(response) {
-                  alert(response.name + " 방 개설에 성공하였습니다.");
+                  alert(response.roomId + " 방 개설에 성공하였습니다.");
                   roomNameInput.value = ''; 
                   findAllRooms(); 
               },
@@ -79,7 +79,7 @@
           rooms.forEach(function(room) {
               var li = document.createElement('li');
               li.className = 'list-group-item list-group-item-action';
-              li.textContent = room.name;
+              li.textContent = room.roomId;
               li.onclick = function() {
                   enterRoom(room.roomId);
               };

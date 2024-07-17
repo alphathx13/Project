@@ -67,11 +67,7 @@ public class MemberController {
 	@GetMapping("/user/member/doLogout")
 	@ResponseBody
 	public String doLogout(String uri) {
-	
-		System.out.println(uri);
-		
 		rq.logout();
-		
 		return Util.jsReplace("정상적으로 로그아웃 되었습니다.", uri);
 	}
 	

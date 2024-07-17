@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
+import com.example.Project.util.Util;
 import com.example.Project.vo.ChatMessage;
+import com.example.Project.vo.Rq;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +21,12 @@ public class ChatController {
 	
 	@Autowired
 	public ChatService chatService;
+	
+	@Autowired
+	public Rq rq;
+	
+	@Autowired
+	public RedisUserService redisUserService;
 	
 	// "/pub/chat/message"로 들어오는 메시지 처리
 	@MessageMapping("/chat/message")
@@ -44,6 +52,7 @@ public class ChatController {
 		}
 		
 		// 메시지 저장하기
+		message.setTimestamp(Util.Now());
 		chatService.saveChatMessage(message.getRoomId(), message);
 		
 		// 메시지 pub

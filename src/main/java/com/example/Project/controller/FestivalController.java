@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.util.WebUtils;
 
+import com.example.Project.chat.ChatRoomRepository;
 import com.example.Project.service.FestivalService;
 import com.example.Project.util.Util;
 import com.example.Project.vo.Festival;
@@ -30,9 +31,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public class FestivalController {
 	
 	private FestivalService festivalService;
+	private final ChatRoomRepository chatRoomRepository;
 
-	public FestivalController(FestivalService festivalService) {
+	public FestivalController(FestivalService festivalService, ChatRoomRepository chatRoomRepository) {
 		this.festivalService = festivalService;
+		this.chatRoomRepository = chatRoomRepository;
 	}
 	
 	@Value("${custom.api.key}")
@@ -71,6 +74,7 @@ public class FestivalController {
 		return "/user/festival/detail";
 	}
 	
+	// 이건 테스트용으로 남겨둔것
 	@GetMapping("/user/festival/festivalUpdate")
 	public String festivalUpdate() throws IOException, ParseException {
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/6300000/eventDataService/eventDataListJson"); /*URL*/
@@ -102,13 +106,10 @@ public class FestivalController {
         List<Festival> festivalList = objectMapper.readValue(jsonObject.get("msgBody").toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, Festival.class));
         
         for (Festival festival : festivalList) {
-        	if (festival.getEndDt().compareTo(Util.today()) < 0) {
-        		continue;
-        	}
-
         	String dataStnDtCheck = festivalService.dataStnDtCheck(festival.getEventSeq());
         	if (dataStnDtCheck == null) {
         		festivalService.insert(festival);
+        		chatRoomRepository.createChatRoom(String.valueOf(festival.getEventSeq()));
         		// 이전에 기록이 없는 새로운 행사인 경우, 목록조회 DB에 추가
         	} else if (dataStnDtCheck != festival.getDataStnDt()) {
         		festivalService.update(festival);

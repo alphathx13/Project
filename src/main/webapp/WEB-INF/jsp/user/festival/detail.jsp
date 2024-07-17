@@ -239,240 +239,166 @@
 		    	</tbody>
 			</table>
 		</div>
-	</section>
-	<script>
-		$(document).ready(function(){
-			
-	  		var today = new Date();
-	  		
-	  		for (var i = 3; i <= 7; i++) {
-	  		    var futureDate = new Date(today);
-	  		    futureDate.setDate(today.getDate() + i);
 
-	  		    var month = futureDate.getMonth() + 1;
-	  		    var day = futureDate.getDate();
-
-	  		  	$('.midDate').append(`<td>\${month}/\${day}</td>`);
-	  		}
-	  		
-	  		// 단기 날씨
-	  		$.ajax({
-				url : '/user/weather/weatherShortView',
-				type : 'GET',
-				dataType : 'json',
-				success : function(data) {
-					var dataNum = 0;
-					for (var num = 6; num <= 18; num+=3) {
-						$('.' + num + '시').html(`
-								<td>\${num}시</td>
-								<td>\${data[dataNum].fcstValue}도/\${data[dataNum+2].fcstValue}%/\${data[dataNum+1].fcstValue}</td>
-								<td>\${data[dataNum+15].fcstValue}도/\${data[dataNum+17].fcstValue}%/\${data[dataNum+16].fcstValue}</td>
-								<td>\${data[dataNum+30].fcstValue}도/\${data[dataNum+32].fcstValue}%/\${data[dataNum+31].fcstValue}</td>
-								`);
-						dataNum += 3;
-					}
-				},
-				error : function(xhr, status, error) {
-					console.log(error);
-				}
-			})
-	  		
-			// 중기 날씨
-			$.ajax({
-				url : '/user/weather/weatherMidView',
-				type : 'GET',
-				dataType : 'json',
-				success : function(data) {
-					
-					$('.temp').html(`
-						<th> 최저/최고 온도</th>
-						<th>\${data.taMin3}도 / \${data.taMax3}도</th>
-						<th>\${data.taMin4}도 / \${data.taMax4}도</th>
-						<th>\${data.taMin5}도 / \${data.taMax5}도</th>
-						<th>\${data.taMin6}도 / \${data.taMax6}도</th>
-						<th>\${data.taMin7}도 / \${data.taMax7}도</th>
-							`);
-
-					$('.am').html(`
-						<th> 오전/오후 강수확률 </th>
-						<th>\${data.rnSt3Am} % / \${data.rnSt3Pm} %</th>
-						<th>\${data.rnSt4Am} % / \${data.rnSt4Pm} %</th>
-						<th>\${data.rnSt5Am} % / \${data.rnSt5Pm} %</th>
-						<th>\${data.rnSt6Am} % / \${data.rnSt6Pm} %</th>
-						<th>\${data.rnSt7Am} % / \${data.rnSt7Pm} %</th>
-							`);
-					
-					$('.cloud').html(`
-						<th> 오전/오후 날씨 </th>
-						<th>\${data.wf3Am} / \${data.wf3Pm}</th>
-						<th>\${data.wf4Am} / \${data.wf4Pm}</th>
-						<th>\${data.wf5Am} / \${data.wf5Pm}</th>
-						<th>\${data.wf6Am} / \${data.wf6Pm}</th>
-						<th>\${data.wf7Am} / \${data.wf7Pm}</th>
-							`);
-				},
-				error : function(xhr, status, error) {
-					console.log(error);
-				}
-			})
-
-		})
-	</script>
-	
-	
-	<script>
-		$(document).ready(function(){
-			replyLoad('festival', ${festival.eventSeq });
-			replyLikeLoad();
-		})
-		
-		// 댓글 불러오기
-		const replyLoad = function(relTypeCode, relId) {
-			$.ajax({
-				url : '../reply/viewReply',
-				type : 'POST',
-				data : {
-					relTypeCode : relTypeCode,
-					relId : relId
-				},
-				async: false,
-				dataType : 'json',
-				success : function(result) {
-					let loginMemberNumber = ${rq.loginMemberNumber};
-					let content = '';
-					if (result.data.length != 0) {
-						$('.reply').html(`
-								<div class="container mx-auto px-3>
-									<div class="">
-										<table class="table table-lg">
-											<colgroup>
-												<col width="30"/>
-												<col width="30"/>
-												<col width=""/>
-												<col width="200"/>
-												<col width="10"/>
-												<col width="10"/>
-											</colgroup>
-										<thead>
-											<tr>
-												<th>추천수</th>
-												<th>작성자</th>
-												<th>내용</th>
-												<th>작성일시</th>
-												<th></th>
-												<th></th>
-											</tr>
-										</thead>
-											<tbody class="replyList">
-											</tbody>
-										</table>
-									</div>
-								</div>
-								`);
-					
-						$.each(result.data, function(index, item) {
-							let date = item.updateDate.substr(5);
-							content += `
-									<tr>
-										<td>
-											<div class="replyLikeTooltip tooltip w-20 h-full" data-tip="">
-												<button check="\${item.id}" class="replyLikeBtn btn btn-outline w-full h-full text-xl" onclick = "replyLikeBtnChange();" type="button">
-													<i class="replyStar"><div class="replyLikePoint text-xl">\${item.likePoint }</div></i>
-												</button>
-											</div>
-										</td>
-										<td>\${item.nickname}</td>
-										<td>
-											<div class="\${item.id}R">\${item.body}	</div>
-											<div class="\${item.id}"></div>
-										</td>
-										<td>\${date}
-									`;
-							if (item.regDate != item.updateDate) {
-								content += `(수정됨)`;
-							}
-							content += `</td>`;
-							$('.replyList').append('</td>');		
-							if(item.memberId == loginMemberNumber ) {
-								content += `<td><div class="tooltip" data-tip="댓글 수정"><button onclick="replyModify(\${item.id})"><i class="fa-solid fa-pen-to-square"></i></button></div></td>`;
-								content += `<td><div class="tooltip" data-tip="댓글 삭제"><button onclick="replyDelete(\${item.id}); return false;"><i class="fa-solid fa-trash-can"></i></button></div></td>`;
-							}
-						})
-						$('.replyList').append(content);
-					}
-				},
-				error : function(xhr, status, error) {
-					console.log(error);
-				}
-			})
-		}
-		
-		// 댓글 좋아요 불러오기
-		const replyLikeLoad = function(relTypeCode, relId) {
-			if (${rq.loginMemberNumber == 0 }) {
-				$('.replyLikeTooltip').attr('data-tip', '추천수');
-				$('.replyStar').addClass('fa-solid fa-splotch');
-			} else {
-				$('.replyLikeBtn').each(function() {
-					var reply = $(this);
-					$.ajax({
-						url : '../likePoint/likeCheck',
-						type : 'GET',
-						data : {
-							relTypeCode : 'reply',
-							relId : $(this).attr('check')
-						},
-						dataType : 'json',
-						success : function(result) {
-							if (result.resultCode == "S-1") {
-								reply.html(`
-										<i class="replyStar star fa-solid fa-star"></i>
-										<div class="replyLikePoint">\${result.data }</div>
-										`);
-								reply.parent().attr('data-tip', '추천취소');
-							} else {
-								reply.html(`
-										<i class="replyStar star fa-regular fa-star"></i>
-										<div class="replyLikePoint">\${result.data }</div>
-										`);
-								reply.parent().attr('data-tip', '추천하기');
-							}
-						},
-						error : function(xhr, status, error) {
-							console.log(error);
-						}
-					})
-				})
-			}
-		}
-		
-		// 댓글 좋아요 / 좋아요취소
-		const replyLikeBtnChange = function() {
-			var $button = $(event.target);
-			
-			if(${rq.loginMemberNumber != 0}) {
-				let likeCheck = true;
-				if($button.children('i.replyStar').hasClass('fa-regular')) {
-					likeCheck = false;
-				}
+		<script>
+			$(document).ready(function(){
 				
-				$.ajax({
-					url : '../likePoint/doLike',
+		  		var today = new Date();
+		  		
+		  		for (var i = 3; i <= 7; i++) {
+		  		    var futureDate = new Date(today);
+		  		    futureDate.setDate(today.getDate() + i);
+	
+		  		    var month = futureDate.getMonth() + 1;
+		  		    var day = futureDate.getDate();
+	
+		  		  	$('.midDate').append(`<td>\${month}/\${day}</td>`);
+		  		}
+		  		
+		  		// 단기 날씨
+		  		$.ajax({
+					url : '/user/weather/weatherShortView',
 					type : 'GET',
-					data : {
-						relTypeCode : 'reply',
-						relId : $button.attr('check'),
-						likeCheck : likeCheck
+					dataType : 'json',
+					success : function(data) {
+						var dataNum = 0;
+						for (var num = 6; num <= 18; num+=3) {
+							$('.' + num + '시').html(`
+									<td>\${num}시</td>
+									<td>\${data[dataNum].fcstValue}도/\${data[dataNum+2].fcstValue}%/\${data[dataNum+1].fcstValue}</td>
+									<td>\${data[dataNum+15].fcstValue}도/\${data[dataNum+17].fcstValue}%/\${data[dataNum+16].fcstValue}</td>
+									<td>\${data[dataNum+30].fcstValue}도/\${data[dataNum+32].fcstValue}%/\${data[dataNum+31].fcstValue}</td>
+									`);
+							dataNum += 3;
+						}
 					},
+					error : function(xhr, status, error) {
+						console.log(error);
+					}
+				})
+		  		
+				// 중기 날씨
+				$.ajax({
+					url : '/user/weather/weatherMidView',
+					type : 'GET',
+					dataType : 'json',
+					success : function(data) {
+						
+						$('.temp').html(`
+							<th> 최저/최고 온도</th>
+							<th>\${data.taMin3}도 / \${data.taMax3}도</th>
+							<th>\${data.taMin4}도 / \${data.taMax4}도</th>
+							<th>\${data.taMin5}도 / \${data.taMax5}도</th>
+							<th>\${data.taMin6}도 / \${data.taMax6}도</th>
+							<th>\${data.taMin7}도 / \${data.taMax7}도</th>
+								`);
+	
+						$('.am').html(`
+							<th> 오전/오후 강수확률 </th>
+							<th>\${data.rnSt3Am} % / \${data.rnSt3Pm} %</th>
+							<th>\${data.rnSt4Am} % / \${data.rnSt4Pm} %</th>
+							<th>\${data.rnSt5Am} % / \${data.rnSt5Pm} %</th>
+							<th>\${data.rnSt6Am} % / \${data.rnSt6Pm} %</th>
+							<th>\${data.rnSt7Am} % / \${data.rnSt7Pm} %</th>
+								`);
+						
+						$('.cloud').html(`
+							<th> 오전/오후 날씨 </th>
+							<th>\${data.wf3Am} / \${data.wf3Pm}</th>
+							<th>\${data.wf4Am} / \${data.wf4Pm}</th>
+							<th>\${data.wf5Am} / \${data.wf5Pm}</th>
+							<th>\${data.wf6Am} / \${data.wf6Pm}</th>
+							<th>\${data.wf7Am} / \${data.wf7Pm}</th>
+								`);
+					},
+					error : function(xhr, status, error) {
+						console.log(error);
+					}
+				})
+	
+			})
+		</script>
+	
+	
+		<script>
+			$(document).ready(function(){
+				replyLoad('festival', ${festival.eventSeq });
+				replyLikeLoad();
+			})
+			
+			// 댓글 불러오기
+			const replyLoad = function(relTypeCode, relId) {
+				$.ajax({
+					url : '../reply/viewReply',
+					type : 'POST',
+					data : {
+						relTypeCode : relTypeCode,
+						relId : relId
+					},
+					async: false,
 					dataType : 'json',
 					success : function(result) {
-						$button.children('div.replyLikePoint').text(result.data);
-						if (result.resultCode == 'undoLike') {
-							$button.children('i.replyStar').attr('class','replyStar star fa-regular fa-star');
-							$button.parent().attr('data-tip', '추천하기');
-						} else {
-							$button.children('i.replyStar').attr('class','replyStar star fa-solid fa-star');
-							$button.parent().attr('data-tip', '추천취소');
+						let loginMemberNumber = ${rq.loginMemberNumber};
+						let content = '';
+						if (result.data.length != 0) {
+							$('.reply').html(`
+									<div class="container mx-auto px-3>
+										<div class="">
+											<table class="table table-lg">
+												<colgroup>
+													<col width="30"/>
+													<col width="30"/>
+													<col width=""/>
+													<col width="200"/>
+													<col width="10"/>
+													<col width="10"/>
+												</colgroup>
+											<thead>
+												<tr>
+													<th>추천수</th>
+													<th>작성자</th>
+													<th>내용</th>
+													<th>작성일시</th>
+													<th></th>
+													<th></th>
+												</tr>
+											</thead>
+												<tbody class="replyList">
+												</tbody>
+											</table>
+										</div>
+									</div>
+									`);
+						
+							$.each(result.data, function(index, item) {
+								let date = item.updateDate.substr(5);
+								content += `
+										<tr>
+											<td>
+												<div class="replyLikeTooltip tooltip w-20 h-full" data-tip="">
+													<button check="\${item.id}" class="replyLikeBtn btn btn-outline w-full h-full text-xl" onclick = "replyLikeBtnChange();" type="button">
+														<i class="replyStar"><div class="replyLikePoint text-xl">\${item.likePoint }</div></i>
+													</button>
+												</div>
+											</td>
+											<td>\${item.nickname}</td>
+											<td>
+												<div class="\${item.id}R">\${item.body}	</div>
+												<div class="\${item.id}"></div>
+											</td>
+											<td>\${date}
+										`;
+								if (item.regDate != item.updateDate) {
+									content += `(수정됨)`;
+								}
+								content += `</td>`;
+								$('.replyList').append('</td>');		
+								if(item.memberId == loginMemberNumber ) {
+									content += `<td><div class="tooltip" data-tip="댓글 수정"><button onclick="replyModify(\${item.id})"><i class="fa-solid fa-pen-to-square"></i></button></div></td>`;
+									content += `<td><div class="tooltip" data-tip="댓글 삭제"><button onclick="replyDelete(\${item.id}); return false;"><i class="fa-solid fa-trash-can"></i></button></div></td>`;
+								}
+							})
+							$('.replyList').append(content);
 						}
 					},
 					error : function(xhr, status, error) {
@@ -481,142 +407,377 @@
 				})
 			}
 			
+			// 댓글 좋아요 불러오기
+			const replyLikeLoad = function(relTypeCode, relId) {
+				if (${rq.loginMemberNumber == 0 }) {
+					$('.replyLikeTooltip').attr('data-tip', '추천수');
+					$('.replyStar').addClass('fa-solid fa-splotch');
+				} else {
+					$('.replyLikeBtn').each(function() {
+						var reply = $(this);
+						$.ajax({
+							url : '../likePoint/likeCheck',
+							type : 'GET',
+							data : {
+								relTypeCode : 'reply',
+								relId : $(this).attr('check')
+							},
+							dataType : 'json',
+							success : function(result) {
+								if (result.resultCode == "S-1") {
+									reply.html(`
+											<i class="replyStar star fa-solid fa-star"></i>
+											<div class="replyLikePoint">\${result.data }</div>
+											`);
+									reply.parent().attr('data-tip', '추천취소');
+								} else {
+									reply.html(`
+											<i class="replyStar star fa-regular fa-star"></i>
+											<div class="replyLikePoint">\${result.data }</div>
+											`);
+									reply.parent().attr('data-tip', '추천하기');
+								}
+							},
+							error : function(xhr, status, error) {
+								console.log(error);
+							}
+						})
+					})
+				}
+			}
 			
-		}
-		
-		// 댓글 수정란
-		const replyModify = function(id) {
-			let body;
-			$.ajax({
-				url : '../reply/getReplyBody',
-				type : 'POST',
-				data : {
-					id : id
-				},
-				dataType : 'text',
-				success : function(result) {
-					body = result;
-					if(!$('div.' + id).hasClass('replyModifyOpen')) {
-						replyFormClose('replyModifyOpen');
-						
-						$('div.' + id + 'R').css('display', 'none');
-						$('div.' + id).html(`
-								<form class="replyForm" onsubmit="if(replyForm_onSubmit(this) == true) { if(confirm('댓글을 수정하시겠습니까?')) replySend(this);} return false;">
-									<input type="hidden" name="id" value="\${id}"/>
-									<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="body" placeholder="\${body}"></textarea>
-									<div class="flex justify-end"><button class="btn btn-outline btn-sm">댓글 수정</button></div>
-								</form>
-								`);
-						$('div.' + id).addClass('replyModifyOpen');
-					} else {
-						replyFormClose(id);
+			// 댓글 좋아요 / 좋아요취소
+			const replyLikeBtnChange = function() {
+				var $button = $(event.target);
+				
+				if(${rq.loginMemberNumber != 0}) {
+					let likeCheck = true;
+					if($button.children('i.replyStar').hasClass('fa-regular')) {
+						likeCheck = false;
 					}
-				},
-				error : function(xhr, status, error) {
-					console.log(error);
+					
+					$.ajax({
+						url : '../likePoint/doLike',
+						type : 'GET',
+						data : {
+							relTypeCode : 'reply',
+							relId : $button.attr('check'),
+							likeCheck : likeCheck
+						},
+						dataType : 'json',
+						success : function(result) {
+							$button.children('div.replyLikePoint').text(result.data);
+							if (result.resultCode == 'undoLike') {
+								$button.children('i.replyStar').attr('class','replyStar star fa-regular fa-star');
+								$button.parent().attr('data-tip', '추천하기');
+							} else {
+								$button.children('i.replyStar').attr('class','replyStar star fa-solid fa-star');
+								$button.parent().attr('data-tip', '추천취소');
+							}
+						},
+						error : function(xhr, status, error) {
+							console.log(error);
+						}
+					})
 				}
-			})
-		}
-		
-		const replyFormClose = function(id) {
-			$('div.' + id).siblings().css('display', 'inline-block');
-			$('div.' + id).html('');
-			$('div.' + id).removeClass('replyModifyOpen');
-		}
-		
-		// 댓글 수정
-		function replySend(){
-			let data = $(".replyForm").serialize();
-			
-			$.ajax({
-				url : '../reply/replyModify',
-				type : 'POST',
-				data : data,
-				dataType : 'json',
-				success : function(result) {
-					location.href='/user/festival/detail?eventSeq=${festival.eventSeq}';
-				},
-				error : function(xhr, status, error) {
-					console.log(error);
-				}
-			})
-		}
-		
-		// 댓글 삭제
-		const replyDelete = function(id) {
-			if(confirm('정말 삭제하시겠습니까?')) {
-				location.href="/user/reply/replyDelete?id=" + id + "&eventSeq=" + ${festival.eventSeq};
-			}
-		}
-		
-		// 댓글 체크
-		const replyForm_onSubmit = function(form){
-			let body = form.body.value.trim();
-		
-			if (body.length == 0) {
-				alert('비어있는 댓글은 작성할 수 없습니다');
-				form.body.focus();
-				return false;
+				
+				
 			}
 			
-			return true;
-		}
+			// 댓글 수정란
+			const replyModify = function(id) {
+				let body;
+				$.ajax({
+					url : '../reply/getReplyBody',
+					type : 'POST',
+					data : {
+						id : id
+					},
+					dataType : 'text',
+					success : function(result) {
+						body = result;
+						if(!$('div.' + id).hasClass('replyModifyOpen')) {
+							replyFormClose('replyModifyOpen');
+							
+							$('div.' + id + 'R').css('display', 'none');
+							$('div.' + id).html(`
+									<form class="replyForm" onsubmit="if(replyForm_onSubmit(this) == true) { if(confirm('댓글을 수정하시겠습니까?')) replySend(this);} return false;">
+										<input type="hidden" name="id" value="\${id}"/>
+										<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="body" placeholder="\${body}"></textarea>
+										<div class="flex justify-end"><button class="btn btn-outline btn-sm">댓글 수정</button></div>
+									</form>
+									`);
+							$('div.' + id).addClass('replyModifyOpen');
+						} else {
+							replyFormClose(id);
+						}
+					},
+					error : function(xhr, status, error) {
+						console.log(error);
+					}
+				})
+			}
+			
+			const replyFormClose = function(id) {
+				$('div.' + id).siblings().css('display', 'inline-block');
+				$('div.' + id).html('');
+				$('div.' + id).removeClass('replyModifyOpen');
+			}
+			
+			// 댓글 수정
+			function replySend(){
+				let data = $(".replyForm").serialize();
+				
+				$.ajax({
+					url : '../reply/replyModify',
+					type : 'POST',
+					data : data,
+					dataType : 'json',
+					success : function(result) {
+						location.href='/user/festival/detail?eventSeq=${festival.eventSeq}';
+					},
+					error : function(xhr, status, error) {
+						console.log(error);
+					}
+				})
+			}
+			
+			// 댓글 삭제
+			const replyDelete = function(id) {
+				if(confirm('정말 삭제하시겠습니까?')) {
+					location.href="/user/reply/replyDelete?id=" + id + "&eventSeq=" + ${festival.eventSeq};
+				}
+			}
+			
+			// 댓글 체크
+			const replyForm_onSubmit = function(form){
+				let body = form.body.value.trim();
+			
+				if (body.length == 0) {
+					alert('비어있는 댓글은 작성할 수 없습니다');
+					form.body.focus();
+					return false;
+				}
+				
+				return true;
+			}
+			
+		</script>	
 		
-	</script>	
+		<section class="reply mt-8 text-lg"></section>	
 		
-	<section class="reply mt-8 text-lg"></section>	
-		
- 	<c:if test="${rq.loginMemberNumber != 0 }">
-		<div class="container mx-auto px-3">
-			<form action="../reply/doWrite" method="post" onsubmit="if(replyForm_onSubmit(this)) { if(confirm('댓글을 작성하시겠습니까?')) form.submit();} return false;">
-				<input type="hidden" name="relId" value="${festival.eventSeq }"/>
-				<input type="hidden" name="relTypeCode" value="festival"/>
-				<div class="mt-4 reply-border p-4 text-left">
-					<div class="mb-2">${rq.loginMemberNn }</div>
-					<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="replyBody" placeholder="댓글을 입력하세요."></textarea>
-					<div class="flex justify-end"><button class="btn btn-outline btn-sm">댓글 작성</button></div>
-				</div>
-			</form>
-		</div>
-	</c:if>
+	 	<c:if test="${rq.loginMemberNumber != 0 }">
+			<div class="container mx-auto px-3">
+				<form action="../reply/doWrite" method="post" onsubmit="if(replyForm_onSubmit(this)) { if(confirm('댓글을 작성하시겠습니까?')) form.submit();} return false;">
+					<input type="hidden" name="relId" value="${festival.eventSeq }"/>
+					<input type="hidden" name="relTypeCode" value="festival"/>
+					<div class="mt-4 reply-border p-4 text-left">
+						<div class="mb-2">${rq.loginMemberNn }</div>
+						<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="replyBody" placeholder="댓글을 입력하세요."></textarea>
+						<div class="flex justify-end"><button class="btn btn-outline btn-sm">댓글 작성</button></div>
+					</div>
+				</form>
+			</div>
+		</c:if>
 	
-	<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-	<script type="text/javascript">
-		Kakao.init('${kakaoKey}');
+		<!-- 카톡 링크 -->
+		<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+		<script type="text/javascript">
+			Kakao.init('${kakaoKey}');
+			
+			function kakaoShare() {
+				Kakao.Link.sendDefault({
+				  objectType: 'feed',
+				  content: {
+				    title: '${festival.title}',
+				    description: '테마 : ${festival.themeCdNm} / 장소 : ${festival.placeCdNm}',
+				    imageUrl:
+				      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6Lqd0DpY_4JKFhXxaZq0nt5iImKM5D2Gcg&s',
+				    link: {
+				      mobileWebUrl: 'https://www.naver.com',
+				      webUrl: 'https://www.naver.com',
+				    },
+				  },
+	
+				  buttons: [
+				    {
+				      title: '웹으로 이동',
+				      link: {
+				        mobileWebUrl: 'https://www.naver.com',
+				        webUrl: 'https://www.naver.com',
+				      },
+				    }
+				  ],
+				});
+			}
+		</script>
+	
+		<div>
+			<a id="kakao-link-btn" href="javascript:kakaoShare()">
+	    	<img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" />
+	    	</a>
+	    </div>
 		
-		function kakaoShare() {
-			Kakao.Link.sendDefault({
-			  objectType: 'feed',
-			  content: {
-			    title: '${festival.title}',
-			    description: '테마 : ${festival.themeCdNm} / 장소 : ${festival.placeCdNm}',
-			    imageUrl:
-			      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6Lqd0DpY_4JKFhXxaZq0nt5iImKM5D2Gcg&s',
-			    link: {
-			      mobileWebUrl: 'https://www.naver.com',
-			      webUrl: 'https://www.naver.com',
-			    },
-			  },
-
-			  buttons: [
-			    {
-			      title: '웹으로 이동',
-			      link: {
-			        mobileWebUrl: 'https://www.naver.com',
-			        webUrl: 'https://www.naver.com',
-			      },
-			    }
-			  ],
-			});
-		}
-	</script>
+		
+		<!-- 채팅방 -->
+		<div class="container" id="chat"></div>
+		<h1> 현재 접속 중인 사용자 목록</h1>
+		<ul id="onlineUsers"></ul>
+		
+		<script src="/webjars/sockjs-client/1.5.1/sockjs.min.js"></script>
+		<script src="/webjars/stomp-websocket/2.3.4/stomp.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script>
+			var roomId = '${festival.eventSeq}';
+			var sender = '${rq.loginMemberNn}';
+			var messageInputElement;
+			var messageListElement;
+			var sock = new SockJS("/ws-stomp");
+			var ws = Stomp.over(sock);
+			var reconnect = 0;
 	
-	<div>
-		<a id="kakao-link-btn" href="javascript:kakaoShare()">
-    	<img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" />
-    	</a>
-    </div>
+			$(document).ready(function(){
+				updateOnlineUsers();
+				
+				if (${rq.loginMemberNumber == 0}) {
+					$('#chat').append('<div> 채팅방 기능은 로그인후에만 사용하실 수 있습니다. </div>');
+					return;
+				}
+				
+				function checkRoom() {
+					$.ajax({
+						type : "GET",
+						url : '/chat/room/' + roomId,
+						success : function(response) {
+							if(response != '') {
+								chatBox();
+							} else {
+								$('#chat').append(`
+										<div> 현재 행사에 대한 채팅방이 존재하지 않습니다.</div>
+										<div> 새 채팅방을 만드시겠습니까? </div>
+										<button onclick="createRoom()" class="btn btn-outline btn-info mt-4">채팅방 생성</button>	
+										`);
+							}
+						},
+						error : function(error) {
+							console.error(error);
+						}
+					});
+				}
+				
+				checkRoom();
+				connect();
+				
+				setInterval(function() {
+	                updateOnlineUsers();
+	            }, 5000);
+				
+			})
+			
+			function chatBox(){
+				$('#chat').html(`
+						<div> 채팅방 </div>
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<label class="input-group-text">내용</label>
+							</div>
+							<textarea maxlength=300 id="messageInput" onkeypress="handleKeyPress(event)" class="form-control textarea textarea-bordered textarea-lg w-full" name="replyBody" placeholder="채팅을 입력하세요."></textarea>
+							<div class="input-group-append">
+								<button class="btn btn-primary" type="button"
+									onclick="sendMessage()">보내기</button>
+							</div>
+						</div>
+						<ul id="messageList" class="list-group">
+						</ul>
+						`);
+				messageInputElement = document.getElementById('messageInput');
+				messageListElement = document.getElementById('messageList');
+			}
 	
-	<button onclick="history.back()" class="btn btn-outline btn-info mt-4">뒤로 가기</button>	
+			function sendMessage() {
+				var message = messageInputElement.value.trim();
+				if (message === "") {
+					alert("메시지를 입력해 주세요.");
+					return;
+				}
+	
+				ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'TALK', roomId : roomId, sender : sender, message : message }));
+				messageInputElement.value = '';
+			}
+	
+			function recvMessage(recv) {
+				var li = document.createElement('li');
+				li.className = 'list-group-item';
+				li.textContent = recv.sender + ' - ' + recv.message;
+				messageListElement.insertBefore(li, messageListElement.firstChild);
+			}
+	
+			// 채팅방 접속시 pub로 연결알리기
+			function connect() {
+				ws.connect({}, function(frame) {
+					$.ajax({
+						type: "GET",
+						url: "/chat/room/" + roomId + "/connect",
+						data : {
+							userId : sender
+						},
+						success: function(response) {
+							console.log('접속성공');
+						 },
+						 error: function(error) {
+						     console.error(error);
+						 }
+					});	
+					
+					ws.subscribe("/sub/chat/room/" + roomId, function(message) {
+						var recv = JSON.parse(message.body);
+						recvMessage(recv);
+					});
+					ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'ENTER', roomId : roomId, sender : sender }));
+					
+				}, function(error) {
+					if (reconnect++ <= 5) {
+						setTimeout(function() {
+							console.log("connection reconnect");
+							sock = new SockJS("/ws-stomp");
+							ws = Stomp.over(sock);
+							connect();
+						}, 10 * 1000);
+					}
+				});
+			}
+	
+			function handleKeyPress(event) {
+				if (event.keyCode === 13) { // Enter key
+					sendMessage();
+				}
+			}
+			
+			function updateOnlineUsers() {
+	            $.ajax({
+	                type: "GET",
+	                url: "/chat/room/" + roomId + "/online-users",
+	                success: function(response) {
+	                	console.log(response);
+	                	var onlineUsersArray = Array.from(response);
+	                    $("#onlineUsers").empty();
+	                    $.each(onlineUsersArray, function(index, user) {
+	                        var li = $("<li>").text(user);
+	                        $("#onlineUsers").append(li);
+	                    });
+	                },
+	                error: function(error) {
+	                    console.error(error);
+	                }
+	            });
+	        }
+			
+			connect();
+	
+		</script>
+		
+		<button onclick="history.back()" class="btn btn-outline btn-info mt-4">뒤로 가기</button>	
+	
+	</section>
 	
 <%@ include file="../../common/foot.jsp" %>  

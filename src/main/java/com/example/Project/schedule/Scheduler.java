@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.example.Project.chat.ChatRoomRepository;
 import com.example.Project.service.FestivalService;
 import com.example.Project.service.WeatherService;
 import com.example.Project.util.Util;
@@ -32,8 +33,10 @@ public class Scheduler {
 	private FestivalService festivalService;
 	private WeatherService weatherService;
 	private String date;
+	private final ChatRoomRepository chatRoomRepository;
 
-	public Scheduler(FestivalService festivalService, WeatherService weatherService) {
+	public Scheduler(FestivalService festivalService, WeatherService weatherService, ChatRoomRepository chatRoomRepository) {
+		this.chatRoomRepository = chatRoomRepository;
 		this.festivalService = festivalService;
 		this.weatherService = weatherService;
 	}
@@ -88,6 +91,7 @@ public class Scheduler {
         	String dataStnDtCheck = festivalService.dataStnDtCheck(festival.getEventSeq());
         	if (dataStnDtCheck == null) {
         		festivalService.insert(festival);
+        		 chatRoomRepository.createChatRoom(String.valueOf(festival.getEventSeq()));
         		// 이전에 기록이 없는 새로운 행사인 경우, 목록조회 DB에 추가
         	} else if (dataStnDtCheck != festival.getDataStnDt()) {
         		festivalService.update(festival);

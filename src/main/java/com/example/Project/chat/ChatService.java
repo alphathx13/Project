@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.redis.core.ListOperations;
@@ -26,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ChatService {
 
+    private static final String ONLINE_USERS_PREFIX = "online_users:";
+	
     private final ObjectMapper objectMapper;
     private final RedisTemplate<String, Object> redisTemplate;
     private Map<String, ChatRoom> chatRooms;
@@ -89,4 +92,5 @@ public class ChatService {
         }
         return chatMessages;
     }
+    
 }
