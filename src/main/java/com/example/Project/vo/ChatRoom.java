@@ -1,4 +1,4 @@
-package com.example.Project.chat;
+package com.example.Project.vo;
 
 import java.io.Serializable;
 

@@ -155,7 +155,7 @@
 		form.submit();
 	}
 	
-	// 암호 보이기/숨기기
+	// 암호 보기/숨기기
 	$('.change').click(function() {
 		if ($('.pw').attr('type') == 'password') {
 			$('.pw').attr('type', 'text');

@@ -16,6 +16,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import com.example.Project.vo.ChatMessage;
+import com.example.Project.vo.ChatRoom;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -109,7 +110,7 @@ public class ChatService {
         redisTemplateS.opsForSet().add(key, userId);
     }
 
-    // 사용자가 특정 채팅방에서 접속 해제
+    // 사용자가 특정 채팅방에서 퇴장
     public void userDisconnected(String roomId, String userId) {
         String key = ONLINE_USERS_PREFIX + roomId;
         redisTemplateS.opsForSet().remove(key, userId);

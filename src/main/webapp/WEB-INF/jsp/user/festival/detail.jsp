@@ -555,6 +555,8 @@
 			
 			// 댓글 체크
 			const replyForm_onSubmit = function(form){
+				
+				console.log('hell');
 				let body = form.body.value.trim();
 			
 				if (body.length == 0) {
@@ -577,7 +579,7 @@
 					<input type="hidden" name="relTypeCode" value="festival"/>
 					<div class="mt-4 reply-border p-4 text-left">
 						<div class="mb-2">${rq.loginMemberNn }</div>
-						<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="replyBody" placeholder="댓글을 입력하세요."></textarea>
+						<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="body" placeholder="댓글을 입력하세요."></textarea>
 						<div class="flex justify-end"><button class="btn btn-outline btn-sm">댓글 작성</button></div>
 					</div>
 				</form>
@@ -623,8 +625,12 @@
 	    </div>
 		
 		<!-- 채팅방 -->
-		<div class="container" id="chat"></div>
-		<ul id="onlineUsers"></ul>
+		<div class="w-96">
+			<div class="container overflow-auto max-h-96" id="chat"></div>
+			<div class="chatOther"></div>
+			<div class="userList"></div>
+			<ul id="onlineUsers"></ul>
+		</div>
 		
 		<script src="/webjars/sockjs-client/1.5.1/sockjs.min.js"></script>
 		<script src="/webjars/stomp-websocket/2.3.4/stomp.min.js"></script>
@@ -660,16 +666,19 @@
 			function chatBox(){
 				$('#chat').html(`
 						<div class="font-bold text-blue-500"> 채팅방 </div>
-						<ul id="messageList" class="list-group w-96">
+						<ul id="messageList" class="list-group">
 						</ul>
 						<br/><br/>
-						<div class="input-group">
-							<textarea maxlength=300 id="messageInput" onkeypress="handleKeyPress(event)" class="form-control textarea textarea-bordered textarea-lg w-96" name="replyBody" placeholder="채팅을 입력하세요."></textarea>
+						`);
+				$('.chatOther').html(`
+						<div class="input-group w-96">
+							<textarea maxlength=300 id="messageInput" onkeypress="handleKeyPress(event)" class="form-control textarea textarea-bordered textarea-lg w-full" name="replyBody" placeholder="채팅을 입력하세요."></textarea>
 							<div class="input-group-append">
-								<button class="btn btn-primary" type="button"
-									onclick="sendMessage()">보내기</button>
+								<button class="btn btn-primary" type="button" onclick="sendMessage()">보내기</button>
 							</div>
 						</div>
+						`);
+				$('.userList').html(`
 						<h1> 현재 접속 중인 사용자 목록</h1>
 						`);
 				messageInputElement = document.getElementById('messageInput');
@@ -741,6 +750,7 @@
 			    }
 			    
 			    $(messageListElement).append(li);
+			    scrollToBottom();
 			}
 	
 			// 채팅방 접속시 pub로 연결알리기
@@ -760,63 +770,14 @@
 						     console.error(error);
 						 }
 					});	
-					
-					// 이전 채팅 내역 가져오기
-					$.ajax({
-		                type: "GET",
-		                url: "/pub/chat/lastMessage",
-		                data : {
-		                	userId : sender,
-		                	roomId : roomId
-		                },
-		                success: function(response) {
-		                	$.each(response, function(index, recv) {
-		                		if (recv.sender != '${rq.loginMemberNn}') {
-		        					var li = $('<li>').addClass('list-group-item').html(`
-		        							<div class="chat chat-start">
-		        								<div class="chat-image avatar">
-		        							    <div class="w-10 rounded-full">
-		        							    	<img src="https://cdn.pixabay.com/photo/2024/03/08/09/47/ai-generated-8620359_1280.png" />
-		        							    </div>
-		        							  </div>
-		        							  <div class="chat-header">
-		        							    \${recv.sender}
-		        							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
-		        							  </div>
-		        							  <div class="chat-bubble">\${recv.message}</div>
-		        							</div>
-		        							`);
-		        				} else {
-		        					var li = $('<li>').addClass('list-group-item').html(`
-		        							<div class="chat chat-end">
-		        							  <div class="chat-image avatar">
-		        							    <div class="w-10 rounded-full">
-		        							   		<img src="https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg" />
-		        							    </div>
-		        							  </div>
-		        							  <div class="chat-header">
-		        							  \${recv.sender}
-		        							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
-		        							  </div>
-		        							  <div class="chat-bubble">\${recv.message}</div>
-		        							</div>
-		        							`);
-		        				}
-		        				
-		        			    $(messageListElement).append(li);
-		                	});
-		                	ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'ENTER', roomId : roomId, sender : sender }));
-		                },
-		                error: function(error) {
-		                    console.error(error);
-		                }
-		            });
+
+					// 이전 채팅내역
+					pastMessage();
 					
 					ws.subscribe("/sub/chat/room/" + roomId, function(message) {
 						var recv = JSON.parse(message.body);
 						recvMessage(recv);
 					});
-					
 					
 				}, function(error) {
 					if (reconnect++ <= 5) {
@@ -830,12 +791,77 @@
 				});
 			}
 	
+			// 이전 채팅내역 가져오기
+			function pastMessage() {
+				$.ajax({
+	                type: "GET",
+	                url: "/pub/chat/lastMessage",
+	                data : {
+	                	userId : sender,
+	                	roomId : roomId
+	                },
+	                success: function(response) {
+	                	$.each(response, function(index, recv) {
+	                		if (recv.sender != '${rq.loginMemberNn}') {
+	        					var li = $('<li>').addClass('list-group-item').html(`
+	        							<div class="chat chat-start">
+	        								<div class="chat-image avatar">
+	        							    <div class="w-10 rounded-full">
+	        							    	<img src="https://cdn.pixabay.com/photo/2024/03/08/09/47/ai-generated-8620359_1280.png" />
+	        							    </div>
+	        							  </div>
+	        							  <div class="chat-header">
+	        							    \${recv.sender}
+	        							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
+	        							  </div>
+	        							  <div class="chat-bubble">\${recv.message}</div>
+	        							</div>
+	        							`);
+	        				} else {
+	        					var li = $('<li>').addClass('list-group-item').html(`
+	        							<div class="chat chat-end">
+	        							  <div class="chat-image avatar">
+	        							    <div class="w-10 rounded-full">
+	        							   		<img src="https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg" />
+	        							    </div>
+	        							  </div>
+	        							  <div class="chat-header">
+	        							  \${recv.sender}
+	        							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
+	        							  </div>
+	        							  <div class="chat-bubble">\${recv.message}</div>
+	        							</div>
+	        							`);
+	        				}
+	        				
+	        			    $(messageListElement).append(li);
+	                	});
+	                	ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'ENTER', roomId : roomId, sender : sender }));
+	                	scrollToBottom();
+	                },
+	                error: function(error) {
+	                    console.error(error);
+	                }
+	            });
+			}
+			
+			// Enter키로 채팅전송
 			function handleKeyPress(event) {
 				if (event.keyCode === 13) { 
 					sendMessage();
 				}
 			}
 			
+			// 최신 채팅내역 보여주기
+			function scrollToBottom() {
+			    var chatElement = $('#chat');
+			    if (chatElement.length > 0) {
+			        var scrollHeight = chatElement[0].scrollHeight;
+			        chatElement.scrollTop(scrollHeight);
+			    }
+			}
+			
+			// 실시간 접속 유저
 			function updateOnlineUsers() {
 	            $.ajax({
 	                type: "GET",
@@ -854,6 +880,7 @@
 	            });
 	        }
 			
+			// 채팅방 퇴장 처리
 			function leaveRoom(roomId) {
 				ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'LEAVE', roomId : roomId, sender : sender }));
 				
@@ -872,14 +899,13 @@
 				
 			}
 			
+			// ws 연결 끊김시 퇴장처리
 			window.onbeforeunload = function() {
 			    leaveRoom(roomId);
 			};
 			// stompClient.send("/pub/chat/" + roomId + "/disconnect", {}, JSON.stringify({ sender: sender }));
 			// ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'LEAVE', roomId : roomId, sender : sender }));
-			
 			connect();
-	
 		</script>
 		
 		<button onclick="history.back()" class="btn btn-outline btn-info mt-4">뒤로 가기</button>	
@@ -887,7 +913,3 @@
 	</section>
 	
 <%@ include file="../../common/foot.jsp" %>  
-
-<!-- 
-
- -->

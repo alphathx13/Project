@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,42 +21,35 @@ public class ChatController {
 
 	private final RedisPublisher redisPublisher;
 	private final ChatRoomRepository chatRoomRepository;
+	private final ChatService chatService;
 	
-	@Autowired
-	public ChatService chatService;
-	
-	// "/pub/chat/message"로 들어오는 메시지 처리
+	// "/pub/chat/message"로 들어오는 message 처리
 	@MessageMapping("/chat/message")
 	public void message(ChatMessage message) {
-		// 시간 설정
+		// message의 시간설정
 		message.setTimestamp(Util.Now());
 
-		// 채팅방 입장시
+		// 채팅방 입장/퇴장시
 		if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
-			// 메시지 sub
 			chatRoomRepository.enterChatRoom(message.getRoomId());
-
-			// 입장 메시지 입력
-			message.setMessage(message.getSender() + "님이 입장하셨습니다.");
+			
+			message.setMessage("님이 입장하셨습니다.");
+			redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
+			return;
+		} else if (ChatMessage.MessageType.LEAVE.equals(message.getType())) {
+			message.setMessage("님이 퇴장하셨습니다.");
 			redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
 			return;
 		}
 		
-		// 채팅방 퇴장시
-		if (ChatMessage.MessageType.LEAVE.equals(message.getType())) {
-			// 퇴장 메시지 입력
-			message.setMessage(message.getSender() + "님이 퇴장하셨습니다.");
-			redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
-			return;
-		}
-		
-		// 메시지 저장하기
+		// 메시지 저장
 		chatService.saveChatMessage(message.getRoomId(), message);
 		
-		// 메시지 pub
+		// 입력한 메시지 pub
 		redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
 	}
 	
+	// 이전 채팅내역 가져오기
 	@GetMapping("/pub/chat/lastMessage")
 	@ResponseBody
 	public List<ChatMessage> pastMessages(String roomId) {
@@ -66,7 +58,7 @@ public class ChatController {
 		return messages;
 	}
 	
-    // 특정 채팅방의 접속 중인 사용자 목록 조회
+    // 채팅방의 접속 중인 사용자 목록 조회
     @GetMapping("/chat/room/{roomId}/online-users")
     @ResponseBody
     public Set<String> showOnlineUsersInRoom(@PathVariable String roomId) {
@@ -74,12 +66,14 @@ public class ChatController {
         return onlineUsers; 
     }
     
+    // 채팅방 접속
     @GetMapping("/chat/room/{roomId}/connect")
     @ResponseBody
     public void userConnected(@PathVariable String roomId, String userId) {
     	chatService.userConnected(roomId, userId);
     }
-    
+
+    // 채팅방 퇴장
     @GetMapping("/chat/room/{roomId}/disconnect")
     @ResponseBody
     public void userDisconnected(@PathVariable String roomId, String userId) {

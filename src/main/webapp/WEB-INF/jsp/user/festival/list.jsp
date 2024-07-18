@@ -60,7 +60,7 @@
 						        <td><a href="detail?eventSeq=${festival.eventSeq}">${festival.title }</a></td>
 			        			<td>${festival.beginDt }</td>
 			        			<td>${festival.endDt }</td>
-			        			<td>${festival.likePoint }</td>
+			        			<td><i class="star fa-solid fa-star"></i> ${festival.likePoint }</td>
 			        			<td>${festival.viewCount }</td>
 			      			</tr>
 			   			</c:forEach>  

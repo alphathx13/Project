@@ -59,6 +59,7 @@
 		let nicknameDupCheck = false;
 	})
 
+	// 입력란 공백체크
 	function check(form) {
 		let loginPw = form.loginPw.value.trim();
 		let loginPwRe = form.loginPwRe.value.trim();
@@ -130,6 +131,7 @@
 		form.submit();
 	}
 	
+	// 암호 보기/숨기기
 	$('.change').click(function() {
 		if ($('.pw').attr('type') == 'password') {
 			$('.pw').attr('type', 'text');

@@ -10,6 +10,8 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Repository;
 
+import com.example.Project.vo.ChatRoom;
+
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
@@ -37,14 +39,14 @@ public class ChatRoomRepository {
         return opsHashChatRoom.get(CHAT_ROOMS, id);
     }
 
-    // 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash에 저장한다.
+    // 채팅방 생성
     public ChatRoom createChatRoom(String name) {
         ChatRoom chatRoom = ChatRoom.create(name);
         opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
         return chatRoom;
     }
 
-    // 채팅방 입장 : redis에 topic을 만들고 pub/sub 통신을 하기 위해 리스너를 설정한다.
+    // 채팅방 입장
     public void enterChatRoom(String roomId) {
         ChannelTopic topic = topics.get(roomId);
         if (topic == null) {
@@ -52,6 +54,7 @@ public class ChatRoomRepository {
             redisMessageListener.addMessageListener(redisSubscriber, topic);
             topics.put(roomId, topic);
         }
+        
     }
 
     public ChannelTopic getTopic(String roomId) {
