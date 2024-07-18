@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,9 @@ public class ChatService {
     private final RedisTemplate<String, Object> redisTemplate;
     private Map<String, ChatRoom> chatRooms;
     private ListOperations<String, Object> listOps;
+    
+    @Autowired
+    private RedisTemplate<String, String> redisTemplateS;
 
     @PostConstruct
     private void init() {
@@ -91,6 +95,24 @@ public class ChatService {
             }
         }
         return chatMessages;
+    }
+    
+    // 특정 채팅방의 접속 중인 사용자 목록 조회
+    public Set<String> getOnlineUsersInRoom(String roomId) {
+        String key = ONLINE_USERS_PREFIX + roomId;
+        return redisTemplateS.opsForSet().members(key);
+    }
+
+    // 사용자가 특정 채팅방에 접속
+    public void userConnected(String roomId, String userId) {
+        String key = ONLINE_USERS_PREFIX + roomId;
+        redisTemplateS.opsForSet().add(key, userId);
+    }
+
+    // 사용자가 특정 채팅방에서 접속 해제
+    public void userDisconnected(String roomId, String userId) {
+        String key = ONLINE_USERS_PREFIX + roomId;
+        redisTemplateS.opsForSet().remove(key, userId);
     }
     
 }

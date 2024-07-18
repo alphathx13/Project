@@ -1,7 +1,5 @@
 package com.example.Project.vo;
 
-import java.time.LocalDateTime;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class ChatMessage {
     public enum MessageType {
-        ENTER, TALK
+        ENTER, LEAVE, TALK
     }
     
     private MessageType type; 
