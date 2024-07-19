@@ -49,11 +49,15 @@ public class MemberService {
 		return memberDao.passCheck(loginId, loginPw) == 0 ? false : true;
 	}
 
-	public void withdrawal(int loginMemberNumber) {
-		memberDao.withdrawal(loginMemberNumber);
+	public void doWithdrawal(int id) {
+		memberDao.doWithdrawal(id);
 	}
 
 	public void withdrawalCancel(int id) {
 		memberDao.withdrawalCancel(id);
+	}
+
+	public void withdrawalReason(int id, String reason) {
+		memberDao.withdrawalReason(id, reason);
 	}
 }

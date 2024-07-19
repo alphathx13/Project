@@ -134,8 +134,9 @@ CREATE TABLE `member`(
     , cellphone VARCHAR(20) NOT NULL
     , email VARCHAR(50) NOT NULL
     , authLevel INT UNSIGNED NOT NULL DEFAULT 2 COMMENT '권한 레벨 (일반 = 2, 관리자 = 1)'
-    , delStatus INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '탈퇴 여부 (탈퇴 전 = 0, 탈퇴 후 = 1)'
+    , delStatus INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '탈퇴 여부 (탈퇴 전 = 0, 탈퇴 신청 = 1, 탈퇴 신청진행중 = 2)'
     , delDate DATETIME COMMENT '탈퇴 날짜'
+    , delReason TEXT COMMENT '탈퇴 사유'
 );
 
 ALTER TABLE `member` CONVERT TO CHARSET utf8;

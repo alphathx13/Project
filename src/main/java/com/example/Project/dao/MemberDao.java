@@ -88,16 +88,25 @@ public interface MemberDao {
 
 	@Update("""
 			UPDATE `member`
-				SET delStatus = 1,
+				SET delStatus = 2,
 					delDate = NOW()
 				WHERE id = #{loginMemberNumber};
 			""")
-	public void withdrawal(int loginMemberNumber);
+	public void doWithdrawal(int id);
 
 	@Update("""
 			UPDATE `member`
+				SET delReason = #{reason},
+					delStatus = 1
+				WHERE id = #{id}
+			""")
+	public void withdrawalReason(int id, String reason);
+	
+	@Update("""
+			UPDATE `member`
 				SET delStatus = 0,
-					delDate = NULL
+				delDate = NULL,
+				delReason = NULL
 				WHERE id = #{id};
 			""")
 	public void withdrawalCancel(int id);

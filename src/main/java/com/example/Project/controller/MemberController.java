@@ -59,7 +59,11 @@ public class MemberController {
 		if (!member.getLoginPw().equals(pwSecure(pwSecure(loginPw)))) 
 			return Util.jsBack(String.format("비밀번호가 일치하지 않습니다."));
 		
-		if (member.getDelStatus() != 0) {
+		if (member.getDelStatus() == 1) {
+			return Util.jsConfirm("탈퇴확인용 이메일이 전송된 상태입니다. 탈퇴를 취소하시겠습니까?", String.format("withdrawalCancel?id=%s", member.getId()), "/");
+		}
+		
+		if (member.getDelStatus() == 2) {
 			return Util.jsConfirm("현재 탈퇴처리가 진행중 계정입니다. 탈퇴를 취소하시겠습니까?", String.format("withdrawalCancel?id=%s", member.getId()), "/");
 		}
 
@@ -103,18 +107,25 @@ public class MemberController {
 	}
 	
 	@GetMapping("/user/member/withdrawal")
-	@ResponseBody
-	public String withdrawal() {
-		memberService.withdrawal(rq.getLoginMemberNumber());
-		rq.logout();
+	public String withdrawal(Model model) {
+		model.addAttribute("nickname", rq.getLoginMemberNn());
+		return "/user/member/withdrawal";
+	}
 	
-		return Util.jsReplace("회원 탈퇴처리가 진행중입니다. 일주일내로 취소하실 수 있습니다.", "/user/home/main");
+	@PostMapping("/user/member/doWithdrawal")
+	@ResponseBody
+	public String doWithdrawal(String reason) {
+		memberService.withdrawalReason(rq.getLoginMemberNumber(), reason);
+		rq.logout();
+		// 이메일 보내는것 추가
+		return Util.jsReplace("이메일로 탈퇴신청 메일이 전송되었습니다. 이메일 링크에서 승인하시면 탈퇴절차가 진행됩니다. 탈퇴후 일주일동안 탈퇴를 취소할 수 있습니다.", "/");
 	}
 	
 	@GetMapping("/user/member/withdrawalCancel")
 	@ResponseBody
 	private String withdrawalCancel(int id) {
 		memberService.withdrawalCancel(id);
+		// 탈퇴 취소 이메일 보내기
 		return Util.jsReplace("탈퇴처리가 취소되었습니다. 정상적으로 계정을 이용하실 수 있습니다.", "/");
 	}
 	
