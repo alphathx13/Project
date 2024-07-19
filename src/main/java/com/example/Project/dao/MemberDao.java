@@ -71,4 +71,34 @@ public interface MemberDao {
 				where nickname = #{nickname}
 			""")
 	public Member getMemberByNickname(String nickname);
+
+	@Select("""
+			select COUNT(*)
+				from `member` 
+				where loginId = #{loginId} AND loginPw = #{loginPw}
+			""")
+	public int passCheck(String loginId, String loginPw);
+
+	@Select("""
+			select regDate, loginId, nickname, name, cellphone, email
+				from `member` 
+				where id = #{id}
+			""")
+	public Member memberInfo(int id);
+
+	@Update("""
+			UPDATE `member`
+				SET delStatus = 1,
+					delDate = NOW()
+				WHERE id = #{loginMemberNumber};
+			""")
+	public void withdrawal(int loginMemberNumber);
+
+	@Update("""
+			UPDATE `member`
+				SET delStatus = 0,
+					delDate = NULL
+				WHERE id = #{id};
+			""")
+	public void withdrawalCancel(int id);
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.Project.service.ChatService;
 import com.example.Project.util.Util;
 import com.example.Project.vo.ChatMessage;
 

@@ -43,6 +43,37 @@ public class Util{
 							</script>
 							""", msg, uri);
 	}
+	
+	public static String jsConfirm(String msg, String trueUri, String falseUri) {
+		
+		if (msg == null) {
+			msg = "";
+		}
+		
+		if (trueUri == null) {
+			trueUri = "";
+		}
+		
+		if (falseUri == null) {
+			falseUri = "";
+		}
+		
+		return String.format("""
+							<script>
+								const msg = '%s'.trim();
+								
+								if (msg.length > 0) {
+								
+									if(confirm(msg)) {
+										location.replace('%s');
+									} else {
+										location.replace('%s');
+									}
+								}
+								
+							</script>
+							""", msg, trueUri, falseUri);
+	}
 
 	public static String jsBack(String msg) {
 		if (msg == null) {

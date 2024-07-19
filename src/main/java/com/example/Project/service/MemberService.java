@@ -24,9 +24,9 @@ public class MemberService {
 	public Member getMemberById(int id) {
 		return memberDao.getMemberById(id);
 	}
-
-	public int getLastInsertId() {
-		return memberDao.getLastInsertId();
+	
+	public Member memberInfo(int id) {
+		return memberDao.memberInfo(id);
 	}
 
 	public void change(int memberNumber, String loginPw, String nickname, String cellphone, String email) {
@@ -43,5 +43,17 @@ public class MemberService {
 
 	public Member getMemberByNickname(String nickname) {
 		return memberDao.getMemberByNickname(nickname);
+	}
+
+	public boolean passCheck(String loginId, String loginPw) {
+		return memberDao.passCheck(loginId, loginPw) == 0 ? false : true;
+	}
+
+	public void withdrawal(int loginMemberNumber) {
+		memberDao.withdrawal(loginMemberNumber);
+	}
+
+	public void withdrawalCancel(int id) {
+		memberDao.withdrawalCancel(id);
 	}
 }

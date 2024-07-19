@@ -26,3 +26,5 @@ custom:
     key: FHg5mCrqdD%2BYDOCHquhjUh7gSK%2BL0t5flP55KwHHGcZ%2BwSb0kPWFGWJwgsqFcO8mBUXY8KdVSqu4yul5tdcKZA%3D%3D
   kakao:
     key: 45c9a06d40a4e3bff0f18e6318a5b541
+  salt:
+    key: 872e4e50ce9990d8b041330c47c9ddd11bec6b503ae9386a99da8584e9bb12c4

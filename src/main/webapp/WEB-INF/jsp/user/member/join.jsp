@@ -170,7 +170,6 @@
 	
 	// 아이디 중복 체크
 	$('#loginId').change(function() {
-		
 		if($('[name=memberForm] #loginId').val().trim().length == 0) {
 			idDupCheck = true;
 			$('.idCheck').html('');

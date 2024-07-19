@@ -1,4 +1,4 @@
-package com.example.Project.chat;
+package com.example.Project.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
