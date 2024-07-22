@@ -28,8 +28,8 @@ public class FestivalService {
 		festivalDao.update(festival);
 	}
 
-	public  List<Festival> festivalList(int number) {
-		return festivalDao.festivalList(number);
+	public  List<Festival> festivalList(int type) {
+		return festivalDao.festivalList(type);
 	}
 
 	public Festival festivalDetail(int eventSeq) {

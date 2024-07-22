@@ -15,12 +15,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.WebUtils;
 
 import com.example.Project.chat.ChatRoomRepository;
 import com.example.Project.service.FestivalService;
-import com.example.Project.util.Util;
 import com.example.Project.vo.Festival;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.Cookie;
@@ -45,11 +46,30 @@ public class FestivalController {
 	private String kakaoKey;
 	
 	@GetMapping("/user/festival/list")
-	public String list(Model model) {
-		model.addAttribute("festivalList", festivalService.festivalList(500));
-		model.addAttribute("today", Util.today());
+	public String list(Model model, @RequestParam(defaultValue = "0") int searchType, @RequestParam(defaultValue = "") String searchText, @RequestParam(defaultValue = "10") int itemsInPage, @RequestParam(defaultValue = "1") int cPage) throws JsonProcessingException {
+
+		searchText = searchText.trim();
+
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		// 1:현재, 2:미래, 3:과거
+		String currentFestival = objectMapper.writeValueAsString(festivalService.festivalList(1));
+		String futureFestival = objectMapper.writeValueAsString(festivalService.festivalList(2));
+		String pastFestival = objectMapper.writeValueAsString(festivalService.festivalList(3));
+		
+		model.addAttribute("currentFestival", currentFestival);
+		model.addAttribute("futureFestival", futureFestival);
+		model.addAttribute("pastFestival", pastFestival);
+		
 		return "/user/festival/list";
 	}
+	
+//	@GetMapping("/user/festival/list")
+//	public String list(Model model) {
+//		model.addAttribute("festivalList", festivalService.festivalList(500));
+//		model.addAttribute("today", Util.today());
+//		return "/user/festival/list";
+//	}
 	
 	@GetMapping("/user/festival/detail")
 	public String detail(HttpServletRequest request, HttpServletResponse response, Model model, int eventSeq) {
@@ -110,10 +130,8 @@ public class FestivalController {
         	if (dataStnDtCheck == null) {
         		festivalService.insert(festival);
         		chatRoomRepository.createChatRoom(String.valueOf(festival.getEventSeq()));
-        		// 이전에 기록이 없는 새로운 행사인 경우, 목록조회 DB에 추가
         	} else if (dataStnDtCheck != festival.getDataStnDt()) {
         		festivalService.update(festival);
-        		// 이미 존재하는 행사에서 데이터기준일 변경 => 변경된 정보가 있으니 업데이트
         	}
         }
         return "/user/home/main";

@@ -25,14 +25,11 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addInterceptor(beforeActionInterceptor).addPathPatterns("/**").excludePathPatterns("/resource/**");
 		// "/**" -> 모든 요청
 		
-		registry.addInterceptor(needLoginInterceptor).addPathPatterns("/usr/article/write")
-				.addPathPatterns("/usr/article/doWrite").addPathPatterns("/usr/article/modify")
-				.addPathPatterns("/usr/article/doModify").addPathPatterns("/usr/article/doDelete")
-				.addPathPatterns("/usr/member/doLogout").addPathPatterns("/usr/member/config");
+		registry.addInterceptor(needLoginInterceptor).addPathPatterns("/user/member/config")
+				.addPathPatterns("/user/member/myPage").addPathPatterns("/user/member/withdrawal");
 		
-		registry.addInterceptor(needLogoutInterceptor).addPathPatterns("/usr/member/join")
-		.addPathPatterns("/usr/member/doJoin").addPathPatterns("/usr/member/login")
-		.addPathPatterns("/usr/member/doLogin");
+		registry.addInterceptor(needLogoutInterceptor).addPathPatterns("/user/member/join")
+		.addPathPatterns("/user/member/login");
 	}
 	
 	

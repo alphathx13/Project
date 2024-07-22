@@ -73,7 +73,8 @@
 											</button>
 										</div>
 									</form>
-									<div class="mt-4 font-bold text-xs"><a href="#" class = "hover:text-sky-500 font-extrabold">비밀번호를 잊어버리셨나요?</a></div>
+									<div class="mt-4 font-bold text-xs"><a href="/user/member/findLoginId" class = "hover:text-sky-500 font-extrabold">아이디를 잊어버리셨나요?</a></div>
+									<div class="mt-4 font-bold text-xs"><a href="/user/member/findLoginPw" class = "hover:text-sky-500 font-extrabold">비밀번호를 잊어버리셨나요?</a></div>
 									<div class="mt-4 font-bold text-xs"><a href="/user/member/join" class = "hover:text-sky-500 font-extrabold">계정이 없으신가요?</a></div>
 								</div>
 					      		<form method="dialog">

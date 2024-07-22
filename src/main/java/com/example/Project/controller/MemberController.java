@@ -22,6 +22,7 @@ public class MemberController {
 	private MemberService memberService;
 	private Rq rq;
 	
+	// salt 키
 	@Value("${custom.salt.key}")
 	private String salt;
 
@@ -35,11 +36,35 @@ public class MemberController {
 		return "/user/member/join"; 
 	}
 	
-	@PostMapping("/user/member/doJoin")
+	@PostMapping("/user/member/checkJoin")
 	@ResponseBody
-	public String join(String loginId, String loginPw, String name, String nickname, String cellphone, String email) {
-		memberService.memberJoin(loginId, pwSecure(pwSecure(loginPw)), name, nickname, cellphone, email);
-		return Util.jsReplace("정상적으로 회원가입 되었습니다.", "/user/home/main");
+	public String checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email) {
+		
+		memberService.checkJoin(loginId, pwSecure(pwSecure(loginPw)), name, nickname, cellphone, email);
+
+		try {
+			memberService.sendCheckJoinEmail(memberService.getMemberByCellphone(cellphone).getId(), email);
+		} catch (Exception e) {
+			System.out.println("에러코드 : " + e);
+			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
+			return Util.jsReplace("임시 패스워드 발송에 실패했습니다", "/");
+		}
+		
+		return Util.jsReplace("회원 가입 이메일이 전송되었습니다. 이메일을 확인해주세요.", "/user/home/main");
+	}
+	
+	@GetMapping("/user/member/doJoin")
+	@ResponseBody
+	public String join(int id) {
+		
+		Member member = memberService.getMemberById(id);
+		
+		if (member.getCheckJoin() != 0) {
+			return Util.jsReplace("비 정상적인 접근입니다.", "/");
+		}
+		
+		memberService.doJoin(id);
+		return Util.jsReplace("회원가입이 정상적으로 이루어졌습니다.", "/user/home/main");
 	}
 
 	@GetMapping("/user/member/login")
@@ -56,14 +81,15 @@ public class MemberController {
 		if (member == null) 
 			return Util.jsBack(String.format("[ %s ] 계정은 존재하지 않습니다.", loginId));
 		
+		if (member.getCheckJoin() == 0)  
+			return Util.jsBack(String.format("[ %s ] 계정에 대한 이메일 확인이 이루어지지 않았습니다. 메일을 확인해주세요.", loginId));
+		
 		if (!member.getLoginPw().equals(pwSecure(pwSecure(loginPw)))) 
 			return Util.jsBack(String.format("비밀번호가 일치하지 않습니다."));
 		
 		if (member.getDelStatus() == 1) {
 			return Util.jsConfirm("탈퇴확인용 이메일이 전송된 상태입니다. 탈퇴를 취소하시겠습니까?", String.format("withdrawalCancel?id=%s", member.getId()), "/");
-		}
-		
-		if (member.getDelStatus() == 2) {
+		} else if (member.getDelStatus() == 2) {
 			return Util.jsConfirm("현재 탈퇴처리가 진행중 계정입니다. 탈퇴를 취소하시겠습니까?", String.format("withdrawalCancel?id=%s", member.getId()), "/");
 		}
 
@@ -112,20 +138,41 @@ public class MemberController {
 		return "/user/member/withdrawal";
 	}
 	
-	@PostMapping("/user/member/doWithdrawal")
+	@PostMapping("/user/member/checkWithdrawal")
 	@ResponseBody
-	public String doWithdrawal(String reason) {
-		memberService.withdrawalReason(rq.getLoginMemberNumber(), reason);
+	public String checkWithdrawal(String reason) {
+		Member member = memberService.getMemberById(rq.getLoginMemberNumber());
 		rq.logout();
-		// 이메일 보내는것 추가
-		return Util.jsReplace("이메일로 탈퇴신청 메일이 전송되었습니다. 이메일 링크에서 승인하시면 탈퇴절차가 진행됩니다. 탈퇴후 일주일동안 탈퇴를 취소할 수 있습니다.", "/");
+		
+		try {
+			memberService.sendWithdrawalEmail(member);
+		} catch (Exception e) {
+			System.out.println("에러코드 : " + e);
+			return Util.jsReplace("탈퇴신청 메일 발송에 실패했습니다", "/");
+		}
+
+		memberService.checkWithdrawal(rq.getLoginMemberNumber(), reason);
+		
+		return Util.jsReplace("이메일로 탈퇴신청 메일이 전송되었습니다. 이메일 링크에서 승인하시면 탈퇴절차가 진행됩니다.", "/");
+	}
+	
+	@GetMapping("/user/member/doWithdrawal")
+	@ResponseBody
+	public String doWithdrawal(int id) {
+		Member member = memberService.getMemberById(rq.getLoginMemberNumber());
+		
+		if (member.getDelStatus() != 1) {
+			return Util.jsReplace("비정상적인 접근입니다.", "/");
+		}
+		
+		memberService.doWithdrawal(id);
+		return Util.jsReplace("탈퇴신청 정상적으로 이루어졌습니다. 탈퇴후 일주일동안 탈퇴를 취소할 수 있습니다.", "/");
 	}
 	
 	@GetMapping("/user/member/withdrawalCancel")
 	@ResponseBody
 	private String withdrawalCancel(int id) {
 		memberService.withdrawalCancel(id);
-		// 탈퇴 취소 이메일 보내기
 		return Util.jsReplace("탈퇴처리가 취소되었습니다. 정상적으로 계정을 이용하실 수 있습니다.", "/");
 	}
 	
@@ -135,7 +182,7 @@ public class MemberController {
 		memberService.change(rq.getLoginMemberNumber(), pwSecure(pwSecure(loginPw)), nickname, cellphone, email);
 		
 		model.addAttribute("member", memberService.getMemberById(rq.getLoginMemberNumber()));
-		return "usr/member/myPage";
+		return "user/member/myPage";
 	}
 
 	@GetMapping("/user/member/idDupCheck")
@@ -209,14 +256,11 @@ public class MemberController {
 		String result = "";
 		
 		try {
-			//1. SHA256 알고리즘 객체 생성
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			
-			//2. 비밀번호와 salt 합친 문자열에 SHA 256 적용
 			md.update((pwd+salt).getBytes());
 			byte[] pwdsalt = md.digest();
 			
-			//3. byte To String (10진수의 문자열로 변경)
 			StringBuffer sb = new StringBuffer();
 			for (byte b : pwdsalt) {
 				sb.append(String.format("%02x", b));
@@ -229,6 +273,56 @@ public class MemberController {
 		}
 
 		return result;
+	}
+	
+	@GetMapping("/user/member/findLoginId")
+	public String findLoginId() {
+		return "user/member/findLoginId";
+	}
+
+	@PostMapping("/user/member/doFindLoginId")
+	@ResponseBody
+	public String doFindLoginId(String name, String cellphone, String email) {
+
+		Member member = memberService.doFindLoginId(name, cellphone, email);
+
+		if (member == null) {
+			return Util.jsBack("입력하신 정보와 일치하는 회원이 없습니다");
+		}
+
+		return Util.jsReplace(String.format("회원님의 아이디는 [ %s ] 입니다", member.getLoginId()), "login");
+	}
+	
+	@GetMapping("/user/member/findLoginPw")
+	public String findLoginPw() {
+		return "user/member/findLoginPw";
+	}
+
+	@PostMapping("/user/member/doFindLoginPw")
+	@ResponseBody
+	public String doFindLoginPw(String loginId, String email) {
+
+		Member member = memberService.getMemberByLoginId(loginId);
+
+		if (member == null) {
+			return Util.jsBack("입력하신 아이디와 일치하는 회원이 없습니다");
+		}
+
+		if (member.getEmail().equals(email) == false) {
+			return Util.jsBack("이메일이 일치하지 않습니다");
+		}
+
+		String tempPassword = Util.createTempPassword();
+
+		try {
+			memberService.sendPasswordRecoveryEmail(member.getEmail(), tempPassword);
+		} catch (Exception e) {
+			System.out.println("에러코드 : " + e);
+			return Util.jsReplace("임시 패스워드 발송에 실패했습니다", "/");
+		}
+		memberService.doPasswordModify(member.getId(), pwSecure(pwSecure(tempPassword)));
+
+		return Util.jsReplace("회원님의 이메일주소로 임시 패스워드가 발송되었습니다", "login");
 	}
 	
 }

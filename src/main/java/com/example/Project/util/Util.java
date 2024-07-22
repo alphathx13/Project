@@ -3,6 +3,7 @@ package com.example.Project.util;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 public class Util{
 	
@@ -91,6 +92,10 @@ public class Util{
 					history.back();
 				</script>
 			""", msg);
+	}
+	
+	public static String createTempPassword() {
+		return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
 	}
 	
 }

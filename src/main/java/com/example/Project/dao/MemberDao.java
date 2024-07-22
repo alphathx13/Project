@@ -1,5 +1,6 @@
 package com.example.Project.dao;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -14,6 +15,7 @@ public interface MemberDao {
 			INSERT INTO `member`
 			 	SET regDate = NOW()
 			     	, updateDate = NOW()
+			     	, checkJoin = 0
 			     	, loginId = #{loginId}
 			     	, loginPw = #{loginPw}
 			     	, `name` = #{name}
@@ -21,8 +23,21 @@ public interface MemberDao {
 			     	, cellphone = #{cellphone}
 			     	, email = #{email}
 			""")
-	public void memberJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email);
+	public void checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email);
+	
+	@Update("""
+			UPDATE `member`
+			 	SET checkJoin = 1
+			    WHERE id = #{id}
+			""")
+	public void doJoin(int id);
 
+	@Delete("""
+			DELETE FROM `member`
+				WHERE id = #{id}
+			""")
+	public void memberJoinFail(int id);
+	
 	@Select("""
 			SELECT *
 				FROM `member`
@@ -88,26 +103,48 @@ public interface MemberDao {
 
 	@Update("""
 			UPDATE `member`
+				SET delStatus = 1
+					, delReason = #{reason}
+				WHERE id = #{id}
+			""")
+	public void checkWithdrawal(int id, String reason);
+	
+	@Update("""
+			UPDATE `member`
 				SET delStatus = 2,
 					delDate = NOW()
-				WHERE id = #{loginMemberNumber};
+				WHERE id = #{id};
 			""")
 	public void doWithdrawal(int id);
 
 	@Update("""
 			UPDATE `member`
-				SET delReason = #{reason},
-					delStatus = 1
-				WHERE id = #{id}
-			""")
-	public void withdrawalReason(int id, String reason);
-	
-	@Update("""
-			UPDATE `member`
 				SET delStatus = 0,
-				delDate = NULL,
 				delReason = NULL
 				WHERE id = #{id};
 			""")
 	public void withdrawalCancel(int id);
+
+	@Select("""
+			SELECT loginId
+				FROM `member`
+				WHERE name = #{name} AND cellphone = #{cellphone} AND email = #{email}
+			""")
+	public Member doFindLoginId(String name, String cellphone, String email);
+
+	@Update("""
+			UPDATE `member`
+				SET loginPw = #{loginPw}
+				WHERE id = #{id}
+			""")
+	public void doPasswordModify(int id, String loginPw);
+
+	@Delete("""
+			DELETE FROM `member`
+				WHERE delDate < DATE_SUB(NOW(), INTERVAL 1 WEEK);
+			""")
+	public void memberDelete();
+
+	
+
 }

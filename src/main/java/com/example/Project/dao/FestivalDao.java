@@ -51,7 +51,7 @@ public interface FestivalDao {
 					, prpleHoldYn = #{prpleHoldYn}
 					, homepageAdd = #{homepageAdd}
 			""")
-	public void insert(Festival festival); 
+	public void insert(Festival festival);
 
 	@Update("""
 			UPDATE festivalList
@@ -88,21 +88,35 @@ public interface FestivalDao {
 	public void update(Festival festival);
 
 	@Select("""
-			SELECT f.*, IFNULL(SUM(l.point), 0) `likePoint`
+			<script>
+			SELECT f.eventSeq, f.themeCdNm, f.title, f.beginDt, f.endDt, IFNULL(SUM(l.point), 0) `likePoint`, f.viewCount
 				FROM festivalList f
 				LEFT OUTER JOIN likePoint l
-					ON f.eventSeq = l.relId AND l.relTypeCode = 'festival'
+				ON f.eventSeq = l.relId AND l.relTypeCode = 'festival'
+				<if test="type != 0">
+					<choose>
+						<when test="type == 1">
+							WHERE CURRENT_DATE() BETWEEN f.beginDt AND f.endDt
+						</when>
+						<when test="type == 2">
+							WHERE DATEDIFF(f.beginDt, CURRENT_DATE()) > 0
+						</when>
+						<otherwise>
+							WHERE DATEDIFF(CURRENT_DATE(), f.endDt) > 0
+						</otherwise>
+					</choose>
+				</if>
                 GROUP BY f.eventSeq
                 ORDER BY f.eventSeq DESC
-                LIMIT 0, #{number}
+			</script>
 			""")
-	public List<Festival> festivalList(int number);
+	public List<Festival> festivalList(int type);
 
 	@Select("""
 			SELECT f.*, IFNULL(SUM(l.point), 0) `likePoint`
 				FROM festivalList f
 				LEFT OUTER JOIN likePoint l
-					ON f.eventSeq = l.relId AND l.relTypeCode = 'festival' 
+					ON f.eventSeq = l.relId AND l.relTypeCode = 'festival'
 				WHERE eventSeq = #{eventSeq}
 				GROUP BY f.eventSeq
 			""")
@@ -114,4 +128,5 @@ public interface FestivalDao {
 				where eventSeq = #{eventSeq};
 			""")
 	public void viewCountPlus(int eventSeq);
+
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.Project.chat.ChatRoomRepository;
 import com.example.Project.service.FestivalService;
+import com.example.Project.service.MemberService;
 import com.example.Project.service.WeatherService;
 import com.example.Project.util.Util;
 import com.example.Project.vo.Festival;
@@ -32,13 +33,15 @@ public class Scheduler {
 	
 	private FestivalService festivalService;
 	private WeatherService weatherService;
+	private MemberService memberService;
 	private String date;
 	private final ChatRoomRepository chatRoomRepository;
 
-	public Scheduler(FestivalService festivalService, WeatherService weatherService, ChatRoomRepository chatRoomRepository) {
-		this.chatRoomRepository = chatRoomRepository;
+	public Scheduler(FestivalService festivalService, WeatherService weatherService, MemberService memberService, ChatRoomRepository chatRoomRepository) {
 		this.festivalService = festivalService;
 		this.weatherService = weatherService;
+		this.memberService = memberService;
+		this.chatRoomRepository = chatRoomRepository;
 	}
 	
 	{
@@ -227,4 +230,9 @@ public class Scheduler {
         }
 	}
 	
+    @Scheduled(cron = "0 0 6 * * *")
+	public void memberDelete() {
+    	memberService.memberDelete();
+    }
+    
 }
