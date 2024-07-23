@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.example.Project.vo.Festival;
+import com.example.Project.vo.FestivalForList;
 
 @Mapper
 public interface FestivalDao {
@@ -107,10 +108,22 @@ public interface FestivalDao {
 					</choose>
 				</if>
                 GROUP BY f.eventSeq
-                ORDER BY f.eventSeq DESC
+                <if test="type != 0">
+					<choose>
+						<when test="type == 1">
+							ORDER BY endDt ASC
+						</when>
+						<when test="type == 2">
+							ORDER BY beginDt ASC
+						</when>
+						<otherwise>
+							ORDER BY endDt DESC
+						</otherwise>
+					</choose>
+				</if>
 			</script>
 			""")
-	public List<Festival> festivalList(int type);
+	public List<FestivalForList> festivalList(int type);
 
 	@Select("""
 			SELECT f.*, IFNULL(SUM(l.point), 0) `likePoint`

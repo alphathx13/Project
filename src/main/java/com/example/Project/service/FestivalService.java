@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.Project.dao.FestivalDao;
 import com.example.Project.vo.Festival;
+import com.example.Project.vo.FestivalForList;
 
 @Service
 public class FestivalService {
@@ -28,7 +29,7 @@ public class FestivalService {
 		festivalDao.update(festival);
 	}
 
-	public  List<Festival> festivalList(int type) {
+	public  List<FestivalForList> festivalList(int type) {
 		return festivalDao.festivalList(type);
 	}
 

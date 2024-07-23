@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
 import com.example.Project.chat.ChatRoomRepository;
@@ -60,16 +61,36 @@ public class FestivalController {
 		model.addAttribute("currentFestival", currentFestival);
 		model.addAttribute("futureFestival", futureFestival);
 		model.addAttribute("pastFestival", pastFestival);
-		
+
 		return "/user/festival/list";
 	}
 	
-//	@GetMapping("/user/festival/list")
-//	public String list(Model model) {
-//		model.addAttribute("festivalList", festivalService.festivalList(500));
-//		model.addAttribute("today", Util.today());
-//		return "/user/festival/list";
-//	}
+	@GetMapping("/user/festival/listMode")
+	@ResponseBody
+	public String listMode(HttpServletRequest request, HttpServletResponse response, @RequestParam(defaultValue = "false") String change) {
+		
+		String mode;	
+		
+		if (WebUtils.getCookie(request, "listMode") != null && WebUtils.getCookie(request, "listMode").getValue().equals("list")) {
+			mode = "list";
+		} else {
+			mode = "gallery";
+		}
+		
+		if (change.equals("true")) {
+			if (mode.equals("list")) {
+				mode = "gallery";
+			} else {
+				mode = "list";
+			}
+		}
+
+		Cookie cookie = new Cookie("listMode", mode);
+		cookie.setMaxAge(5000);
+		response.addCookie(cookie);
+		
+		return mode;
+	}
 	
 	@GetMapping("/user/festival/detail")
 	public String detail(HttpServletRequest request, HttpServletResponse response, Model model, int eventSeq) {
