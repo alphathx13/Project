@@ -13,20 +13,48 @@
 		<button class="galleryIcon ml-4" onclick="galleryMode('change')" type="button"><img class="img" src=""></button>
 	</div>
 
-	<div class="font-bold text-blue-500">현재 진행중인 행사</div>
+	<div class="font-bold text-blue-500">현재 진행중인 행사
+		<c:if test="${currentFestivalCount != 0}">
+			<span> ${currentFestivalCount }개 </span>
+		</c:if>
+	</div>
 	<div id="currentFestival"></div>
 	<br/><br/>
 
-	<div class="font-bold text-purple-500">진행예정 행사</div>
+	<div class="font-bold text-purple-500">진행예정 행사
+		<c:if test="${futureFestivalCount != 0}">
+			<span> ${futureFestivalCount }개 </span>
+		</c:if>
+	</div>
 	<div id="futureFestival"></div>
 	<br/><br/>
 	
 	<div class="font-bold text-red-500">종료된 행사</div>
 	<div id="pastFestival"></div>
+	
+	<div>
+		<form class = "flex justify-center" action="" method="get" onsubmit="emptyCheck(this); return false;"> 
+			<select data-value="${searchType }" class="select select-bordered h-4" name="searchType">
+				<option value="" selected disabled> 검색항목 </option>
+				<option value="1"> 제목 </option>
+				<option value="2"> 내용 </option>
+				<option value="3"> 제목+내용 </option>
+			</select>
+			&nbsp;
+			<input type="hidden" value="helloWorld" name ="test"/>
+			<label class="input input-bordered flex items-center gap-2">
+				<input maxlength="20" type="text" value="${searchText }" class="grow" name ="searchText" placeholder="Search" />
+				<button>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" fill="currentColor" class="h-4 w-4 opacity-70">
+						<path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"  clip-rule="evenodd" />
+				  	</svg>
+			  	</button>
+			</label>
+		</form>
+	</div>
 
 	<script>
-
-		// 데이터
+		// 전역으로 사용할 데이터
 	    var currentFestival;
  	    var currentFestivalview ;
  	    var futureFestival;
@@ -172,11 +200,11 @@
 	        		html += `<span class="flex flex-col basis-1/3 px-4 mb-4">`;
 		        	
 		        	if (festival.themeCdNm == '공연') {
-		        		html += `<img class="rounded-2xl" src="/resource/images/festival.jpg" />`;
+		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/images/festival.jpg" /></a>`;
 		        	} else if (festival.themeCdNm == '전시') {
-		        		html += `<img class="rounded-2xl" src="/resource/images/exhibition.jpg" />`;
+		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/images/exhibition.jpg" /></a>`;
 		        	} else {
-		        		html += `<img class="rounded-2xl" src="/resource/images/etc.jpg" />`;
+		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/images/etc.jpg" /></a>`;
 		        	}
 		        	html += `<span>\${festival.title}</span>
 		        			<span>시작일 : \${festival.beginDt}</span>
@@ -261,6 +289,25 @@
 			})
  		}
  	    
+ 		// 행사 검색 공백체크
+ 		function emptyCheck(form) {
+ 			let searchType = form.searchType.value;
+			let searchText = form.searchText.value.trim();
+	
+			if (searchText.length == 0) {
+				alert('검색하실 내용을 입력해 주세요.');
+				form.searchText.focus();
+				return;
+			}
+			
+			if (searchType == 0) {
+				alert('검색하실 항목을 선택해주세요');
+				form.searchType.focus();
+				return;
+			}
+			
+			form.submit();
+		}
 	</script>
 
 </section>

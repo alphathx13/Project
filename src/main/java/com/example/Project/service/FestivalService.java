@@ -29,8 +29,8 @@ public class FestivalService {
 		festivalDao.update(festival);
 	}
 
-	public  List<FestivalForList> festivalList(int type) {
-		return festivalDao.festivalList(type);
+	public  List<FestivalForList> festivalList(int type, int searchType, String searchText) {
+		return festivalDao.festivalList(type, searchType, searchText);
 	}
 
 	public Festival festivalDetail(int eventSeq) {
@@ -39,6 +39,10 @@ public class FestivalService {
 
 	public void viewCountPlus(int eventSeq) {
 		festivalDao.viewCountPlus(eventSeq);
+	}
+
+	public int festivalListCount(int type) {
+		return festivalDao.festivalListCount(type);
 	}
 
 }

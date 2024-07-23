@@ -90,7 +90,7 @@ public interface FestivalDao {
 
 	@Select("""
 			<script>
-			SELECT f.eventSeq, f.themeCdNm, f.title, f.beginDt, f.endDt, IFNULL(SUM(l.point), 0) `likePoint`, f.viewCount
+			SELECT f.eventSeq, f.themeCdNm, f.title, f.contents, f.beginDt, f.endDt, IFNULL(SUM(l.point), 0) `likePoint`, f.viewCount
 				FROM festivalList f
 				LEFT OUTER JOIN likePoint l
 				ON f.eventSeq = l.relId AND l.relTypeCode = 'festival'
@@ -104,6 +104,19 @@ public interface FestivalDao {
 						</when>
 						<otherwise>
 							WHERE DATEDIFF(CURRENT_DATE(), f.endDt) > 0
+						</otherwise>
+					</choose>
+				</if>
+				<if test="searchText != ''">
+					<choose>
+						<when test="searchType == 1">
+							and f.title like CONCAT('%', #{searchText}, '%')
+						</when>
+						<when test="searchType == 2">
+							and f.contents like CONCAT('%', #{searchText}, '%')
+						</when>
+						<otherwise>
+							and (f.title like CONCAT('%', #{searchText}, '%') or f.contents like CONCAT('%', #{searchText}, '%'))
 						</otherwise>
 					</choose>
 				</if>
@@ -123,7 +136,7 @@ public interface FestivalDao {
 				</if>
 			</script>
 			""")
-	public List<FestivalForList> festivalList(int type);
+	public List<FestivalForList> festivalList(int type, int searchType, String searchText);
 
 	@Select("""
 			SELECT f.*, IFNULL(SUM(l.point), 0) `likePoint`
@@ -141,5 +154,26 @@ public interface FestivalDao {
 				where eventSeq = #{eventSeq};
 			""")
 	public void viewCountPlus(int eventSeq);
+
+	@Select("""
+			<script>
+			SELECT COUNT(*)
+				FROM FestivalList
+				<if test="type != 0">
+					<choose>
+						<when test="type == 1">
+							WHERE CURRENT_DATE() BETWEEN beginDt AND endDt
+						</when>
+						<when test="type == 2">
+							WHERE DATEDIFF(beginDt, CURRENT_DATE()) > 0
+						</when>
+						<otherwise>
+							WHERE DATEDIFF(CURRENT_DATE(), f.endDt) > 0
+						</otherwise>
+					</choose>
+				</if>
+			</script>
+			""")
+	public int festivalListCount(int type);
 
 }

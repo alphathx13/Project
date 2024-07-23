@@ -49,18 +49,20 @@ public class FestivalController {
 	@GetMapping("/user/festival/list")
 	public String list(Model model, @RequestParam(defaultValue = "0") int searchType, @RequestParam(defaultValue = "") String searchText, @RequestParam(defaultValue = "10") int itemsInPage, @RequestParam(defaultValue = "1") int cPage) throws JsonProcessingException {
 
-		searchText = searchText.trim();
-
+		// searchType : 1(제목), 2(내용), 3(제목+내용)
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		// 1:현재, 2:미래, 3:과거
-		String currentFestival = objectMapper.writeValueAsString(festivalService.festivalList(1));
-		String futureFestival = objectMapper.writeValueAsString(festivalService.festivalList(2));
-		String pastFestival = objectMapper.writeValueAsString(festivalService.festivalList(3));
+		// 1:진행중인 행사, 2:진행 예정인 행사, 3:종료 행사
+		String currentFestival = objectMapper.writeValueAsString(festivalService.festivalList(1, searchType, searchText));
+		String futureFestival = objectMapper.writeValueAsString(festivalService.festivalList(2, searchType, searchText));
+		String pastFestival = objectMapper.writeValueAsString(festivalService.festivalList(3, searchType, searchText));
 		
 		model.addAttribute("currentFestival", currentFestival);
 		model.addAttribute("futureFestival", futureFestival);
 		model.addAttribute("pastFestival", pastFestival);
+
+		model.addAttribute("currentFestivalCount", festivalService.festivalListCount(1));
+		model.addAttribute("futureFestivalCount", festivalService.festivalListCount(2));
 
 		return "/user/festival/list";
 	}
