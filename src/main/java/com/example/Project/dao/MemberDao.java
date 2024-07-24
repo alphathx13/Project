@@ -22,8 +22,9 @@ public interface MemberDao {
 			     	, nickname = #{nickname}
 			     	, cellphone = #{cellphone}
 			     	, email = #{email}
+			     	, memberImg = #{memberImg}
 			""")
-	public void checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email);
+	public void checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email, int memberImg);
 	
 	@Update("""
 			UPDATE `member`
@@ -145,6 +146,12 @@ public interface MemberDao {
 			""")
 	public void memberDelete();
 
-	
-
+	@Select("""
+			SELECT f.savedPath 
+			    FROM `member` m
+			    LEFT JOIN `file` f
+			    ON m.memberImg = f.id
+			    WHERE m.id = #{id}
+			""")
+	public String getMemberImgPath(int id);
 }

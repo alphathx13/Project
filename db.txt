@@ -133,6 +133,7 @@ CREATE TABLE `member`(
     , nickname VARCHAR(20) NOT NULL
     , cellphone VARCHAR(20) NOT NULL
     , email VARCHAR(50) NOT NULL
+    , memberImg int(10) NOT NULL
     , authLevel INT UNSIGNED NOT NULL DEFAULT 2 COMMENT '권한 레벨 (일반 = 2, 관리자 = 1)'
     , delStatus INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '탈퇴 여부 (탈퇴 전 = 0, 탈퇴 신청 = 1, 탈퇴 신청진행중 = 2)'
     , delDate DATETIME COMMENT '탈퇴 날짜'
@@ -212,5 +213,14 @@ CREATE TABLE likePoint(
     , relTypeCode VARCHAR(20) NOT NULL COMMENT '관련 데이터 타입 코드'
     , relId INT UNSIGNED NOT NULL COMMENT '관련 데이터 번호'
     , `point` INT NOT NULL DEFAULT 1
+);
+
+
+CREATE TABLE `file`(
+    id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
+    , regDate DATETIME NOT NULL
+    , originName VARCHAR(50) NOT NULL
+    , savedName VARCHAR(100) NOT NULL
+    , savedPath VARCHAR(100) NOT NULL
 );
 

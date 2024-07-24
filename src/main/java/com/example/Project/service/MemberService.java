@@ -20,8 +20,8 @@ public class MemberService {
 		this.javaMailSender = javaMailSender;
 	}
 
-	public void checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email) {
-		memberDao.checkJoin(loginId, loginPw, name, nickname, cellphone, email);
+	public void checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email, int memberImg) {
+		memberDao.checkJoin(loginId, loginPw, name, nickname, cellphone, email, memberImg);
 	}
 	
 	public void doJoin(int id) {
@@ -140,5 +140,8 @@ public class MemberService {
 		memberDao.memberDelete();
 	}
 
-	
+	public String getMemberImgPath(int id) {
+		return memberDao.getMemberImgPath(id);
+	}
+
 }

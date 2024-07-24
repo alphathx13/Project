@@ -7,9 +7,9 @@
 <head>
 	<meta charset="UTF-8">
 	<title>${pageTitle }</title>
-	<!-- 파비콘 넣기 
+	
+	<!-- 파비콘 넣기 -->
 	<link rel="shortcut icon" href="/resource/favicon/favicon.ico" />
-	 -->
 	 
 	<!-- tailwind CSS -->
 	<script src="https://cdn.tailwindcss.com"></script>
@@ -87,9 +87,7 @@
 				<c:otherwise>
 					<div class="mt-6 dropdown dropdown-end">
 						<div tabindex="0" role="button">
-							<div class="w-10 rounded-full flex">
-            					<i class="fa-solid fa-user"></i><div class="text-xl ml-2">${rq.loginMemberNn }</div>
-        					</div>
+							<img class="h-8 w-8 rounded-full" src="/user/member/memberImg" />
 						</div>
 						<ul tabindex="0"
 							class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 shadow w-24">

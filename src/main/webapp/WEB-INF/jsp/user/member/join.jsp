@@ -8,7 +8,7 @@
 
 <section class="mt-8 text-lg">
 	<div class="container mx-auto px-3">
-		<form name="memberForm" action="checkJoin" method="POST" onsubmit="check(this); return false;">
+		<form name="memberForm" action="checkJoin" method="POST" onsubmit="check(this); return false;" enctype="multipart/form-data">
 			<label class="input input-bordered flex items-center gap-2">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
 					fill="currentColor" class="h-4 w-4 opacity-70">
@@ -51,6 +51,10 @@
 	  			<input maxlength="30" type="text" id="email" class="grow" placeholder="이메일" name="email"/> 
 	  			<div class="emailCheck"></div>
 			</label>
+			<br/>
+			<div>회원 이미지 (32x32 사이즈까지 지원됩니다.)</div>
+			<input id=upload type="file" name="file" value="/resource/images/defaultImg.png"/>
+			<div id='preview' class="flex"> 기본 이미지 : &nbsp;<img src="/resource/images/defaultImg.png"> </div>
 			<div class="mt-4 text-center">
 				<div class="tooltip mx-4" data-tip="뒤로 가기">
 					<button class="btn btn-outline btn-info" type="button" onclick="history.back();">
@@ -298,6 +302,29 @@
 			}
 		})
 	});
+	
+	// 업로드 이미지 미리보기
+	$('#upload').change(function(e) {
+        var get_file = e.target.files;
+        var image = $('<img>');
+        
+        image.attr('width', 32);
+        image.attr('height', 32);
+
+        var reader = new FileReader();
+        reader.onload = (function(img) {
+            return function(e) {
+                img.attr('src', e.target.result);
+            };
+        })(image);
+
+        if (get_file) {
+            reader.readAsDataURL(get_file[0]);
+        }
+
+        $('#preview').empty().html('업로드 이미지 : &nbsp;');
+        $('#preview').append(image);
+    });
 
 </script>
 

@@ -1,17 +1,26 @@
 package com.example.Project.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.example.Project.service.FileService;
 import com.example.Project.service.MemberService;
 import com.example.Project.util.Util;
+import com.example.Project.vo.FileVo;
 import com.example.Project.vo.Member;
 import com.example.Project.vo.ResultData;
 import com.example.Project.vo.Rq;
@@ -20,14 +29,20 @@ import com.example.Project.vo.Rq;
 public class MemberController {
 
 	private MemberService memberService;
+	private FileService fileService;
 	private Rq rq;
 	
 	// salt 키
 	@Value("${custom.salt.key}")
 	private String salt;
+	
+	// 이미지 DB 위치
+	@Value("${file.dir}")
+	private String fileDir;
 
-	public MemberController(MemberService memberService, Rq rq) {
+	public MemberController(MemberService memberService, Rq rq, FileService fileService) {
 		this.memberService = memberService;
+		this.fileService = fileService;
 		this.rq = rq;
 	}
 	
@@ -38,17 +53,27 @@ public class MemberController {
 	
 	@PostMapping("/user/member/checkJoin")
 	@ResponseBody
-	public String checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email) {
+	public String checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email, @RequestParam(defaultValue = "") MultipartFile file) {
 		
-		memberService.checkJoin(loginId, pwSecure(pwSecure(loginPw)), name, nickname, cellphone, email);
-
-		try {
-			memberService.sendCheckJoinEmail(memberService.getMemberByCellphone(cellphone).getId(), email);
-		} catch (Exception e) {
-			System.out.println("에러코드 : " + e);
-			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
-			return Util.jsReplace("임시 패스워드 발송에 실패했습니다", "/");
+		int memberImg = 1;
+		
+		if (!file.isEmpty()) {
+			try {
+				memberImg = fileService.saveFile(file);
+			} catch (IOException e) {
+				Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
+			}
 		}
+		
+		memberService.checkJoin(loginId, pwSecure(pwSecure(loginPw)), name, nickname, cellphone, email, memberImg);
+
+//		try {
+//			memberService.sendCheckJoinEmail(memberService.getMemberByCellphone(cellphone).getId(), email);
+//		} catch (Exception e) {
+//			System.out.println("에러코드 : " + e);
+//			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
+//			return Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
+//		}
 		
 		return Util.jsReplace("회원 가입 이메일이 전송되었습니다. 이메일을 확인해주세요.", "/user/home/main");
 	}
@@ -325,4 +350,15 @@ public class MemberController {
 		return Util.jsReplace("회원님의 이메일주소로 임시 패스워드가 발송되었습니다", "login");
 	}
 	
+	// 회원 이미지 가져오기
+	@GetMapping("/user/member/memberImg")
+	@ResponseBody
+	public Resource fileLoad(Model model) throws IOException {
+		
+		String memberImgPath = memberService.getMemberImgPath(rq.getLoginMemberNumber());
+		
+		System.out.println(memberImgPath);
+		
+		return new UrlResource("file:" + memberImgPath);
+	}
 }

@@ -21,6 +21,7 @@ public class Rq {
 	private int loginMemberNumber;
 	@Getter
 	private String loginMemberNn;
+	@Getter
 	private HttpServletResponse response;
 	private HttpSession session;
 

@@ -25,6 +25,10 @@ spring:
           auth: true
           starttls:
             enable: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
         
 server:
   port: 8000
@@ -35,3 +39,6 @@ custom:
     key: 45c9a06d40a4e3bff0f18e6318a5b541
   salt:
     key: 872e4e50ce9990d8b041330c47c9ddd11bec6b503ae9386a99da8584e9bb12c4
+    
+file:
+  dir: D:\kyj\upload
