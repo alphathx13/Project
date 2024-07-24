@@ -2,8 +2,6 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<c:set var="pageTitle" value="게시글 작성" />
-
 <%@ include file="../../common/head.jsp"%>
 <%@ include file="../../common/toastUiLib.jsp"%>
 
@@ -25,6 +23,3 @@
 	</section>
 
 <%@ include file="../../common/foot.jsp"%>
-
-
-<!-- <textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full h-72" name="body" placeholder="글 내용"></textarea> -->

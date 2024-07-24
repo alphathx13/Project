@@ -100,7 +100,7 @@
 			</c:choose>
 
 			<li class="hover:underline p-4 ml-4"><a class="h-full px-3 flex items-center" href="/user/festival/list"><span>행사 목록</span></a>
-			<li class="hover:underline p-4 ml-4"><a class="h-full px-3 flex items-center" href="/user/article/list"><span>게시판</span></a>
+			<li class="hover:underline p-4 ml-4"><a class="h-full px-3 flex items-center" href="/user/article/list?boardId=1"><span>게시판</span></a>
 		</ul>
 	</div>
 

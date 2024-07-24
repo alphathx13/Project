@@ -57,7 +57,7 @@ public class MemberController {
 		
 		if (!file.isEmpty()) {
 			try {
-				memberImg = fileService.saveFile(file);
+				memberImg = fileService.saveFile(file, "member");
 			} catch (IOException e) {
 				Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
 			}

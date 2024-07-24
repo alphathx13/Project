@@ -16,7 +16,9 @@
 					</c:otherwise>
 				</c:choose>
 				<div class ="grow"></div> 
-				<div>${cPage } 페이지 / ${tPage } 페이지 &nbsp;&nbsp;</div>
+				<c:if test="${articleCount != 0 }">
+					<div>${cPage } 페이지 / ${tPage } 페이지 &nbsp;&nbsp;</div>
+				</c:if>
 				<div>
 					<form action="" method="get"> 
 						<input type="hidden" name ="boardId" value="${param.boardId }"/>
@@ -62,9 +64,7 @@
 						          <div class="flex items-center gap-3">
 						            <div class="avatar">
 						              <div class="mask mask-squircle h-6 w-6">
-						                <img
-						                  src="https://images.freeimages.com/fic/images/icons/2166/oxygen/128/application_x_desktop.png?fmt=webp&h=350"
-						                  alt="Avatar Tailwind CSS Component" />
+						                <img src="/user/member/memberImg/${article.memberNumber }"/>
 						              </div>
 						            </div>
 						            <div>
@@ -174,6 +174,7 @@
 		
 		form.submit();
 	}
+	
 	</script>
 
 	

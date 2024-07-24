@@ -13,22 +13,22 @@
 	const { colorSyntax } = Editor.plugin;
 	
 	$(function(){
-	  $('.toast-ui-editor').each(function(index, item) {
-		const items = $(item);
-		const initialValueEl = items.find(' > script');
-		const initialValue = initialValueEl.length == 0 ? '' : initialValueEl.html().trim();
-	    
-	    const editor = new Editor({
-	      el: item,
-	      height: '600px',
-	      initialEditType: 'markdown',
-	      initialValue: initialValue,
-	      previewStyle: 'tab',
-	      plugins: [colorSyntax]
-	    });
-	
-	    items.data('data-toast-editor', editor);
-	  });
+	  	$('.toast-ui-editor').each(function(index, item) {
+			const items = $(item);
+			const initialValueEl = items.find(' > script');
+			const initialValue = initialValueEl.length == 0 ? '' : initialValueEl.html().trim();
+		    
+		    const editor = new Editor({
+				el: item,
+				height: '600px',
+				initialEditType: 'markdown',
+				initialValue: initialValue,
+				previewStyle: 'vertical',
+				plugins: [colorSyntax]
+		    });
+		
+		    items.data('data-toast-editor', editor);
+	 	});
 	});
 	
 	function check(form){

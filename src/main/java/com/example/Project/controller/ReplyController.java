@@ -30,7 +30,10 @@ public class ReplyController {
 
 		replyService.writeReply(rq.getLoginMemberNumber(), replyBody, relTypeCode, relId);
 
-		return Util.jsReplace(String.format("댓글을 작성했습니다"), String.format("../festival/detail?eventSeq=%d", relId));
+		if (relTypeCode.equals("festival"))
+			return Util.jsReplace(String.format("댓글을 작성했습니다"), String.format("../festival/detail?eventSeq=%d", relId));
+
+		return Util.jsReplace(String.format("댓글을 작성했습니다"), String.format("../article/detail?id=%d", relId));
 	}
 
 	@PostMapping("/user/reply/viewReply")

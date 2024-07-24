@@ -26,7 +26,8 @@ public class WebConfig implements WebMvcConfigurer {
 		// "/**" -> 모든 요청
 		
 		registry.addInterceptor(needLoginInterceptor).addPathPatterns("/user/member/config")
-				.addPathPatterns("/user/member/myPage").addPathPatterns("/user/member/withdrawal");
+				.addPathPatterns("/user/member/myPage").addPathPatterns("/user/member/withdrawal")
+				.addPathPatterns("/user/article/modify").addPathPatterns("/user/article/write");
 		
 		registry.addInterceptor(needLogoutInterceptor).addPathPatterns("/user/member/join")
 		.addPathPatterns("/user/member/login");

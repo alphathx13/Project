@@ -88,7 +88,7 @@ public class ArticleController {
 		model.addAttribute("itemsInPage", itemsInPage);
 		model.addAttribute("searchText", searchText);
 		model.addAttribute("searchType", searchType);
-
+		
 		return "user/article/list";
 	}
 

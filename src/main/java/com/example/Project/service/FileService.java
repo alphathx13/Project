@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Project.dao.FileDao;
@@ -24,13 +25,20 @@ public class FileService {
 		this.fileDao = fileDao;
 	}
 
-	public int saveFile(MultipartFile file) throws IOException {
+	public int saveFile(MultipartFile file, @RequestParam(defaultValue = "") String type ) throws IOException {
 
 		String orgName = file.getOriginalFilename();
 		String uuid = UUID.randomUUID().toString();
 		String extension = orgName.substring(orgName.lastIndexOf("."));
 		String savedName = uuid + extension;
-		String savedPath = fileDir + "\\" + savedName;
+		String savedPath;
+		
+		if (type.equals("member")) {
+			savedPath = fileDir + "\\memberImg\\" + savedName;
+		} else {
+			savedPath = fileDir + "\\" + savedName;
+		}
+		
 		fileDao.insertFile(orgName, savedName, savedPath);
 		
 		file.transferTo(new File(savedPath));

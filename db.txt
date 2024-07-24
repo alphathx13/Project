@@ -232,4 +232,5 @@ CREATE TABLE article (
     , `body` TEXT NOT NULL
     , memberNumber INT(100) NOT NULL
     , boardId INT(20) UNSIGNED NOT NULL
+    , viewCount INT(10) UNSIGNED NOT NULL DEFAULT 0
 );

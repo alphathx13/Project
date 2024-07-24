@@ -184,7 +184,7 @@
 								let date = item.updateDate.substr(5);
 								content += `
 										<tr>
-											<td>\${item.nickname}</td>
+											<td class="flex"><img class = "h-8 rounded" src="/user/member/memberImg/\${item.memberId }"/> &nbsp; <div class="mt-1"> \${item.nickname} </div> </td>
 											<td>
 												<div class="\${item.id}R">\${item.body}	</div>
 												<div class="\${item.id}"></div>
@@ -196,7 +196,7 @@
 								}
 								content += `</td>`;
 								$('.replyList').append('</td>');		
-								if(item.memberNumber == loginMemberNumber ) {
+								if(item.memberId == ${rq.loginMemberNumber }) {
 									content += `<td><div class="tooltip" data-tip="댓글 수정"><button onclick="replyModify(\${item.id})"><i class="fa-solid fa-pen-to-square"></i></button></div></td>`;
 									content += `<td><div class="tooltip" data-tip="댓글 삭제"><button onclick="replyDelete(\${item.id}); return false;"><i class="fa-solid fa-trash-can"></i></button></div></td>`;
 								}
@@ -233,7 +233,7 @@
 									<form class="replyForm" onsubmit="if(replyForm_onSubmit(this) == true) { if(confirm('댓글을 수정하시겠습니까?')) replySend(this);} return false;">
 										<input type="hidden" name="id" value="\${id}"/>
 										<input type="hidden" name="articleId" value="${article.id }"/>
-										<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="body" placeholder="\${body}"></textarea>
+										<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="replyBody" placeholder="\${body}"></textarea>
 										<div class="flex justify-end"><button class="btn btn-outline btn-sm">댓글 수정</button></div>
 									</form>
 									`);
@@ -278,7 +278,7 @@
 			}
 			
 			const replyForm_onSubmit = function(form){
-				let body = form.body.value.trim();
+				let body = form.replyBody.value.trim();
 			
 				if (body.length == 0) {
 					alert('비어있는 댓글은 작성할 수 없습니다');
@@ -300,7 +300,7 @@
 					<input type="hidden" name="relId" value="${article.id }"/>
 					<div class="mt-4 reply-border p-4 text-left">
 						<div class="mb-2">${rq.loginMemberNn }</div>
-						<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="body" placeholder="댓글을 입력하세요."></textarea>
+						<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="replyBody" placeholder="댓글을 입력하세요."></textarea>
 						<div class="flex justify-end"><button class="btn btn-outline btn-sm">댓글 작성</button></div>
 					</div>
 				</form>
