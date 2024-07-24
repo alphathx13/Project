@@ -153,5 +153,13 @@ public interface MemberDao {
 			    ON m.memberImg = f.id
 			    WHERE m.id = #{id}
 			""")
-	public String getMemberImgPath(int id);
+	public String getMemberImg(int id);
+
+	@Select("""
+			SELECT nickname
+			    FROM `member`
+			    WHERE id = #{id}
+			""")
+	public String getNicknameById(int id);
+
 }

@@ -36,7 +36,7 @@
 <body>
 	<div class="h-20 flex container mx-auto text-3xl text-sky-500">
 		<div class="logo text-6xl">
-			<a href="#" class="h-full flex items-center"><i class="fa-solid fa-cloud"></i></a>
+			<a href="/" class="h-full flex items-center"> <img class="w-12 h-12"src="/resource/images/homeButton.png" /> </a>
 		</div>
 		<div class="grow"></div>
 		<ul class="flex">
@@ -87,7 +87,7 @@
 				<c:otherwise>
 					<div class="mt-6 dropdown dropdown-end">
 						<div tabindex="0" role="button">
-							<img class="h-8 w-8 rounded-full" src="/user/member/memberImg" />
+							<img class="h-8 w-8 rounded-full" src="/user/member/memberImg/${rq.loginMemberNumber }" />
 						</div>
 						<ul tabindex="0"
 							class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 shadow w-24">
@@ -99,13 +99,9 @@
 				</c:otherwise>
 			</c:choose>
 
-			<li class="hover:underline p-4 ml-4"><a
-				class="h-full px-3 flex items-center" href="/"><span>HOME</span></a>
+			<li class="hover:underline p-4 ml-4"><a class="h-full px-3 flex items-center" href="/user/festival/list"><span>행사 목록</span></a>
+			<li class="hover:underline p-4 ml-4"><a class="h-full px-3 flex items-center" href="/user/article/list"><span>게시판</span></a>
 		</ul>
-	</div>
-
-	<div class="ml-72 p-2 text-4xl">
-		<h1>${pageTitle }</h1>
 	</div>
 
 	<script>

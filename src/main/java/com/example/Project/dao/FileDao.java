@@ -1,12 +1,8 @@
 package com.example.Project.dao;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-
-import com.example.Project.vo.FileVo;
 
 @Mapper
 public interface FileDao {
@@ -19,12 +15,6 @@ public interface FileDao {
 					, savedPath = #{savedPath}
 			""")
 	void insertFile(String orgName, String savedName, String savedPath);
-
-	@Select("""
-			SELECT *
-				FROM `file`
-			""")
-	List<FileVo> getFiles();
 
 	@Select("""
 			SELECT id

@@ -140,8 +140,12 @@ public class MemberService {
 		memberDao.memberDelete();
 	}
 
-	public String getMemberImgPath(int id) {
-		return memberDao.getMemberImgPath(id);
+	public String getMemberImg(int id) {
+		return memberDao.getMemberImg(id);
+	}
+
+	public String getNicknameById(int id) {
+		return memberDao.getNicknameById(id);
 	}
 
 }

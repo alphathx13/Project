@@ -1,5 +1,9 @@
 package com.example.Project.controller;
 
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -12,15 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import com.example.Project.service.FileService;
 import com.example.Project.service.MemberService;
 import com.example.Project.util.Util;
-import com.example.Project.vo.FileVo;
 import com.example.Project.vo.Member;
 import com.example.Project.vo.ResultData;
 import com.example.Project.vo.Rq;
@@ -67,13 +65,13 @@ public class MemberController {
 		
 		memberService.checkJoin(loginId, pwSecure(pwSecure(loginPw)), name, nickname, cellphone, email, memberImg);
 
-//		try {
-//			memberService.sendCheckJoinEmail(memberService.getMemberByCellphone(cellphone).getId(), email);
-//		} catch (Exception e) {
-//			System.out.println("에러코드 : " + e);
-//			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
-//			return Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
-//		}
+		try {
+			memberService.sendCheckJoinEmail(memberService.getMemberByCellphone(cellphone).getId(), email);
+		} catch (Exception e) {
+			System.out.println("에러코드 : " + e);
+			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
+			return Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
+		}
 		
 		return Util.jsReplace("회원 가입 이메일이 전송되었습니다. 이메일을 확인해주세요.", "/user/home/main");
 	}
@@ -351,14 +349,13 @@ public class MemberController {
 	}
 	
 	// 회원 이미지 가져오기
-	@GetMapping("/user/member/memberImg")
+	@GetMapping("/user/member/memberImg/{id}")
 	@ResponseBody
-	public Resource fileLoad(Model model) throws IOException {
+	public Resource fileLoad(@PathVariable("id") int id, Model model) throws IOException {
 		
-		String memberImgPath = memberService.getMemberImgPath(rq.getLoginMemberNumber());
-		
-		System.out.println(memberImgPath);
+		String memberImgPath = memberService.getMemberImg(id);
 		
 		return new UrlResource("file:" + memberImgPath);
 	}
+	
 }

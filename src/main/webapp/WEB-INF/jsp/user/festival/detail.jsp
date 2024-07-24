@@ -637,13 +637,15 @@
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 		<script>
 			var roomId = '${festival.eventSeq}';
-			var sender = '${rq.loginMemberNn}';
+			var sender = '${rq.loginMemberNumber}';
 			var messageInputElement;
 			var messageListElement;
 			var sock = new SockJS("/ws-stomp");
 			var ws = Stomp.over(sock);
 			var reconnect = 0;
-	
+			var onlineNickname;
+			var chatNickname;
+			
 			// 로그인 확인
 			$(document).ready(function(){
 				updateOnlineUsers();
@@ -700,7 +702,7 @@
 			// 채팅받기
 			function recvMessage(recv) {
 				if (recv.type != 'TALK') {
-					var li = $('<li>').addClass('list-group-item font-bold').text(recv.sender + ' - ' + recv.message);
+					var li = $('<li>').addClass('list-group-item font-bold').text(recv.sender + recv.message);
 				    
 					if (recv.type == 'ENTER') {
 				    	li.addClass('text-blue-500');
@@ -711,37 +713,37 @@
 					return;
 				}
 				
-				if (recv.sender != '${rq.loginMemberNn}') {
-					var li = $('<li>').addClass('list-group-item').html(`
-							<div class="chat chat-start">
-								<div class="chat-image avatar">
-							    <div class="w-10 rounded-full">
-							      <img src="https://cdn.pixabay.com/photo/2024/03/08/09/47/ai-generated-8620359_1280.png" />
-							    </div>
-							  </div>
-							  <div class="chat-header">
-							    \${recv.sender}
-							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
-							  </div>
-							  <div class="chat-bubble">\${recv.message}</div>
-							</div>
-							`);
-				} else {
-					var li = $('<li>').addClass('list-group-item').html(`
-							<div class="chat chat-end">
-							  <div class="chat-image avatar">
-							    <div class="w-10 rounded-full">
-							      <img src="https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg" />
-							    </div>
-							  </div>
-							  <div class="chat-header">
-							  \${recv.sender}
-							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
-							  </div>
-							  <div class="chat-bubble">\${recv.message}</div>
-							</div>
-							`);
-				}
+			if (recv.sender != '${rq.loginMemberNumber}') {
+				var li = $('<li>').addClass('list-group-item').html(`
+						<div class="chat chat-start">
+							<div class="chat-image avatar">
+						    <div class="w-10 rounded-full">
+						    	<img src="/user/member/memberImg/\${recv.sender }" />
+						    </div>
+						  </div>
+						  <div class="chat-header">
+						    \${recv.nickname}
+						    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
+						  </div>
+						  <div class="chat-bubble">\${recv.message}</div>
+						</div>
+						`);
+			} else {
+				var li = $('<li>').addClass('list-group-item').html(`
+						<div class="chat chat-end">
+						  <div class="chat-image avatar">
+						    <div class="w-10 rounded-full">
+						  	  <img src="/user/member/memberImg/\${recv.sender }" />
+						    </div>
+						  </div>
+						  <div class="chat-header">
+						  \${recv.nickname}
+						    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
+						  </div>
+						  <div class="chat-bubble">\${recv.message}</div>
+						</div>
+						`);
+			}
 				
 			    if (recv.type == 'ENTER') {
 			    	li.addClass('text-blue-500');
@@ -801,17 +803,18 @@
 	                	roomId : roomId
 	                },
 	                success: function(response) {
+	                	console.log(response);
 	                	$.each(response, function(index, recv) {
-	                		if (recv.sender != '${rq.loginMemberNn}') {
+	                		if (recv.sender != '${rq.loginMemberNumber}') {
 	        					var li = $('<li>').addClass('list-group-item').html(`
 	        							<div class="chat chat-start">
 	        								<div class="chat-image avatar">
 	        							    <div class="w-10 rounded-full">
-	        							    	<img src="https://cdn.pixabay.com/photo/2024/03/08/09/47/ai-generated-8620359_1280.png" />
+	        							    	<img src="/user/member/memberImg/\${recv.sender }" />
 	        							    </div>
 	        							  </div>
 	        							  <div class="chat-header">
-	        							    \${recv.sender}
+	        							    \${recv.nickname}
 	        							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
 	        							  </div>
 	        							  <div class="chat-bubble">\${recv.message}</div>
@@ -822,11 +825,11 @@
 	        							<div class="chat chat-end">
 	        							  <div class="chat-image avatar">
 	        							    <div class="w-10 rounded-full">
-	        							   		<img src="https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg" />
+	        							   		<img src="/user/member/memberImg/\${recv.sender }" />
 	        							    </div>
 	        							  </div>
 	        							  <div class="chat-header">
-	        							  \${recv.sender}
+	        							  \${recv.nickname}
 	        							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
 	        							  </div>
 	        							  <div class="chat-bubble">\${recv.message}</div>
@@ -867,9 +870,9 @@
 	                type: "GET",
 	                url: "/chat/room/" + roomId + "/online-users",
 	                success: function(response) {
-	                	var onlineUsersArray = Array.from(response);
+	                	var onlineUser = Array.from(response);
 	                    $("#onlineUsers").empty();
-	                    $.each(onlineUsersArray, function(index, user) {
+	                    $.each(onlineUser, function(index, user) {
 	                        var li = $("<li>").text(user);
 	                        $("#onlineUsers").append(li);
 	                    });
@@ -906,6 +909,7 @@
 			// stompClient.send("/pub/chat/" + roomId + "/disconnect", {}, JSON.stringify({ sender: sender }));
 			// ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'LEAVE', roomId : roomId, sender : sender }));
 			connect();
+			
 		</script>
 		
 		<button onclick="history.back()" class="btn btn-outline btn-info mt-4">뒤로 가기</button>	

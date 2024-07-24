@@ -12,15 +12,6 @@
 	
 	<button onclick="location.href='../weatherMidUpdate'" class="btn btn-outline btn-info mt-4">중기 날씨 가져오기</button>	
 	<button onclick="location.href='/weatherShortUpdate'" class="btn btn-outline btn-info mt-4">단기 날씨 가져오기</button>	
-	<br/><br/>
-	
-	<div class="mt-8">
-		<form action="upload" method="post" enctype="multipart/form-data">
-			<input id="upload" type="file" name="file" />
-			<button class="btn btn-active btn-sm">업로드</button>
-			<div id='preview'></div>
-		</form>
-	</div>
 	
 <%@ include file="../../common/foot.jsp" %>  
 	

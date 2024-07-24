@@ -38,8 +38,4 @@ public class FileService {
 		return fileDao.lastFileId();
 	}
 
-	public List<FileVo> getFiles() {
-		return this.fileDao.getFiles();
-	}
-
 }
