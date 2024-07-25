@@ -9,26 +9,64 @@
 <script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
 
 <script>
+	
+	// image 저장할 변수
+	let imageArray = [];
+	
+	// toastui editor 설정
 	const { Editor } = toastui;
 	const { colorSyntax } = Editor.plugin;
 	
 	$(function(){
+		
 	  	$('.toast-ui-editor').each(function(index, item) {
-			const items = $(item);
-			const initialValueEl = items.find(' > script');
+			const editorItem = $(item);
+			const initialValueEl = editorItem.find(' > script');
 			const initialValue = initialValueEl.length == 0 ? '' : initialValueEl.html().trim();
-		    
-		    const editor = new Editor({
+			
+		    const editor = new toastui.Editor({
 				el: item,
 				height: '600px',
-				initialEditType: 'markdown',
+				initialEditType: 'WYSIWYG',
 				initialValue: initialValue,
 				previewStyle: 'vertical',
-				plugins: [colorSyntax]
+				plugins: [colorSyntax],
+				hooks: {
+		            addImageBlobHook(blob, callback) {  // 이미지 업로드 로직변경
+
+		            	const formData = new FormData();
+		                formData.append('file', blob);
+		                
+		                $.ajax({
+		                    url: '/user/file/upload',
+		                    type: 'POST',
+		                    enctype: 'multipart/form-data',
+		                    data: formData,
+		                    dataType: 'json',
+		                    processData: false,
+		                    contentType: false,
+		                    cache: false,
+		                    timeout: 600000,
+		                    success: function(data) {
+		                    	imageArray.push(data.id);
+		                    	var imgPath = '/user/file/images/' + data.id;
+		                        callback(imgPath, '${data.originName}');
+		                    },
+		                    error: function(e) {
+		                        callback('image_load_fail', '이미지 업로드가 실패했습니다. 다시 업로드해주세요.');
+		                    }
+		                });
+		                
+		            }
+		        }
 		    });
 		
-		    items.data('data-toast-editor', editor);
+		    editorItem.data('data-toast-editor', editor);
+		    
 	 	});
+		
+		// 모드 안보여주기
+	  	
 	});
 	
 	function check(form){
@@ -53,5 +91,5 @@
 		
 		form.submit();
 	}
-
+	
 </script>

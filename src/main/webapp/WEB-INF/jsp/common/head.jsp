@@ -15,9 +15,7 @@
 	<script src="https://cdn.tailwindcss.com"></script>
 	
 	<!-- daisyUI -->
-	<link
-		href="https://cdn.jsdelivr.net/npm/daisyui@4.12.8/dist/full.min.css"
-		rel="stylesheet" type="text/css" />
+	<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.8/dist/full.min.css" rel="stylesheet" type="text/css" />
 	
 	<!-- jQuery -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

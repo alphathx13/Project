@@ -5,7 +5,7 @@
 <c:set var="pageTitle" value="게시글 보기" />
 
 <%@ include file="../../common/head.jsp"%>
-<%@ include file="../../common/toastUiLib.jsp"%>
+<%@ include file="../../common/toastUiViewer.jsp"%>
 
 <!-- 전체 틀 -->
 <section class="mt-8 text-lg text-center">
@@ -39,15 +39,28 @@
 					</td>
 				</tr>
 				<tr class="h-40">
-					<td colspan="4" class=""> ${article.body }</td>
+					<td colspan="4" class="">
+						<div class="viewer"> ${article.body } </div>
+					</td>
 				</tr>
 			</table>
 		</div>
 		
 		<!-- 추천수 -->
+	
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 		<script>
+
 			$(document).ready(function(){
-		
+				
+				var contents = `${article.body}`;
+			    var viewerEl = $('.viewer')[0];
+			    var viewer = new toastui.Editor.factory({
+			        el: viewerEl,
+			        viewer: true,
+			        initialValue: contents
+			    });
+				
 				if (${rq.loginMemberNumber == 0 }) {
 					$('.likeTooltip').attr('data-tip', '추천수');
 					$('.star').addClass('fa-solid fa-splotch');

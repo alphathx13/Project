@@ -11,11 +11,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
 import com.example.Project.service.ArticleService;
+import com.example.Project.service.FileService;
 import com.example.Project.util.Util;
 import com.example.Project.vo.Article;
 import com.example.Project.vo.Reply;
 import com.example.Project.vo.ResultData;
 import com.example.Project.vo.Rq;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,10 +29,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ArticleController {
 
 	private ArticleService articleService;
+	private FileService fileService;
 	private Rq rq;
 
-	public ArticleController(ArticleService articleService, Rq rq) {
+	public ArticleController(ArticleService articleService, FileService fileService, Rq rq) {
 		this.articleService = articleService;
+		this.fileService = fileService;
 		this.rq = rq;
 	}
 	
@@ -40,11 +46,18 @@ public class ArticleController {
 	
 	@GetMapping("/user/article/doWrite")
 	@ResponseBody
-	public String doWrite(int boardId, String title, String body) {
+	public String doWrite(int boardId, String title, String body, String images) throws JsonMappingException, JsonProcessingException {
 		
 		articleService.articleWrite(title, body, boardId, rq.getLoginMemberNumber());
 
 		int id = articleService.getLastInsertId();
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+        String[] imageArray = objectMapper.readValue(images, String[].class);
+        
+        for (String image : imageArray) {
+        	fileService.imageArticleId(id, Integer.parseInt(image));
+        }
 		
 		return Util.jsReplace(String.format("%d번 게시글을 작성했습니다.", id), "/user/article/detail?id="+id);
 	}
@@ -139,6 +152,12 @@ public class ArticleController {
 	public String doDelete(int id, int boardId) {
 		
 		articleService.articleDelete(id);
+		List<String> imagePath = fileService.getImagePath(id);
+		fileService.imageDBDelete(id);
+		
+		for(String path : imagePath) {
+			fileService.imageDelete(path);
+		}
 		
 		return Util.jsReplace(String.format("%d번 게시글을 삭제했습니다.", id), String.format("/user/article/list?boardId=%d", boardId));
 	}

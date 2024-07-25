@@ -222,6 +222,7 @@ CREATE TABLE `file`(
     , originName VARCHAR(50) NOT NULL
     , savedName VARCHAR(100) NOT NULL
     , savedPath VARCHAR(100) NOT NULL
+    , articleId int(10)
 );
 
 CREATE TABLE article (

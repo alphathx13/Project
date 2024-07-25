@@ -13,4 +13,5 @@ public class FileVo {
 	private String originName;
 	private String savedName;
 	private String savedPath;
+	private int articleId;
 }

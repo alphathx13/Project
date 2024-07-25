@@ -36,9 +36,11 @@ public class ChatController {
 	// "/pub/chat/message"로 들어오는 message 처리
 	@MessageMapping("/chat/message")
 	public void message(ChatMessage message) {
-		// message의 시간설정
+		
+		// message의 시간, 닉네임 설정
 		message.setTimestamp(Util.Now());
-
+		message.setNickname(memberService.getNicknameById(Integer.valueOf(message.getSender())));
+		
 		// 채팅방 입장/퇴장시
 		if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
 			chatRoomRepository.enterChatRoom(message.getRoomId());

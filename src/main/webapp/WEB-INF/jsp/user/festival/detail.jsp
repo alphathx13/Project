@@ -702,7 +702,7 @@
 			// 채팅받기
 			function recvMessage(recv) {
 				if (recv.type != 'TALK') {
-					var li = $('<li>').addClass('list-group-item font-bold').text(recv.sender + recv.message);
+					var li = $('<li>').addClass('list-group-item font-bold').text(recv.nickname + recv.message);
 				    
 					if (recv.type == 'ENTER') {
 				    	li.addClass('text-blue-500');
@@ -713,37 +713,37 @@
 					return;
 				}
 				
-			if (recv.sender != '${rq.loginMemberNumber}') {
-				var li = $('<li>').addClass('list-group-item').html(`
-						<div class="chat chat-start">
-							<div class="chat-image avatar">
-						    <div class="w-10 rounded-full">
-						    	<img src="/user/member/memberImg/\${recv.sender }" />
-						    </div>
-						  </div>
-						  <div class="chat-header">
-						    \${recv.nickname}
-						    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
-						  </div>
-						  <div class="chat-bubble">\${recv.message}</div>
-						</div>
-						`);
-			} else {
-				var li = $('<li>').addClass('list-group-item').html(`
-						<div class="chat chat-end">
-						  <div class="chat-image avatar">
-						    <div class="w-10 rounded-full">
-						  	  <img src="/user/member/memberImg/\${recv.sender }" />
-						    </div>
-						  </div>
-						  <div class="chat-header">
-						  \${recv.nickname}
-						    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
-						  </div>
-						  <div class="chat-bubble">\${recv.message}</div>
-						</div>
-						`);
-			}
+				if (recv.sender != '${rq.loginMemberNumber}') {
+					var li = $('<li>').addClass('list-group-item').html(`
+							<div class="chat chat-start">
+								<div class="chat-image avatar">
+							    <div class="w-10 rounded-full">
+							    	<img src="/user/member/memberImg/\${recv.sender }" />
+							    </div>
+							  </div>
+							  <div class="chat-header">
+							    \${recv.nickname}
+							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
+							  </div>
+							  <div class="chat-bubble">\${recv.message}</div>
+							</div>
+							`);
+				} else {
+					var li = $('<li>').addClass('list-group-item').html(`
+							<div class="chat chat-end">
+							  <div class="chat-image avatar">
+							    <div class="w-10 rounded-full">
+							  	  <img src="/user/member/memberImg/\${recv.sender }" />
+							    </div>
+							  </div>
+							  <div class="chat-header">
+							  \${recv.nickname}
+							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
+							  </div>
+							  <div class="chat-bubble">\${recv.message}</div>
+							</div>
+							`);
+				}
 				
 			    if (recv.type == 'ENTER') {
 			    	li.addClass('text-blue-500');
@@ -773,9 +773,10 @@
 						 }
 					});	
 
-					// 이전 채팅내역
+					// 이전 채팅내역 불러오기
 					pastMessage();
 					
+					// 채팅방 sub
 					ws.subscribe("/sub/chat/room/" + roomId, function(message) {
 						var recv = JSON.parse(message.body);
 						recvMessage(recv);
@@ -803,7 +804,6 @@
 	                	roomId : roomId
 	                },
 	                success: function(response) {
-	                	console.log(response);
 	                	$.each(response, function(index, recv) {
 	                		if (recv.sender != '${rq.loginMemberNumber}') {
 	        					var li = $('<li>').addClass('list-group-item').html(`

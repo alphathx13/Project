@@ -3,11 +3,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ include file="../../common/head.jsp"%>
-<%@ include file="../../common/toastUiLib.jsp"%>
+<%@ include file="../../common/toastUiEditor.jsp"%>
 
 	<section class="mt-8 text-lg">
 		<div class="container mx-auto px-3">
-			<form action="doWrite" method="GET" onsubmit="check(this); return false;">
+			<form action="doWrite" method="GET" onsubmit="imgNumber(); check(this); return false;">
+				<input type="hidden" name="images">
 				<input type="hidden" value="${boardId }" name="boardId">
 				<input type="hidden" value="" name="body">
 				<input type="text" maxlength=100 class="input input-bordered w-full mb-4" name="title" placeholder="글 제목"></input>
@@ -21,5 +22,12 @@
 			</form>
 		</div>
 	</section>
-
+	
+	<script>
+		function imgNumber() {
+			var imagesString = JSON.stringify(imageArray); 
+			document.querySelector('input[name="images"]').value = imagesString;
+		}
+	</script>
+	
 <%@ include file="../../common/foot.jsp"%>

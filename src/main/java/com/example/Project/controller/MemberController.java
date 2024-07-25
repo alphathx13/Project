@@ -48,7 +48,7 @@ public class MemberController {
 	public String join() {
 		return "/user/member/join"; 
 	}
-	
+
 	@PostMapping("/user/member/checkJoin")
 	@ResponseBody
 	public String checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email, @RequestParam(defaultValue = "") MultipartFile file) {

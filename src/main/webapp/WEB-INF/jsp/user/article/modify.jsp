@@ -2,14 +2,13 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<c:set var="pageTitle" value="게시글 수정" />
-
 <%@ include file="../../common/head.jsp"%>
-<%@ include file="../../common/toastUiLib.jsp"%>
+<%@ include file="../../common/toastUiEditor.jsp"%>
 
 	<section class="mt-8 text-lg">
 		<div class="container mx-auto px-3">
 			<form action="doModify" method="POST" onsubmit="check(this); return false;">
+				<input type="hidden" name="images">
 				<input type="hidden" value="${article.id }" name="id">
 				<input type="hidden" value="" name="body">
 				<input type="text" maxlength=100 class="input input-bordered w-full mb-4" name="title" value="${article.title }"></input>
