@@ -14,7 +14,7 @@
 				<input type="text" maxlength=100 class="input input-bordered w-full mb-4" name="title" placeholder="글 제목"></input>
 				<div class="toast-ui-editor"></div>
 				<div class="tooltip" data-tip="뒤로 가기">
-					<button class="btn btn-outline btn-info" onclick="history.back();" type="button">
+					<button class="btn btn-outline btn-info" onclick="history.back();">
 					<i class="fa-solid fa-arrow-left-long"></i>
 					</button>
 				</div>

@@ -1,12 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    
-<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-<link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css" />
-<link rel="stylesheet" href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css" />
-<script src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.js"></script>
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-<script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
+	pageEncoding="UTF-8"%>
+
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css" />
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css" />
+<script
+	src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.js"></script>
+<script
+	src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script
+	src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
 
 <script>
 	
@@ -18,7 +24,6 @@
 	const { colorSyntax } = Editor.plugin;
 	
 	$(function(){
-		
 	  	$('.toast-ui-editor').each(function(index, item) {
 			const editorItem = $(item);
 			const initialValueEl = editorItem.find(' > script');
@@ -27,12 +32,13 @@
 		    const editor = new toastui.Editor({
 				el: item,
 				height: '600px',
-				initialEditType: 'WYSIWYG',
+				initialEditType: 'wysiwyg',
 				initialValue: initialValue,
 				previewStyle: 'vertical',
+				hideModeSwitch: true,
 				plugins: [colorSyntax],
 				hooks: {
-		            addImageBlobHook(blob, callback) {  // 이미지 업로드 로직변경
+		            addImageBlobHook(blob, callback) { 
 
 		            	const formData = new FormData();
 		                formData.append('file', blob);
@@ -60,12 +66,10 @@
 		            }
 		        }
 		    });
-		
-		    editorItem.data('data-toast-editor', editor);
 		    
+		    editorItem.data('data-toast-editor', editor);
+
 	 	});
-		
-		// 모드 안보여주기
 	  	
 	});
 	

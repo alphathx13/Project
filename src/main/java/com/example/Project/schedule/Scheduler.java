@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.Project.chat.ChatRoomRepository;
 import com.example.Project.service.FestivalService;
+import com.example.Project.service.FileService;
 import com.example.Project.service.MemberService;
 import com.example.Project.service.WeatherService;
 import com.example.Project.util.Util;
@@ -34,13 +35,15 @@ public class Scheduler {
 	private FestivalService festivalService;
 	private WeatherService weatherService;
 	private MemberService memberService;
+	private FileService fileService;
 	private String date;
 	private final ChatRoomRepository chatRoomRepository;
 
-	public Scheduler(FestivalService festivalService, WeatherService weatherService, MemberService memberService, ChatRoomRepository chatRoomRepository) {
+	public Scheduler(FestivalService festivalService, WeatherService weatherService, MemberService memberService, FileService fileService, ChatRoomRepository chatRoomRepository) {
 		this.festivalService = festivalService;
 		this.weatherService = weatherService;
 		this.memberService = memberService;
+		this.fileService = fileService;
 		this.chatRoomRepository = chatRoomRepository;
 	}
 	
@@ -232,6 +235,18 @@ public class Scheduler {
 	
     @Scheduled(cron = "0 0 6 * * *")
 	public void memberDelete() {
+    	List<Integer> memberImgList = memberService.getDeleteMemberImg();
+    	
+    	String[] fileListArr = new String[memberImgList.size()];
+
+    	int i = 0;
+        for (int fileId : memberImgList) {
+        	fileListArr[i] = fileService.getFilePathById(fileId);
+        	i++;
+        }
+        
+        fileService.fileAndFileDBDelete(fileListArr);
+    	
     	memberService.memberDelete();
     }
     

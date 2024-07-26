@@ -21,9 +21,10 @@ public interface ArticleDao {
 					, title = #{title}
 					, body = #{body}
 					, memberNumber = #{memberNumber}
-					, boardId = #{boardId}; 
+					, boardId = #{boardId}
+					, fileList = #{fileList}
 			""")
-	public void articleWrite(String title, String body, int boardId, int memberNumber);
+	public void articleWrite(String title, String body, int boardId, int memberNumber, String fileList);
 	
 	@Select("""
 			<script>
@@ -74,13 +75,16 @@ public interface ArticleDao {
 	public Article getArticleById(int id);
 	
 	@Update("""
+			<script>
 			update article 
 				set updateDate = NOW()
 					, title = #{title}
 					, body = #{body}
+					, fileList = #{fileList}
 					where id = #{id}
+			</script>
 			""")
-	public void articleModify(int id, String title, String body);
+	public void articleModify(int id, String title, String body, String fileList);
 	
 	@Delete("""
 			delete from article 
@@ -119,5 +123,12 @@ public interface ArticleDao {
 				where id = #{id};
 			""")
 	public void viewCountPlus(int id);
+
+	@Select("""
+			Select FileList
+				FROM article
+				WHERE id = #{id}
+			""")
+	public String getFileListById(int id);
 	
 }

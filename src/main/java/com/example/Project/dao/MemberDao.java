@@ -1,5 +1,7 @@
 package com.example.Project.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -161,5 +163,12 @@ public interface MemberDao {
 			    WHERE id = #{id}
 			""")
 	public String getNicknameById(int id);
+
+	@Select("""
+			SELECT memberImg
+				FROM `member`
+				WHERE delDate < DATE_SUB(NOW(), INTERVAL 1 WEEK);
+			""")
+	public List<Integer> getDeleteMemberImg();
 
 }

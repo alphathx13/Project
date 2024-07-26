@@ -19,4 +19,5 @@ public class Member {
 	private String cellphone;
 	private String email;
 	private int delStatus;
+	private int memberImg;
 }

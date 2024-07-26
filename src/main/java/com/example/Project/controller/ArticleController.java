@@ -1,5 +1,6 @@
 package com.example.Project.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -14,12 +15,9 @@ import com.example.Project.service.ArticleService;
 import com.example.Project.service.FileService;
 import com.example.Project.util.Util;
 import com.example.Project.vo.Article;
-import com.example.Project.vo.Reply;
-import com.example.Project.vo.ResultData;
 import com.example.Project.vo.Rq;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,18 +44,12 @@ public class ArticleController {
 	
 	@GetMapping("/user/article/doWrite")
 	@ResponseBody
-	public String doWrite(int boardId, String title, String body, String images) throws JsonMappingException, JsonProcessingException {
+	public String doWrite(int boardId, String title, String body, String images) {
 		
-		articleService.articleWrite(title, body, boardId, rq.getLoginMemberNumber());
+		String fileList = images.substring(1, images.length()-1);
+		articleService.articleWrite(title, body, boardId, rq.getLoginMemberNumber(), fileList);
 
 		int id = articleService.getLastInsertId();
-		
-		ObjectMapper objectMapper = new ObjectMapper();
-        String[] imageArray = objectMapper.readValue(images, String[].class);
-        
-        for (String image : imageArray) {
-        	fileService.imageArticleId(id, Integer.parseInt(image));
-        }
 		
 		return Util.jsReplace(String.format("%d번 게시글을 작성했습니다.", id), "/user/article/detail?id="+id);
 	}
@@ -71,7 +63,6 @@ public class ArticleController {
 		int articleCount = articleService.articleCount(boardId, searchType, searchText);
 		
 		int tPage = articleCount % itemsInPage == 0 ? articleCount / itemsInPage : articleCount / itemsInPage + 1;
-//		tPage = (int) Math.ceil((double) tArticle / 10);	
 		
 		List<Article> articles = articleService.articleList(from, itemsInPage, boardId, searchType, searchText);
 		
@@ -138,11 +129,17 @@ public class ArticleController {
 		return "user/article/modify";
 	}
 	
-	@PostMapping("/user/article/doModify")
+	@GetMapping("/user/article/doModify")
 	@ResponseBody
-	public String modify(int id, String title, String body) {
+	public String modify(int id, String title, String body, String images) {
 		
-		articleService.articleModify(id, title, body);
+		String fileList = images.substring(1, images.length()-1);
+		
+		if (!articleService.getFileListById(id).equals("")) {
+			fileList = articleService.getFileListById(id) + "," + fileList;
+		}
+		
+		articleService.articleModify(id, title, body, fileList);
 		
 		return Util.jsReplace(String.format("%d번 게시글을 수정하였습니다.", id), "/user/article/detail?id="+id);
 	}
@@ -151,13 +148,14 @@ public class ArticleController {
 	@ResponseBody
 	public String doDelete(int id, int boardId) {
 		
+		String fileList = articleService.getFileListById(id);
+
+		// 불러온 FileList를 배열로 변환해서 전달
+        String[] fileListArr = fileList.split(",");
+        fileService.fileAndFileDBDelete(fileListArr);
+        
+        // 게시글 삭제
 		articleService.articleDelete(id);
-		List<String> imagePath = fileService.getImagePath(id);
-		fileService.imageDBDelete(id);
-		
-		for(String path : imagePath) {
-			fileService.imageDelete(path);
-		}
 		
 		return Util.jsReplace(String.format("%d번 게시글을 삭제했습니다.", id), String.format("/user/article/list?boardId=%d", boardId));
 	}

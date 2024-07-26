@@ -2,6 +2,7 @@ package com.example.Project.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class FileService {
 		this.fileDao = fileDao;
 	}
 	
-	public int saveFile(MultipartFile file, @RequestParam(defaultValue = "") String type ) throws IOException {
+	public int saveFile(MultipartFile file, @RequestParam(defaultValue = "") String type) throws IOException {
 		String orgName = file.getOriginalFilename();
 		String uuid = UUID.randomUUID().toString();
 		String extension = orgName.substring(orgName.lastIndexOf("."));
@@ -61,13 +62,33 @@ public class FileService {
 		return fileDao.getImagePath(id);
 	}
 
-	public void imageDBDelete(int id) {
-		fileDao.imageDBDelete(id);
+	public String getFilePathById(int id) {
+		return fileDao.getFilePathById(id);
 	}
 
-	public void imageDelete(String path) {
-		File file = new File(path);
-        file.delete();
-	}
+	public void fileAndFileDBDelete(String[] fileListArr) {
 
+		// int[] 배열로 변환
+		int[] numbers = Arrays.stream(fileListArr).mapToInt(Integer::parseInt).toArray();
+
+        // 실제 DB에 저장되어있는 파일 저장위치 가져오기
+        String[] filePathArr = new String[numbers.length];
+        int i = 0;
+        for (int fileId : numbers) {
+        	filePathArr[i] = getFilePathById(fileId);
+        	i++;
+        }
+        
+        // DB에서 파일 정보 삭제
+        for (int fileId : numbers) {
+        	fileDao.fileDBDelete(fileId);
+        }
+        
+        // 실제 파일서버에서 파일 삭제
+        for (String filePath : filePathArr) {
+        	File file = new File(filePath);
+            file.delete();
+        }
+	}
+	
 }

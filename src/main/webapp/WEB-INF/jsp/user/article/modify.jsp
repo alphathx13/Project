@@ -7,21 +7,27 @@
 
 	<section class="mt-8 text-lg">
 		<div class="container mx-auto px-3">
-			<form action="doModify" method="POST" onsubmit="check(this); return false;">
+			<form action="doModify" method="GET" onsubmit="imgNumber(); check(this); return false;">
 				<input type="hidden" name="images">
 				<input type="hidden" value="${article.id }" name="id">
 				<input type="hidden" value="" name="body">
 				<input type="text" maxlength=100 class="input input-bordered w-full mb-4" name="title" value="${article.title }"></input>
 				<div class="toast-ui-editor"><script type="text/x-template"> ${article.body } </script></div>
 				<div class="tooltip" data-tip="뒤로 가기">
-					<button class="btn btn-outline btn-info" type="button" onclick="history.back();">
+					<button class="btn btn-outline btn-info" onclick="history.back();" type="button" >
 					<i class="fa-solid fa-arrow-left-long"></i>
 					</button>
 				</div>
-				
 				<button class="mt-5 btn btn-outline btn-info">글 수정하기</button>
 			</form>
 		</div>
 	</section>
+	
+	<script>
+		function imgNumber() {
+			var imagesString = JSON.stringify(imageArray); 
+			document.querySelector('input[name="images"]').value = imagesString;
+		}
+	</script>
 	
 <%@ include file="../../common/foot.jsp"%>

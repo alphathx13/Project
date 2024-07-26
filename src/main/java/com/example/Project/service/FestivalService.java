@@ -1,5 +1,6 @@
 package com.example.Project.service;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -43,6 +44,11 @@ public class FestivalService {
 
 	public int festivalListCount(int type) {
 		return festivalDao.festivalListCount(type);
+	}
+	
+	public void imageDelete(String path) {
+		File file = new File(path);
+        file.delete();
 	}
 
 }

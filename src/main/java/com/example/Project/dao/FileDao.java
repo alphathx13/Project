@@ -51,10 +51,23 @@ public interface FileDao {
 			""")
 	List<String> getImagePath(int id);
 
+	@Select("""
+			SELECT savedPath
+				FROM `file`
+				WHERE id = #{id}
+			""")
+	String getFilePathById(int id);
+
 	@Delete("""
 			DELETE FROM `file`
-				WHERE articleId = #{id}
+				WHERE id = #{id}
 			""")
-	void imageDBDelete(int id);
+	void fileDBDelete(int id);
+
+	@Delete("""
+			DELETE FROM `file`
+				WHERE id = #{memberImg}
+			""")
+	void memberImgDelete(int memberImg);
 
 }

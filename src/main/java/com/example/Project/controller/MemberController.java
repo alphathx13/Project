@@ -38,7 +38,7 @@ public class MemberController {
 	@Value("${file.dir}")
 	private String fileDir;
 
-	public MemberController(MemberService memberService, Rq rq, FileService fileService) {
+	public MemberController(MemberService memberService, FileService fileService, Rq rq) {
 		this.memberService = memberService;
 		this.fileService = fileService;
 		this.rq = rq;
@@ -70,6 +70,7 @@ public class MemberController {
 		} catch (Exception e) {
 			System.out.println("에러코드 : " + e);
 			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
+			fileService.fileAndFileDBDelete(new String[memberService.getMemberByCellphone(cellphone).getMemberImg()]);
 			return Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
 		}
 		
