@@ -25,11 +25,18 @@ public class FileController {
 		this.fileService = fileService;
 	}
 	
-	@PostMapping("/user/file/upload")
+	@PostMapping("/user/file/imageUpload")
 	@ResponseBody
 	public FileVo uploadFile(MultipartFile file) throws IOException {
+		
 		int id = fileService.saveFile(file, "image");
 		return fileService.getFileById(id);
+	}
+	
+	@PostMapping("/user/file/fileUpload")
+	@ResponseBody
+	public FileVo fileUpload(MultipartFile file) throws IOException {
+		return null;
 	}
 	
 	// 서버에서 이미지 불러오기

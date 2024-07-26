@@ -8,6 +8,7 @@
 	<section class="mt-8 text-lg">
 		<div class="container mx-auto px-3">
 			<form action="doWrite" method="GET" onsubmit="imgNumber(); check(this); return false;">
+				<input type="file" id="fileInput" style="display: none;" multiple>
 				<input type="hidden" name="images">
 				<input type="hidden" value="${boardId }" name="boardId">
 				<input type="hidden" value="" name="body">
@@ -18,6 +19,7 @@
 					<i class="fa-solid fa-arrow-left-long"></i>
 					</button>
 				</div>
+				<div id="fileNames" class="file-names"></div>
 				<button class="mt-5 btn btn-outline btn-info">글 작성하기</button>
 			</form>
 		</div>
