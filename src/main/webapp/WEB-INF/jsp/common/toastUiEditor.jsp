@@ -80,9 +80,8 @@
 	});
 	
 	$(document).ready(function() {
-		// 파일 선택시
+		// 업로드할 파일 선택시
 		$('#fileInput').on('change', function(event) {
-			console.log('test');
 		    const files = event.target.files;
 		    let fileNames = [];
 		    
@@ -92,21 +91,21 @@
 		        fileNames.push(files[i].name);
 		    }
 		
-		    $('#fileNames').text('Uploaded Files: ' + fileNames.join(', '));
-		    
-		    console.log(files);
-		    
 		    handleFileUpload(files);
+		    
+		    $('#fileNames').text('Uploaded Files: ' + fileNames.join(', '));
 		});
 		
+		// 실제 파일 업로드
 		function handleFileUpload(files) {
+			
 	        const formData = new FormData();
 	        for (let i = 0; i < files.length; i++) {
 	            formData.append('files[]', files[i]);
 	        }
 	        
 	        $.ajax({
-	            url: '/user/file/fileUpload', // Replace with your server endpoint
+	            url: '/user/file/fileUpload',
 	            type: 'POST',
 	            data: formData,
 	            processData: false,
@@ -115,7 +114,7 @@
 	                console.log('Upload successful:', response);
 	            },
 	            error: function(error) {
-	                console.error('Upload error:', error);
+	                console.error('파일 업로드에 문제가 발생했습니다.', error);
 	            }
 	        });
 	    }

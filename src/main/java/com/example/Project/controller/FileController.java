@@ -35,7 +35,10 @@ public class FileController {
 	
 	@PostMapping("/user/file/fileUpload")
 	@ResponseBody
-	public FileVo fileUpload(MultipartFile file) throws IOException {
+	public FileVo fileUpload(@RequestParam("files[]") MultipartFile[] files) throws IOException {
+		for (MultipartFile file : files) {
+	        System.out.println(file.getOriginalFilename());
+	    }
 		return null;
 	}
 	
