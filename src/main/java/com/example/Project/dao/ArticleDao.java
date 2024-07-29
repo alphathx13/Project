@@ -23,8 +23,9 @@ public interface ArticleDao {
 					, memberNumber = #{memberNumber}
 					, boardId = #{boardId}
 					, fileList = #{fileList}
+					, imageList = #{imageList}
 			""")
-	public void articleWrite(String title, String body, int boardId, int memberNumber, String fileList);
+	public void articleWrite(String title, String body, int boardId, int memberNumber, String fileList, String imageList);
 	
 	@Select("""
 			<script>
@@ -81,10 +82,11 @@ public interface ArticleDao {
 					, title = #{title}
 					, body = #{body}
 					, fileList = #{fileList}
+					, imgList = #{imgList}
 					where id = #{id}
 			</script>
 			""")
-	public void articleModify(int id, String title, String body, String fileList);
+	public void articleModify(int id, String title, String body, String fileList, String imgList);
 	
 	@Delete("""
 			delete from article 

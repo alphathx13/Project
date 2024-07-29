@@ -7,8 +7,11 @@
 
 	<section class="mt-8 text-lg">
 		<div class="container mx-auto px-3">
-			<form action="doModify" method="GET" onsubmit="imgNumber(); check(this); return false;">
-				<input type="hidden" name="images">
+			<form action="doModify" method="GET" onsubmit="imgNumber(); fileNumber(); check(this); return false;">
+				<input type="file" id="fileInput" style="display: none;" multiple>
+				<input type="file" id="imageInput" style="display: none;" multiple>
+				<input type="hidden" name="fileUpload">
+				<input type="hidden" name="imgUpload">
 				<input type="hidden" value="${article.id }" name="id">
 				<input type="hidden" value="" name="body">
 				<input type="text" maxlength=100 class="input input-bordered w-full mb-4" name="title" value="${article.title }"></input>
@@ -18,16 +21,44 @@
 					<i class="fa-solid fa-arrow-left-long"></i>
 					</button>
 				</div>
+				<div id="fileNames" class="file-names"></div>
 				<button class="mt-5 btn btn-outline btn-info">글 수정하기</button>
 			</form>
 		</div>
 	</section>
 	
 	<script>
-		function imgNumber() {
-			var imagesString = JSON.stringify(imageArray); 
-			document.querySelector('input[name="images"]').value = imagesString;
+		$(document).ready(function(){
+		    
+			$.ajax({
+				url : '/user/file/getFileById',
+				type : 'POST',
+				data : {
+					file : '${article.fileList}'
+				},
+				dataType : 'json',
+				success : function(result) {
+				    $('#fileNames').append('첨부파일 <br/>');
+				    
+					$.each(result, function(index, item) {
+						$('#fileNames').append(`<div> <a href="\${item.savedPath}"> \${item.originName} </a> <a class="text-red-500" href="\${item.savedPath}"> X </a> </div>`);
+					})
+				},
+				error : function(xhr, status, error) {
+					console.log(error);
+				}
+			})
+		})
+	
+		function fileNumber() {
+			var fileNumber = JSON.stringify(fileArray); 
+			document.querySelector('input[name="fileUpload"]').value = fileNumber;
 		}
+		
+		function imgNumber() {
+			var imgNumber = JSON.stringify(imgArray); 
+			document.querySelector('input[name="imgUpload"]').value = imgNumber;
+		}	
 	</script>
 	
 <%@ include file="../../common/foot.jsp"%>

@@ -236,16 +236,10 @@ public class Scheduler {
     @Scheduled(cron = "0 0 6 * * *")
 	public void memberDelete() {
     	List<Integer> memberImgList = memberService.getDeleteMemberImg();
-    	
-    	String[] fileListArr = new String[memberImgList.size()];
 
-    	int i = 0;
-        for (int fileId : memberImgList) {
-        	fileListArr[i] = fileService.getFilePathById(fileId);
-        	i++;
+        for (int id : memberImgList) {
+        	fileService.memberImgDelete(id);
         }
-        
-        fileService.fileAndFileDBDelete(fileListArr);
     	
     	memberService.memberDelete();
     }

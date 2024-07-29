@@ -28,67 +28,102 @@ public class FileService {
 		this.fileDao = fileDao;
 	}
 	
+	// 실제 파일 업로드
 	public int saveFile(MultipartFile file, @RequestParam(defaultValue = "") String type) throws IOException {
+
 		String orgName = file.getOriginalFilename();
 		String uuid = UUID.randomUUID().toString();
 		String extension = orgName.substring(orgName.lastIndexOf("."));
 		String savedName = uuid + extension;
 		String savedPath;
+		String table;
 		
 		if (type.equals("member")) {
 			savedPath = fileDir + "\\memberImg\\" + savedName;
-		} else if (type.equals("images")) {
-			savedPath = fileDir + "\\images\\" + savedName;
+			table = "memberImg";
+		} else if (type.equals("image")) {
+			savedPath = fileDir + "\\imgUpload\\" + savedName;
+			table = "imgUpload";
 		} else {
-			savedPath = fileDir + "\\" + savedName;
+			savedPath = fileDir + "\\fileUpload\\" + savedName;
+			table = "fileUpload";
 		}
 		
-		fileDao.insertFile(orgName, savedName, savedPath);
+		if (table.equals("memberImg")) {
+			fileDao.memberImgUpload(orgName, savedName, savedPath);
+		} else if (table.equals("imgUpload")) {
+			fileDao.imgUpload(orgName, savedName, savedPath);
+		} else {
+			fileDao.fileUpload(orgName, savedName, savedPath);
+		}
 		
 		file.transferTo(new File(savedPath));
 		
-		return fileDao.lastFileId();
+		if (table.equals("memberImg")) {
+			return fileDao.memberImgLast();
+		} else if (table.equals("imgUpload")) {
+			return fileDao.imgLast();
+		} 
+			
+		return fileDao.fileLast();
 	}
 	
-	public FileVo getFileById(int id) {
-		return fileDao.getFileById(id);
+	// 번호로 이미지 파일 가져오기
+	public FileVo getImageFileById(int id) {
+		return fileDao.getImageFileById(id);
 	}
 
-	public void imageArticleId(int articleId, int image) {
-		fileDao.imageArticleId(articleId, image);
-	}
-
-	public List<String> getImagePath(int id) {
-		return fileDao.getImagePath(id);
-	}
-
+	// 번호로 첨부파일 가져오기
 	public String getFilePathById(int id) {
 		return fileDao.getFilePathById(id);
 	}
+	
+	// 번호로 멤버이미지 삭제
+	public void memberImgDelete(int id) {
+		fileDao.memberImgDelete(id);
+	}
 
-	public void fileAndFileDBDelete(String[] fileListArr) {
-
+	// DB와 서버에서 파일 삭제
+	public void fileAndFileDBDelete(String[] list, String type) {
+		
 		// int[] 배열로 변환
-		int[] numbers = Arrays.stream(fileListArr).mapToInt(Integer::parseInt).toArray();
-
-        // 실제 DB에 저장되어있는 파일 저장위치 가져오기
-        String[] filePathArr = new String[numbers.length];
+		int[] numbers = Arrays.stream(list).mapToInt(Integer::parseInt).toArray();
+		
+		System.out.println("type : " + type);
+		for (int k : numbers) {
+			System.out.println(k);
+		}
+		
+		// 실제 DB에 저장되어있는 파일 저장위치 가져오기
+        String[] pathArr = new String[numbers.length];
         int i = 0;
-        for (int fileId : numbers) {
-        	filePathArr[i] = getFilePathById(fileId);
+        for (int id : numbers) {
+        	if (type.equals("image")) {
+        		pathArr[i] = fileDao.getImagePathById(id);
+        	} else {
+        		pathArr[i] = fileDao.getFilePathById(id);
+        	}
         	i++;
         }
         
         // DB에서 파일 정보 삭제
-        for (int fileId : numbers) {
-        	fileDao.fileDBDelete(fileId);
+        for (int id : numbers) {
+        	if (type.equals("image")) {
+        		fileDao.imageDBDelete(id);
+        	} else {
+        		fileDao.fileDBDelete(id);
+        	}
         }
         
         // 실제 파일서버에서 파일 삭제
-        for (String filePath : filePathArr) {
+        for (String filePath : pathArr) {
         	File file = new File(filePath);
             file.delete();
         }
+	}
+
+	public FileVo getFileById(int id) {
+		return fileDao.getFileById(id);
 	}
 	
 }

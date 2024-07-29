@@ -7,9 +7,11 @@
 
 	<section class="mt-8 text-lg">
 		<div class="container mx-auto px-3">
-			<form action="doWrite" method="GET" onsubmit="imgNumber(); check(this); return false;">
+			<form action="doWrite" method="GET" onsubmit="imgNumber(); fileNumber(); check(this); return false;">
 				<input type="file" id="fileInput" style="display: none;" multiple>
-				<input type="hidden" name="images">
+				<input type="file" id="imageInput" style="display: none;" multiple>
+				<input type="hidden" name="fileUpload">
+				<input type="hidden" name="imgUpload">
 				<input type="hidden" value="${boardId }" name="boardId">
 				<input type="hidden" value="" name="body">
 				<input type="text" maxlength=100 class="input input-bordered w-full mb-4" name="title" placeholder="글 제목"></input>
@@ -26,10 +28,15 @@
 	</section>
 	
 	<script>
-		function imgNumber() {
-			var imagesString = JSON.stringify(imageArray); 
-			document.querySelector('input[name="images"]').value = imagesString;
+		function fileNumber() {
+			var fileNumber = JSON.stringify(fileArray); 
+			document.querySelector('input[name="fileUpload"]').value = fileNumber;
 		}
+		
+		function imgNumber() {
+			var imgNumber = JSON.stringify(imgArray); 
+			document.querySelector('input[name="imgUpload"]').value = imgNumber;
+		}	
 	</script>
 	
 <%@ include file="../../common/foot.jsp"%>

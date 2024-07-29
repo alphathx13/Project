@@ -1,23 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
-<link rel="stylesheet"
-	href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-<link rel="stylesheet"
-	href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css" />
-<link rel="stylesheet"
-	href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css" />
-<script
-	src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.js"></script>
-<script
-	src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-<script
-	src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css" />
+<link rel="stylesheet" href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css" />
+<script src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
 
 <script>
-	
-	// image 저장할 변수
-	let imageArray = [];
+	// image, file 목록 저장
+	let imgArray = [];
+	let fileArray = [];
 	
 	// toastui editor 설정
 	const { Editor } = toastui;
@@ -54,7 +48,7 @@
 		                    cache: false,
 		                    timeout: 600000,
 		                    success: function(data) {
-		                    	imageArray.push(data.id);
+		                    	imgArray.push(data.id);
 		                    	var imgPath = '/user/file/images/' + data.id;
 		                        callback(imgPath, '${data.originName}');
 		                    },
@@ -67,14 +61,20 @@
 		        }
 		    });
 		    
-		    // 파일 업로드 버튼 만들기
-		    $('.link.toastui-editor-toolbar-icons').after(`<button class="upload-btn" type="button"><i class="tui-icon-file">Upload</i></button>`);
-            $('.upload-btn').on('click', function() {
-            	$('#fileInput').click();
+            $('.toastui-editor-context-menu').before(`<div><button class="imageUpload btn btn-info" type="button">이미지 업로드</button> <button class="fileUpload btn btn-info" type="button">파일 업로드</button></div>`);
+
+            $('.imageUpload').on('click', function() {
+            	$('#imageInput').click();
             });
             
-		    editorItem.data('data-toast-editor', editor);
+            $('.fileUpload').on('click', function() {
+            	$('#fileInput').click();
+            });
 
+		    editorItem.data('data-toast-editor', editor);
+		    
+		    $('.image.toastui-editor-toolbar-icons').remove();
+		    
 	 	});
 	  	
 	});
@@ -93,10 +93,49 @@
 		
 		    handleFileUpload(files);
 		    
-		    $('#fileNames').text('Uploaded Files: ' + fileNames.join(', '));
+		    $('#fileNames').append('첨부파일 <br/>');
+		    
+		    for (let i = 0; i < fileNames.length; i++) {
+		    	$('#fileNames').append(fileNames[i] + '<br>');
+		    }
+		    
 		});
 		
-		// 실제 파일 업로드
+		// 업로드 이미지 선택
+		$('#imageInput').on('change', function(event) {
+			const files = event.target.files;
+		    const formData = new FormData();
+			
+			for (let i = 0; i < files.length; i++) {
+		        var file = files[i];
+		        formData.append('file', file);
+			}
+
+	        $.ajax({
+	            url: '/user/file/imageUpload',
+	            type: 'POST',
+	            enctype: 'multipart/form-data',
+	            data: formData,
+	            dataType: 'json',
+	            processData: false,
+	            contentType: false,
+	            cache: false,
+	            timeout: 600000,
+	            success: function(result) {
+	            	$.each(result, function(index, item) {
+		                $('.toastui-editor-contents').append(`<img src="/user/file/images/\${item.id}" contenteditable="false"></p>`);
+		                imgArray.push(item.id);
+	            	})
+	            	
+	            },
+	            error: function(e) {
+	                console.error('이미지 업로드에 실패했습니다.', e);
+	            }
+	        });
+		    
+		});
+		
+		// 파일 업로드
 		function handleFileUpload(files) {
 			
 	        const formData = new FormData();
@@ -111,7 +150,7 @@
 	            processData: false,
 	            contentType: false,
 	            success: function(response) {
-	                console.log('Upload successful:', response);
+	            	fileArray = fileArray.concat(response);
 	            },
 	            error: function(error) {
 	                console.error('파일 업로드에 문제가 발생했습니다.', error);
@@ -145,11 +184,3 @@
 	}
 	
 </script>
-
-<!-- 
-
-<button class="upload-btn" title="Upload">
-                    	<i class="tui-icon-file"></i> Upload
-                    </button>
-                    
-                     -->

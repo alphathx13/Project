@@ -14,60 +14,100 @@ import com.example.Project.vo.FileVo;
 public interface FileDao {
 
 	@Insert("""
-			INSERT INTO file
+			INSERT INTO memberImg
 				SET regDate = NOW()
 					, originName = #{orgName}
 					, savedName = #{savedName}
 					, savedPath = #{savedPath}
 			""")
-	void insertFile(String orgName, String savedName, String savedPath);
+	void memberImgUpload(String orgName, String savedName, String savedPath);
+
+	@Insert("""
+			INSERT INTO imgUpload
+				SET regDate = NOW()
+					, originName = #{orgName}
+					, savedName = #{savedName}
+					, savedPath = #{savedPath}
+			""")
+	void imgUpload(String orgName, String savedName, String savedPath);
+
+	@Insert("""
+			INSERT INTO fileUpload
+				SET regDate = NOW()
+					, originName = #{orgName}
+					, savedName = #{savedName}
+					, savedPath = #{savedPath}
+			""")
+	void fileUpload(String orgName, String savedName, String savedPath);
 
 	@Select("""
 			SELECT id
-				FROM `file`
+				FROM memberImg
 				ORDER BY id DESC
 				LIMIT 1
 			""")
-	int lastFileId();
+	int memberImgLast();
+	
+	@Select("""
+			SELECT id
+				FROM imgUpload
+				ORDER BY id DESC
+				LIMIT 1
+			""")
+	int imgLast();
+
+	@Select("""
+			SELECT id
+				FROM fileUpload
+				ORDER BY id DESC
+				LIMIT 1
+			""")
+	int fileLast();
 
 	@Select("""
 			SELECT *
-				FROM `file`
+				FROM imgUpload
 				WHERE id = #{id}
 			""")
-	FileVo getFileById(int id);
-
-	@Update("""
-			UPDATE `file`
-				SET articleId = #{articleId}
-				WHERE id = #{image}
-			""")
-	void imageArticleId(int articleId, int image);
+	FileVo getImageFileById(int id);
 
 	@Select("""
 			SELECT savedPath
-			FROM `file`
-			WHERE articleId = #{id}
+				FROM imgUpload
+				WHERE id = #{id}
 			""")
-	List<String> getImagePath(int id);
+	String getImagePathById(int id);
 
 	@Select("""
 			SELECT savedPath
-				FROM `file`
+				FROM fileUpload
 				WHERE id = #{id}
 			""")
 	String getFilePathById(int id);
 
 	@Delete("""
-			DELETE FROM `file`
+			DELETE FROM imgUpload
+				WHERE id = #{id}
+			""")
+	void imageDBDelete(int id);
+
+	@Delete("""
+			DELETE FROM fileUpload
 				WHERE id = #{id}
 			""")
 	void fileDBDelete(int id);
 
 	@Delete("""
-			DELETE FROM `file`
+			DELETE FROM memberImg
 				WHERE id = #{memberImg}
 			""")
 	void memberImgDelete(int memberImg);
+
+	@Select("""
+			SELECT *
+				FROM fileUpload
+				WHERE id = #{id}
+			""")
+	FileVo getFileById(int id);
 
 }

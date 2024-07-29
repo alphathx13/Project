@@ -25,6 +25,7 @@
 	  			<div class="loginPwCheck text-red-500"></div>
 	  			<button class="change" type="button"><i class="see fa-solid fa-eye"></i><i class="notSee hidden fa-solid fa-eye-slash"></i></button>
 			</label>
+			<br/>
 			<label class="mt-1 input input-bordered flex items-center gap-2">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
 					fill="currentColor" class="h-4 w-4 opacity-70">
@@ -34,18 +35,26 @@
 	  			</svg> 
 	  			<input maxlength="12" type="password" class="pw grow" placeholder="비밀번호 재입력" name="loginPwRe"/> 
 			</label>
+			<br/>
 			별명 : <label class="mt-1 input input-bordered flex items-center gap-2" >
 	  			<input maxlength="12" type="text" id="nickname" class="grow" placeholder="닉네임" name="nickname" value="${member.nickname }"/> 
 	  			<div class="nicknameCheck"></div>
 			</label>
+			<br/>
 			핸드폰 : <label class="mt-1 input input-bordered flex items-center gap-2">
 	  			<input maxlength="13" type="text" id="cellphone" class="grow" placeholder="핸드폰번호" name="cellphone" value="${member.cellphone }"/> 
 	  			<div class="cellphoneCheck"></div>
 			</label>
+			<br/>
 			이메일 : <label class="mt-1 input input-bordered flex items-center gap-2">
 	  			<input maxlength="30" type="text" id="email" class="grow" placeholder="이메일" name="email" value="${member.email }"/> 
 	  			<div class="emailCheck"></div>
 			</label>
+			<br/>
+			<div>회원 이미지 (32x32 사이즈까지 지원)</div>
+			<input id=upload type="file" name="file" value="/resource/images/defaultImg.png"/>
+			<div id='preview' class="flex"> 현재 이미지 : &nbsp;<img class="h-16 w-16 rounded-full" src="/user/member/memberImg/${rq.loginMemberNumber }"> </div>
+			
 		<div class="tooltip" data-tip="뒤로 가기">
 			<button class="btn btn-outline btn-info" type="button" onclick="history.back();">
 			<i class="fa-solid fa-arrow-left-long"></i>
@@ -53,7 +62,6 @@
 		</div>
 			<button class="btn btn-outline btn-info"> 회원 정보 수정</button>
 	</form>
-
 </section>
 
 <script>
@@ -290,6 +298,29 @@
 		})
 		
 	})
+	
+	// 업로드 이미지 미리보기
+	$('#upload').change(function(e) {
+        var get_file = e.target.files;
+        var image = $('<img>');
+        
+        image.attr('width', 32);
+        image.attr('height', 32);
+
+        var reader = new FileReader();
+        reader.onload = (function(img) {
+            return function(e) {
+                img.attr('src', e.target.result);
+            };
+        })(image);
+
+        if (get_file) {
+            reader.readAsDataURL(get_file[0]);
+        }
+
+        $('#preview').empty().html('업로드 이미지 : &nbsp;');
+        $('#preview').append(image);
+    });
 	
 </script>
 

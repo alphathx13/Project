@@ -144,6 +144,28 @@
 			</div>
 		</div>	
 			
+		<!-- 첨부파일 조회 -->
+		<script>
+		$(document).ready(function(){
+			$.ajax({
+				url : '/user/file/getFileById',
+				type : 'POST',
+				data : {
+					file : '${article.fileList}'
+				},
+				dataType : 'json',
+				success : function(result) {
+					$.each(result, function(index, item) {
+						$('.uploadFile').append(`<div> <a href="\${item.savedPath}"> \${item.originName} </a> </div>`);
+					})
+				},
+				error : function(xhr, status, error) {
+					console.log(error);
+				}
+			})
+		})
+		</script>	
+		<div class="uploadFile"> 첨부파일 </div>	
 			
 		<!--  댓글 조회 / 수정 / 삭제 / 조회 -->
 		<script>
@@ -197,7 +219,7 @@
 								let date = item.updateDate.substr(5);
 								content += `
 										<tr>
-											<td class="flex"><img class = "h-8 rounded" src="/user/member/memberImg/\${item.memberId }"/> &nbsp; <div class="mt-1"> \${item.nickname} </div> </td>
+											<td class="flex"><img class = "h-8 w-8 rounded-full" src="/user/member/memberImg/\${item.memberId }"/> &nbsp;&nbsp;&nbsp; <div class="mt-1"> \${item.nickname} </div> </td>
 											<td>
 												<div class="\${item.id}R">\${item.body}	</div>
 												<div class="\${item.id}"></div>
@@ -238,8 +260,6 @@
 						
 						if(!$('div.' + id).hasClass('replyModifyOpen')) {
 							replyFormClose('replyModifyOpen');
-							
-							console.log(body);
 							
 							$('div.' + id + 'R').css('display', 'none');
 							$('div.' + id).html(`

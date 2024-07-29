@@ -70,7 +70,7 @@ public class MemberController {
 		} catch (Exception e) {
 			System.out.println("에러코드 : " + e);
 			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
-			fileService.fileAndFileDBDelete(new String[memberService.getMemberByCellphone(cellphone).getMemberImg()]);
+			fileService.memberImgDelete(memberService.getMemberByCellphone(cellphone).getMemberImg());
 			return Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
 		}
 		
@@ -190,6 +190,7 @@ public class MemberController {
 		}
 		
 		memberService.doWithdrawal(id);
+		fileService.memberImgDelete(member.getMemberImg());
 		return Util.jsReplace("탈퇴신청 정상적으로 이루어졌습니다. 탈퇴후 일주일동안 탈퇴를 취소할 수 있습니다.", "/");
 	}
 	

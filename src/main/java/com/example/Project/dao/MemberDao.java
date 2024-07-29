@@ -151,7 +151,7 @@ public interface MemberDao {
 	@Select("""
 			SELECT f.savedPath 
 			    FROM `member` m
-			    LEFT JOIN `file` f
+			    LEFT JOIN memberImg f
 			    ON m.memberImg = f.id
 			    WHERE m.id = #{id}
 			""")

@@ -85,7 +85,7 @@
 				<c:otherwise>
 					<div class="mt-6 dropdown dropdown-end">
 						<div tabindex="0" role="button">
-							<img class="h-8 w-8 rounded-full" src="/user/member/memberImg/${rq.loginMemberNumber }" />
+							<img class="h-8 w-8 rounded-full" src="/user/member/memberImg/${rq.loginMemberNumber }" />						
 						</div>
 						<ul tabindex="0"
 							class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 shadow w-24">

@@ -1,6 +1,8 @@
 package com.example.Project.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -25,21 +27,45 @@ public class FileController {
 		this.fileService = fileService;
 	}
 	
+	// 이미지 업로드
 	@PostMapping("/user/file/imageUpload")
 	@ResponseBody
-	public FileVo uploadFile(MultipartFile file) throws IOException {
+	public List<FileVo> uploadFile(@RequestParam("file") MultipartFile[] files) throws IOException {
+		List<FileVo> imageArray = new ArrayList<>();
 		
-		int id = fileService.saveFile(file, "image");
-		return fileService.getFileById(id);
+		for (MultipartFile file : files)
+			imageArray.add(fileService.getImageFileById(fileService.saveFile(file, "image")));
+		
+		return imageArray;
 	}
 	
+	// 파일 업로드
 	@PostMapping("/user/file/fileUpload")
 	@ResponseBody
-	public FileVo fileUpload(@RequestParam("files[]") MultipartFile[] files) throws IOException {
+	public int[] fileUpload(@RequestParam("files[]") MultipartFile[] files) throws IOException {
+		int[] fileArray = new int[files.length];
+		int i = 0;
+		
 		for (MultipartFile file : files) {
-	        System.out.println(file.getOriginalFilename());
+			fileArray[i] = fileService.saveFile(file, "");
+			i++;
 	    }
-		return null;
+		
+		return fileArray;
+	}
+	
+	// 파일 업로드 목록 보기
+	@PostMapping("/user/file/getFileById")
+	@ResponseBody
+	public List<FileVo> getFileById(String file) {
+		
+		List<FileVo> fileList = new ArrayList<>();
+		
+		for (String str : file.split(",\\s*")) {
+			fileList.add(fileService.getFileById(Integer.parseInt(str)));
+		}
+
+		return fileList;
 	}
 	
 	// 서버에서 이미지 불러오기
@@ -47,17 +73,19 @@ public class FileController {
 	@ResponseBody
 	public Resource images(@PathVariable("id") int id, Model model) throws IOException {
 		
-		String imagePath = fileService.getFileById(id).getSavedPath();
+		String imagePath = fileService.getImageFileById(id).getSavedPath();
 		
 		return new UrlResource("file:" + imagePath);
 	}
 	
-	public int saveFile(MultipartFile file, @RequestParam(defaultValue = "") String type) throws IOException  {
-		return fileService.saveFile(file, "image");
-	}
-	
-	public String getFilePathById(int id) {
-		return fileService.getFilePathById(id);
-	}
+	// 첨부파일 삭제
+//	@GetMapping("/user/file/images/{id}")
+//	@ResponseBody
+//	public Resource images(@PathVariable("id") int id, Model model) throws IOException {
+//		
+//		String imagePath = fileService.getImageFileById(id).getSavedPath();
+//		
+//		return new UrlResource("file:" + imagePath);
+//	}
 	
 }
