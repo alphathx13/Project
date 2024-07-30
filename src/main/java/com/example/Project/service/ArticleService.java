@@ -28,8 +28,8 @@ public class ArticleService {
 		return articleDao.getArticleById(id);
 	}
 	
-	public void articleModify(int id, String title, String body, String fileList, String imgList) {
-		articleDao.articleModify(id, title, body, fileList, imgList);
+	public void articleModify(int id, String title, String body, String fileList, String imageList) {
+		articleDao.articleModify(id, title, body, fileList, imageList);
 	}
 	
 	public void articleDelete(int id) {

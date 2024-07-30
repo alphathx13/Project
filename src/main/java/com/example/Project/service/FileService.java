@@ -126,4 +126,10 @@ public class FileService {
 		return fileDao.getFileById(id);
 	}
 	
+	public void uploadFileDelete(int id) {
+		File file = new File(fileDao.getFilePathById(id));
+		fileDao.fileDBDelete(id);
+		file.delete();
+	}
+	
 }

@@ -1,6 +1,5 @@
 package com.example.Project.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -16,8 +15,6 @@ import com.example.Project.service.FileService;
 import com.example.Project.util.Util;
 import com.example.Project.vo.Article;
 import com.example.Project.vo.Rq;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -136,15 +133,14 @@ public class ArticleController {
 	@GetMapping("/user/article/doModify")
 	@ResponseBody
 	public String modify(int id, String title, String body, String fileUpload, String imgUpload) {
-
+		
 		String fileList = fileUpload.substring(1, fileUpload.length() - 1);
-		String imgList = imgUpload.substring(1, imgUpload.length() - 1);
+		String imageList = imgUpload.substring(1, imgUpload.length() - 1);
 
-		if (!articleService.getFileListById(id).equals("")) {
-			fileList = articleService.getFileListById(id) + "," + fileList;
-		}
-
-		articleService.articleModify(id, title, body, fileList, imgList);
+		fileList = fileList.replace("\"", "");
+		imageList = imageList.replace("\"", "");
+		
+		articleService.articleModify(id, title, body, fileList, imageList);
 
 		return Util.jsReplace(String.format("%d번 게시글을 수정하였습니다.", id), "/user/article/detail?id=" + id);
 	}
@@ -167,6 +163,12 @@ public class ArticleController {
 
 		return Util.jsReplace(String.format("%d번 게시글을 삭제했습니다.", id),
 				String.format("/user/article/list?boardId=%d", boardId));
+	}
+	
+	@PostMapping("/user/article/getFileList")
+	@ResponseBody
+	public String getFileList(int id) {
+		return articleService.getFileListById(id);
 	}
 
 }

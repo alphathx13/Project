@@ -82,11 +82,11 @@ public interface ArticleDao {
 					, title = #{title}
 					, body = #{body}
 					, fileList = #{fileList}
-					, imgList = #{imgList}
+					, imageList = #{imageList}
 					where id = #{id}
 			</script>
 			""")
-	public void articleModify(int id, String title, String body, String fileList, String imgList);
+	public void articleModify(int id, String title, String body, String fileList, String imageList);
 	
 	@Delete("""
 			delete from article 

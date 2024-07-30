@@ -28,28 +28,6 @@
 	</section>
 	
 	<script>
-		$(document).ready(function(){
-		    
-			$.ajax({
-				url : '/user/file/getFileById',
-				type : 'POST',
-				data : {
-					file : '${article.fileList}'
-				},
-				dataType : 'json',
-				success : function(result) {
-				    $('#fileNames').append('첨부파일 <br/>');
-				    
-					$.each(result, function(index, item) {
-						$('#fileNames').append(`<div> <a href="\${item.savedPath}"> \${item.originName} </a> <a class="text-red-500" href="\${item.savedPath}"> X </a> </div>`);
-					})
-				},
-				error : function(xhr, status, error) {
-					console.log(error);
-				}
-			})
-		})
-	
 		function fileNumber() {
 			var fileNumber = JSON.stringify(fileArray); 
 			document.querySelector('input[name="fileUpload"]').value = fileNumber;

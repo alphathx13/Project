@@ -59,6 +59,7 @@ public class Scheduler {
 		date = Util.today();
 	}
 
+	// 행사 업데이트
 	@Scheduled(cron = "5 0 5 * * *")
 	public void festivalUpdate() throws IOException, ParseException {
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/6300000/eventDataService/eventDataListJson"); 
@@ -106,6 +107,7 @@ public class Scheduler {
         }
     }
     
+	// 중기 날씨 업데이트
     @Scheduled(cron = "0 5 6 * * *")
 	public void weatherMidUpdate() throws IOException, ParseException {
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"); 
@@ -169,10 +171,10 @@ public class Scheduler {
         
 	}
 	
+    // 단기 날씨 업데이트
     @Scheduled(cron = "0 5 5 * * *")
 	public void weatherShortUpdate() throws IOException, ParseException {
 		String[] category = {"TMP", "SKY", "POP"};
-//		String[] category = {"TMP", "SKY", "POP", "PCP", "SNO"};
 		
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); 
         urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + apiKey); 
@@ -233,6 +235,7 @@ public class Scheduler {
         }
 	}
 	
+    // 탈퇴신청 계정 삭제
     @Scheduled(cron = "0 0 6 * * *")
 	public void memberDelete() {
     	List<Integer> memberImgList = memberService.getDeleteMemberImg();
@@ -242,6 +245,12 @@ public class Scheduler {
         }
     	
     	memberService.memberDelete();
+    }
+    
+    // 종료된 행사 채팅방 삭제
+    @Scheduled(cron = "0 0 6 * * *")
+	public void chatRoomDelete() {
+    	chatRoomRepository.findAllRoom();
     }
     
 }

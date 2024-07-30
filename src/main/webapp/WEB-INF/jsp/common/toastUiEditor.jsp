@@ -1,12 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
-<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-<link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css" />
-<link rel="stylesheet" href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css" />
-<script src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.js"></script>
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-<script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css" />
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css" />
+<script
+	src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.js"></script>
+<script
+	src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script
+	src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
 
 <script>
 	// image, file 목록 저장
@@ -31,34 +37,6 @@
 				previewStyle: 'vertical',
 				hideModeSwitch: true,
 				plugins: [colorSyntax],
-				hooks: {
-		            addImageBlobHook(blob, callback) { 
-		            	
-		            	const formData = new FormData();
-		                formData.append('file', blob);
-		                
-		                $.ajax({
-		                    url: '/user/file/imageUpload',
-		                    type: 'POST',
-		                    enctype: 'multipart/form-data',
-		                    data: formData,
-		                    dataType: 'json',
-		                    processData: false,
-		                    contentType: false,
-		                    cache: false,
-		                    timeout: 600000,
-		                    success: function(data) {
-		                    	imgArray.push(data.id);
-		                    	var imgPath = '/user/file/images/' + data.id;
-		                        callback(imgPath, '${data.originName}');
-		                    },
-		                    error: function(e) {
-		                        callback('image_load_fail', '이미지 업로드가 실패했습니다. 다시 업로드해주세요.');
-		                    }
-		                });
-		                
-		            }
-		        }
 		    });
 		    
             $('.toastui-editor-context-menu').before(`<div><button class="imageUpload btn btn-info" type="button">이미지 업로드</button> <button class="fileUpload btn btn-info" type="button">파일 업로드</button></div>`);
@@ -73,35 +51,34 @@
 
 		    editorItem.data('data-toast-editor', editor);
 		    
-		    $('.image.toastui-editor-toolbar-icons').remove();
+		    loadFileList().done(function() {
+		        fileList();
+		    });
+		    
+		    //$('.image.toastui-editor-toolbar-icons').remove();
 		    
 	 	});
 	  	
 	});
 	
 	$(document).ready(function() {
-		// 업로드할 파일 선택시
+		
+		// 파일 업로드
 		$('#fileInput').on('change', function(event) {
 		    const files = event.target.files;
 		    let fileNames = [];
-		    
-		    $('#fileNames').empty();
-		    
+
 		    for (let i = 0; i < files.length; i++) {
 		        fileNames.push(files[i].name);
 		    }
 		
-		    handleFileUpload(files);
-		    
-		    $('#fileNames').append('첨부파일 <br/>');
-		    
-		    for (let i = 0; i < fileNames.length; i++) {
-		    	$('#fileNames').append(fileNames[i] + '<br>');
-		    }
+		    handleFileUpload(files).done(function() {
+		        fileList();
+		    });
 		    
 		});
 		
-		// 업로드 이미지 선택
+		// 이미지 업로드
 		$('#imageInput').on('change', function(event) {
 			const files = event.target.files;
 		    const formData = new FormData();
@@ -135,7 +112,7 @@
 		    
 		});
 		
-		// 파일 업로드
+		// 실제 파일 업로드
 		function handleFileUpload(files) {
 			
 	        const formData = new FormData();
@@ -143,7 +120,7 @@
 	            formData.append('files[]', files[i]);
 	        }
 	        
-	        $.ajax({
+	        return $.ajax({
 	            url: '/user/file/fileUpload',
 	            type: 'POST',
 	            data: formData,
@@ -157,9 +134,74 @@
 	            }
 	        });
 	    }
+		
 	})
+	
+	// 글 수정창 열었을때 첨부파일 가져오기
+	function loadFileList() {
+		
+		const id = new URLSearchParams(window.location.search).get('id');
+		
+		return $.ajax({
+            url: '/user/article/getFileList',
+            type: 'POST',
+            data: {id : id},
+            dataType : 'text',
+            success: function(response) {
+            	if (response != '') {
+            		fileArray = response.split(',').map(item => item.trim());
+            	}
+            },
+            error: function(error) {
+                console.error('', error);
+            }
+        });
+	}
+	
+	// 첨부파일 리스트 갱신
+	function fileList() {
+		
+		$('#fileNames').empty();
+		
+		if (fileArray.length != 0) {
+			var fileNumber = fileArray.join(', ');
+			
+			$.ajax({
+	            url: '/user/file/getFileById',
+	            type: 'POST',
+	            data: {file : fileNumber},
+	            dataType : 'json',
+	            success: function(response) {
+	            	$.each(response, function(index, item) {
+	        	    	$('#fileNames').append(`\${item.originName} <button type="button" class="text-red-500" onclick="uploadFileDelete(\${item.id});"> X </button><br>`);
+	            	});
+	            },
+	            error: function(error) {
+	                console.error('', error);
+	            }
+	        });
+		
+		}
+	}
    
-
+	// 업로드 파일 삭제
+	function uploadFileDelete(id) {
+		$.ajax({
+            url: '/user/file/uploadFileDelete',
+            type: 'POST',
+            data: {id : id},            
+            success: function(response) {
+				fileArray = fileArray.filter(item => item !== id.toString());
+				fileList();
+            },
+            error: function(error) {
+                console.error('', error);
+            }
+        });
+		
+	}
+	
+	// 공백체크
 	function check(form){
 		const title = form.title.value.trim();
 		const body = form.body.value.trim();
