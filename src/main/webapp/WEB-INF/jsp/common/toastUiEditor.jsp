@@ -41,27 +41,20 @@
 		    
             $('.toastui-editor-context-menu').before(`<div><button class="imageUpload btn btn-info" type="button">이미지 업로드</button> <button class="fileUpload btn btn-info" type="button">파일 업로드</button></div>`);
 
-            $('.imageUpload').on('click', function() {
-            	$('#imageInput').click();
-            });
-            
-            $('.fileUpload').on('click', function() {
-            	$('#fileInput').click();
-            });
-
 		    editorItem.data('data-toast-editor', editor);
 		    
 		    loadFileList().done(function() {
 		        fileList();
 		    });
 		    
-		    //$('.image.toastui-editor-toolbar-icons').remove();
-		    
 	 	});
 	  	
 	});
 	
 	$(document).ready(function() {
+		
+		hideImageIcon();
+		$(window).resize(hideImageIcon);
 		
 		// 파일 업로드
 		$('#fileInput').on('change', function(event) {
@@ -137,25 +130,45 @@
 		
 	})
 	
-	// 글 수정창 열었을때 첨부파일 가져오기
+	// 기본 툴바 이미지 업로드 아이콘 제거
+	function hideImageIcon() {
+		$('.image.toastui-editor-toolbar-icons').css('display', 'none');
+	}
+	
+	// 업로드 이벤트
+	$('.imageUpload').on('click', function() {
+		$('#imageInput').click();
+	});
+	
+	$('.fileUpload').on('click', function() {
+		$('#fileInput').click();
+	});
+	
+	// DB에서 첨부파일 가져오기
 	function loadFileList() {
 		
 		const id = new URLSearchParams(window.location.search).get('id');
+
+		if (id != null ) {
 		
-		return $.ajax({
-            url: '/user/article/getFileList',
-            type: 'POST',
-            data: {id : id},
-            dataType : 'text',
-            success: function(response) {
-            	if (response != '') {
-            		fileArray = response.split(',').map(item => item.trim());
-            	}
-            },
-            error: function(error) {
-                console.error('', error);
-            }
-        });
+			return $.ajax({
+	            url: '/user/article/getFileList',
+	            type: 'POST',
+	            data: {id : id},
+	            dataType : 'text',
+	            success: function(response) {
+	            	if (response != '') {
+	            		fileArray = response.split(',').map(item => item.trim());
+	            	}
+	            },
+	            error: function(error) {
+	                console.error('', error);
+	            }
+	        });
+		
+		} else {
+			return $.Deferred().reject();
+		}
 	}
 	
 	// 첨부파일 리스트 갱신

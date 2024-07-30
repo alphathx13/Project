@@ -96,6 +96,28 @@ public class MemberController {
 		return "user/member/login";
 	}
 	
+	@PostMapping("/user/member/firebaseLogin")
+	@ResponseBody
+	public String firebaseLogin(Model model, String uid, String email) {
+		
+		Member member = memberService.getMemberByUid(uid);
+		
+		if (member == null) {
+			model.addAttribute("uid", uid);
+			model.addAttribute("email", email);
+			return "false";
+		} 
+		
+		rq.login(member);
+		
+		return "true";
+	}
+	
+	@PostMapping("/user/member/firebaseJoin")
+	public String firebaseLogin() {
+		return "/user/member/firebaseJoin";
+	}
+	
 	@PostMapping("/user/member/doLogin")
 	@ResponseBody
 	public String doLogin(String loginId, String loginPw, String uri) {

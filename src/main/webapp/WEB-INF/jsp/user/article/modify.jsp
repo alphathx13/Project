@@ -9,9 +9,9 @@
 		<div class="container mx-auto px-3">
 			<form action="doModify" method="GET" onsubmit="imgNumber(); fileNumber(); check(this); return false;">
 				<input type="file" id="fileInput" style="display: none;" multiple>
-				<input type="file" id="imageInput" style="display: none;" multiple>
+				<input type="file" id="imageInput" style="display: none;" multiple accept="image/*">
 				<input type="hidden" name="fileUpload">
-				<input type="hidden" name="imgUpload">
+				<input type="hidden" name="imgUpload" >
 				<input type="hidden" value="${article.id }" name="id">
 				<input type="hidden" value="" name="body">
 				<input type="text" maxlength=100 class="input input-bordered w-full mb-4" name="title" value="${article.title }"></input>
@@ -28,6 +28,7 @@
 	</section>
 	
 	<script>
+	
 		function fileNumber() {
 			var fileNumber = JSON.stringify(fileArray); 
 			document.querySelector('input[name="fileUpload"]').value = fileNumber;

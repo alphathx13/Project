@@ -154,4 +154,8 @@ public class MemberService {
 		return memberDao.getDeleteMemberImg();
 	}
 
+	public Member getMemberByUid(String uid) {
+		return memberDao.getMemberByUid(uid);
+	}
+
 }

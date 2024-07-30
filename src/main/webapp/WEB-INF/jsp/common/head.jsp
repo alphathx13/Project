@@ -29,6 +29,9 @@
 	
 	<!-- 공통 javascript -->
 	<script src="/resource/common.js" defer="defer"></script>
+	
+	<!-- firebase 설정 -->
+	<script type="module" src="/resource/firebase.js"></script>
 
 </head>
 <body>
@@ -65,6 +68,11 @@
 								  			<input maxlength="12" type="password" class="pw grow" placeholder="비밀번호" name="loginPw"/> 
 								  			<button class="change" type="button"><i class="see fa-solid fa-eye"></i><i class="notSee hidden fa-solid fa-eye-slash"></i></button>
 										</label>
+										<div class="tooltip w-full mt-4 font-bold text-center" data-tip="구글로 로그인하기">
+											<button type="button" onclick="googleSignIn()">
+												<i class="fa-brands fa-google"></i>
+											</button>
+										</div>
 										<div class="tooltip w-full" data-tip="로그인">
 											<button class="mt-5 w-full text-xl btn btn-outline">
 												<i class="fa-solid fa-right-to-bracket text-black"></i>
@@ -141,4 +149,30 @@
 			}
 		})
 		
+		// firebase 로그인
+		function firebaseLogin(uid, email) {
+		
+			$.ajax({
+				url : '/user/member/firebaseLogin',
+				type : 'POST',
+				data : {
+					uid : uid,
+					email : email
+				},
+				dataType : 'text',
+				success : function(result) {
+					if (result == 'false') {
+						alert('처음 이용하시는 계정입니다. 사이트 이용을 위해 추가적인 정보를 입력하셔야 합니다.');
+						window.location.href = '/user/member/firebaseJoin';
+					}
+				},
+				error : function(xhr, status, error) {
+					console.log(error);
+				}
+			})
+		}
+
 	</script>
+	
+	
+	

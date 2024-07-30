@@ -171,4 +171,11 @@ public interface MemberDao {
 			""")
 	public List<Integer> getDeleteMemberImg();
 
+	@Select("""
+			SELECT *
+				FROM `member`
+				WHERE uid = #{uid}
+			""")
+	public Member getMemberByUid(String uid);
+
 }

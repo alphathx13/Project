@@ -9,7 +9,7 @@
 		<div class="container mx-auto px-3">
 			<form action="doWrite" method="GET" onsubmit="imgNumber(); fileNumber(); check(this); return false;">
 				<input type="file" id="fileInput" style="display: none;" multiple>
-				<input type="file" id="imageInput" style="display: none;" multiple>
+				<input type="file" id="imageInput" style="display: none;" multiple accept="image/*">
 				<input type="hidden" name="fileUpload">
 				<input type="hidden" name="imgUpload">
 				<input type="hidden" value="${boardId }" name="boardId">
