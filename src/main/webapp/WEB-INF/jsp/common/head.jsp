@@ -68,10 +68,22 @@
 								  			<input maxlength="12" type="password" class="pw grow" placeholder="비밀번호" name="loginPw"/> 
 								  			<button class="change" type="button"><i class="see fa-solid fa-eye"></i><i class="notSee hidden fa-solid fa-eye-slash"></i></button>
 										</label>
-										<div class="tooltip w-full mt-4 font-bold text-center" data-tip="구글로 로그인하기">
-											<button type="button" onclick="googleSignIn()">
-												<i class="fa-brands fa-google"></i>
-											</button>
+										<div class="firebaseLogin flex mt-4">
+											<div class="tooltip w-full font-bold text-center" data-tip="구글로 로그인하기">
+												<button type="button" onclick="googleSignIn()">
+													<img class="h-10" src="/resource/images/googleIcon.webp" />
+												</button>
+											</div>
+											<div class="tooltip w-full font-bold text-center" data-tip="카카오로 로그인하기">
+												<button type="button" onclick="kakaoLogin()">
+													<img class="h-9" src="/resource/images/kakaoIcon.png" />
+												</button>
+											</div>
+											<div class="tooltip w-full font-bold text-center" data-tip="네이버로 로그인하기">
+												<button type="button" onclick="naverLogin()">
+													<img class="h-9" src="/resource/images/naverIcon.png" />
+												</button>
+											</div>
 										</div>
 										<div class="tooltip w-full" data-tip="로그인">
 											<button class="mt-5 w-full text-xl btn btn-outline">
@@ -110,6 +122,7 @@
 		</ul>
 	</div>
 
+	<script type="text/javascript" src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 	<script>
 		var currentPageUrl = window.location.href;
 		$('.uri').val(currentPageUrl);
@@ -149,7 +162,7 @@
 			}
 		})
 		
-		// firebase 구글 로그인
+		// firebase 로그인
 		function firebaseLogin(uid, email) {
 		
 			$.ajax({
@@ -165,7 +178,6 @@
 						alert('처음 이용하시는 계정입니다. 사이트 이용을 위해 추가적인 정보를 입력하셔야 합니다.');
 						window.location.href = `/user/member/firebaseJoin?uid=\${uid}&email=\${email}`;
 					} else {
-						console.log(result);
 						alert(result.data + '님 로그인을 환영합니다.');
 						window.location.reload();
 					}
@@ -176,9 +188,30 @@
 			})
 		}
 		
-		// firebase 카카오 로그인
-		function kakaoLogin(uid, email) {
-		
+		// 카카오 로그인
+	    Kakao.init('45c9a06d40a4e3bff0f18e6318a5b541');
+	    function kakaoLogin() {
+	        Kakao.Auth.login({
+	            success: function (response) {
+	                Kakao.API.request({
+	                    url: '/v2/user/me',
+	                    success: function (response) {
+	                    	firebaseLogin(response.id, response.kakao_account.email);
+	                    },
+	                    fail: function (error) {
+	                        alert(JSON.stringify(error));
+	                    },
+	                })
+	            },
+	            fail: function (error) {
+	                alert(JSON.stringify(error))
+	            },
+	        })
+	    }
+	    
+	    // 네이버 로그인
+	    function naverLogin() {
+			window.location.href = '/user/member/naverLogin';
 		}
 
 	</script>

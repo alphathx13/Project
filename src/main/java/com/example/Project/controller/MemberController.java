@@ -1,9 +1,21 @@
 package com.example.Project.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -15,7 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.Project.service.FileService;
 import com.example.Project.service.MemberService;
@@ -23,6 +36,9 @@ import com.example.Project.util.Util;
 import com.example.Project.vo.Member;
 import com.example.Project.vo.ResultData;
 import com.example.Project.vo.Rq;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class MemberController {
@@ -35,6 +51,16 @@ public class MemberController {
 	@Value("${custom.salt.key}")
 	private String salt;
 	
+	// 네이버 관련 키
+	@Value("${custom.naver.clientId}")
+	private String clientId;
+
+	@Value("${custom.naver.clientSecret}")
+	private String clientSecret;
+
+	@Value("${custom.naver.baseUrl}")
+	private String baseUrl;
+
 	// 이미지 DB 위치
 	@Value("${file.dir}")
 	private String fileDir;
@@ -106,6 +132,17 @@ public class MemberController {
 		
 		return ResultData.from("S-1", "true", member.getNickname());
 	}
+	
+	@GetMapping("/user/member/naverLogin")
+	@ResponseBody
+	public void naverLogin(HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, UnsupportedEncodingException, URISyntaxException {
+        String url = getNaverCode("authorize");
+        try {
+            response.sendRedirect(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 	
 	@GetMapping("/user/member/firebaseJoin")
 	public String firebaseJoin(Model model, String uid, String email) {
@@ -398,6 +435,116 @@ public class MemberController {
 		String memberImgPath = memberService.getMemberImg(id);
 		
 		return new UrlResource("file:" + memberImgPath);
+	}
+	
+	// 네이버 코드 받아오기
+	public String getNaverCode(String type) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException {
+
+        String redirectUrl = "http://localhost:8000/user/member/naverLoginCheck";
+
+        UriComponents uriComponents = UriComponentsBuilder
+                .fromUriString(baseUrl + "/" + type)
+                .queryParam("response_type", "code")
+                .queryParam("client_id", clientId)
+                .queryParam("state", URLEncoder.encode("helloWorld", "UTF-8"))
+                .queryParam("redirect_uri", URLEncoder.encode(redirectUrl, "UTF-8"))
+                .build();
+
+        return uriComponents.toString();
+    }
+	
+	// 네이버 토큰 받아오기
+	public String getNaverToken(String type, String code, String state) throws URISyntaxException, MalformedURLException, UnsupportedEncodingException {
+
+        UriComponents uriComponents = UriComponentsBuilder
+                .fromUriString(baseUrl + "/" + type)
+                .queryParam("grant_type", "authorization_code")
+                .queryParam("client_id", clientId)
+                .queryParam("client_secret", clientSecret)
+                .queryParam("code", code)
+                .queryParam("state", URLEncoder.encode(state, "UTF-8"))
+                .build();
+
+        try {
+            URL url = new URL(uriComponents.toString());
+            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+            con.setRequestMethod("GET");
+
+            int responseCode = con.getResponseCode();
+            BufferedReader br;
+
+            if(responseCode==200) {
+                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            } else { 
+                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+            }
+
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+            while ((inputLine = br.readLine()) != null) {
+                response.append(inputLine);
+            }
+
+            br.close();
+            return response.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return null;
+        
+    }
+	
+	@GetMapping("/user/member/naverLoginCheck")
+	@ResponseBody
+	public String naverLoginCheck(Model model, HttpServletRequest request, HttpServletResponse response, String code, String state) throws MalformedURLException, UnsupportedEncodingException, URISyntaxException, JsonMappingException, JsonProcessingException {
+		
+		String tokenList = getNaverToken("token", code, state);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode jsonNode = objectMapper.readTree(tokenList);
+		String accessToken = jsonNode.get("access_token").asText();
+		
+		try {
+            String urlString = "https://openapi.naver.com/v1/nid/me";
+            URL url = new URL(urlString);
+            
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+            
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder user = new StringBuilder();
+            
+            while ((inputLine = in.readLine()) != null) {
+                user.append(inputLine);
+            }
+            in.close();
+            
+            JsonNode rootNode = objectMapper.readTree(user.toString());
+            
+            JsonNode responseNode = rootNode.path("response");
+            
+            String uid = responseNode.path("id").asText();
+            String email = responseNode.path("email").asText();
+            
+    		Member member = memberService.getMemberByUid(uid);
+    		
+    		if (member == null) {
+    			return Util.jsReplace("처음 이용하시는 계정입니다. 사이트 이용을 위해 추가적인 정보를 입력하셔야 합니다.", String.format("/user/member/firebaseJoin?uid=%s&email=%s", uid, email));
+    		} 
+    		
+    		rq.login(member);
+    		
+    		return Util.jsReplace(String.format("%s 님 로그인을 환영합니다.", member.getNickname()), "/");
+    		
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+		return null;
+
 	}
 	
 }
