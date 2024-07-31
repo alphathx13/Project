@@ -2,13 +2,13 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<c:set var="pageTitle" value="회원가입" />
-
 <%@ include file="../../common/head.jsp"%>
 
 <section class="mt-8 text-lg">
 	<div class="container mx-auto px-3">
-		<form name="memberForm" action="checkJoin" method="POST" onsubmit="check(this); return false;" enctype="multipart/form-data">
+		<form name="memberForm" action="firebaseCheckJoin" method="POST" onsubmit="check(this); return false;" enctype="multipart/form-data">
+			<input type="hidden" name="email" value="${email }" />
+			<input type="hidden" name="uid" value="${uid }" />
 			<label class="mt-1 input input-bordered flex items-center gap-2">
 	  			<input maxlength="12" type="text" class="grow" placeholder="이름" name="name"/> 
 			</label>
@@ -45,7 +45,6 @@
 <script>
 
 	$(document).ready(function(){
-		let idDupCheck = false;
 		let cellphoneDupCheck = false;
 		let emailDupCheck = false;
 		let nicknameDupCheck = false;
@@ -161,8 +160,8 @@
         var get_file = e.target.files;
         var image = $('<img>');
         
-        image.attr('width', 32);
-        image.attr('height', 32);
+        image.attr('width', 64);
+        image.attr('height', 64);
 
         var reader = new FileReader();
         reader.onload = (function(img) {

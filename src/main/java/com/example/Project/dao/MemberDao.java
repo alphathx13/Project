@@ -178,4 +178,19 @@ public interface MemberDao {
 			""")
 	public Member getMemberByUid(String uid);
 
+	@Insert("""
+			INSERT INTO `member`
+			 	SET regDate = NOW()
+			     	, updateDate = NOW()
+			     	, checkJoin = 1
+			     	, loginType = 'firebase'
+			     	, uid = #{uid}
+			     	, `name` = #{name}
+			     	, nickname = #{nickname}
+			     	, cellphone = #{cellphone}
+			     	, email = #{email}
+			     	, memberImg = #{memberImg}
+			""")
+	public void firebaseCheckJoin(String name, String nickname, String cellphone, String email, String uid, int memberImg);
+
 }

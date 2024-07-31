@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.Project.service.FileService;
 import com.example.Project.service.MemberService;
@@ -91,31 +92,48 @@ public class MemberController {
 		return Util.jsReplace("회원가입이 정상적으로 이루어졌습니다.", "/user/home/main");
 	}
 
-	@GetMapping("/user/member/login")
-	public String login() {
-		return "user/member/login";
-	}
-	
 	@PostMapping("/user/member/firebaseLogin")
 	@ResponseBody
-	public String firebaseLogin(Model model, String uid, String email) {
+	public ResultData<String> firebaseLogin(Model model, String uid, String email) {
 		
 		Member member = memberService.getMemberByUid(uid);
 		
 		if (member == null) {
-			model.addAttribute("uid", uid);
-			model.addAttribute("email", email);
-			return "false";
+			return ResultData.from("F-1", "false");
 		} 
 		
 		rq.login(member);
 		
-		return "true";
+		return ResultData.from("S-1", "true", member.getNickname());
 	}
 	
-	@PostMapping("/user/member/firebaseJoin")
-	public String firebaseLogin() {
+	@GetMapping("/user/member/firebaseJoin")
+	public String firebaseJoin(Model model, String uid, String email) {
+		model.addAttribute("uid", uid);
+		model.addAttribute("email", email);
 		return "/user/member/firebaseJoin";
+	}
+	
+	@PostMapping("/user/member/firebaseCheckJoin")
+	@ResponseBody
+	public String firebaseCheckJoin(String name, String nickname, String cellphone, String email, String uid, @RequestParam(defaultValue = "") MultipartFile file) {
+		
+		int memberImg = 1;
+		
+		if (!file.isEmpty()) {
+			try {
+				memberImg = fileService.saveFile(file, "member");
+			} catch (IOException e) {
+				Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
+			}
+		}
+		
+		memberService.firebaseCheckJoin(name, nickname, cellphone, email, uid, memberImg);
+		Member member = memberService.getMemberByUid(uid);
+		
+		rq.login(member);
+		
+		return Util.jsReplace("정상적으로 등록되었습니다. 모든 기능을 사용하실 수 있습니다.", "/user/home/main");
 	}
 	
 	@PostMapping("/user/member/doLogin")

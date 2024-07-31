@@ -158,4 +158,8 @@ public class MemberService {
 		return memberDao.getMemberByUid(uid);
 	}
 
+	public void firebaseCheckJoin(String name, String nickname, String cellphone, String email, String uid, int memberImg) {
+		memberDao.firebaseCheckJoin(name, nickname, cellphone, email, uid, memberImg);
+	}
+
 }

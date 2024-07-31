@@ -129,7 +129,7 @@ CREATE TABLE `member`(
     , updateDate DATETIME NOT NULL
     , checkJoin INT(1) NOT NULL
     , loginType VARCHAR(20) NOT NULL
-    , uid VARCHAR(20) 
+    , uid VARCHAR(50) 
     , loginId VARCHAR(20) 
     , loginPw VARCHAR(100) 
     , `name` VARCHAR(20) NOT NULL

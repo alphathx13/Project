@@ -8,7 +8,9 @@
 
 	<section class = "ml-4">
 		<div>가입일 : ${member.regDate }</div>
-		<div>아이디 : ${member.loginId }</div>
+		<c:if test="${member.loginId != null }">
+			<div>아이디 : ${member.loginId }</div>
+		</c:if>
 		<div>이름 : ${member.name }</div>
 		<div>별명 : ${member.nickname }</div>
 		<div>핸드폰 : ${member.cellphone }</div>

@@ -149,7 +149,7 @@
 			}
 		})
 		
-		// firebase 로그인
+		// firebase 구글 로그인
 		function firebaseLogin(uid, email) {
 		
 			$.ajax({
@@ -159,17 +159,26 @@
 					uid : uid,
 					email : email
 				},
-				dataType : 'text',
+				dataType : 'json',
 				success : function(result) {
-					if (result == 'false') {
+					if (result.resultMsg == 'false') {
 						alert('처음 이용하시는 계정입니다. 사이트 이용을 위해 추가적인 정보를 입력하셔야 합니다.');
-						window.location.href = '/user/member/firebaseJoin';
+						window.location.href = `/user/member/firebaseJoin?uid=\${uid}&email=\${email}`;
+					} else {
+						console.log(result);
+						alert(result.data + '님 로그인을 환영합니다.');
+						window.location.reload();
 					}
 				},
 				error : function(xhr, status, error) {
 					console.log(error);
 				}
 			})
+		}
+		
+		// firebase 카카오 로그인
+		function kakaoLogin(uid, email) {
+		
 		}
 
 	</script>
