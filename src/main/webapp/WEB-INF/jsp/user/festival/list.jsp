@@ -4,43 +4,56 @@
 
 <%@ include file="../../common/head.jsp"%>
 
-<c:set var="pageTitle" value="Main Page" />
+<style>
+	.custom-bg {
+	    background-image: url('/resource/images/festivalListMainImage.jpg');
+	}
+</style>
 
-<section class="mx-56 mt-8 text-lg text-center">
-
-	<div class="flex justify-end">
-		<button class="listIcon" onclick="listMode('change')" type="button"><img class="img" src=""></button>
-		<button class="galleryIcon ml-4" onclick="galleryMode('change')" type="button"><img class="img" src=""></button>
+<section class="mx-56 mt-8 text-lg text-center ownglyphFont">
+	<div style="height: 400px;" class="visual custom-bg flex flex-col text-white">
+		<div class="grow"></div>
+		<div class="text-4xl ownglyphFont"> 즐거운 문화생활의 시작</div>
+		<div class="text-6xl mb-4"> 행사 안내</div>
+	</div>
+	
+	<div class="mt-4 flex justify-end">
+		<div class="tooltip w-8 font-bold text-center" data-tip="갤러리 형태로 보기">
+			<button class="galleryIcon" onclick="galleryMode('change')" type="button"><img class="img h-8" src=""></button>
+		</div>
+		<div class="w-4"></div>
+		<div class="tooltip w-8 font-bold text-center" data-tip="리스트 형태로 보기">
+			<button class="listIcon" onclick="listMode('change')" type="button"><img class="img h-8" src=""></button>
+		</div>
 	</div>
 
-	<div class="font-bold text-blue-500">현재 진행중인 행사
+	<div class="font-bold text-blue-500 text-4xl">현재 진행중인 행사
 		<c:if test="${currentFestivalCount != 0}">
-			<span> ${currentFestivalCount }개 </span>
+			<span> : ${currentFestivalCount }개 </span>
 		</c:if>
 	</div>
 	<div id="currentFestival"></div>
 	<br/><br/>
 
-	<div class="font-bold text-purple-500">진행예정 행사
+	<div class="font-bold text-purple-500 text-4xl">진행예정 행사
 		<c:if test="${futureFestivalCount != 0}">
-			<span> ${futureFestivalCount }개 </span>
+			<span> : ${futureFestivalCount }개 </span>
 		</c:if>
 	</div>
 	<div id="futureFestival"></div>
 	<br/><br/>
 	
-	<div class="font-bold text-red-500">종료된 행사</div>
+	<div class="font-bold text-red-500 text-4xl">종료된 행사</div>
 	<div id="pastFestival"></div>
 	
-	<div>
+	<div class="search text-black mt-4">
 		<form class = "flex justify-center" action="" method="get" onsubmit="emptyCheck(this); return false;"> 
-			<select data-value="${searchType }" class="select select-bordered h-4" name="searchType">
+			<select data-value="${searchType }" class="select select-bordered h-4 mr-1" name="searchType">
 				<option value="" selected disabled> 검색항목 </option>
 				<option value="1"> 제목 </option>
 				<option value="2"> 내용 </option>
 				<option value="3"> 제목+내용 </option>
 			</select>
-			&nbsp;
 			<input type="hidden" value="helloWorld" name ="test"/>
 			<label class="input input-bordered flex items-center gap-2">
 				<input maxlength="20" type="text" value="${searchText }" class="grow" name ="searchText" placeholder="Search" />
@@ -137,7 +150,7 @@
 	        `;
 	        
 	        if (festivals.length > show) {
-		        html += `<button class="btn btn-outline" onclick="viewMoreFestivalList('\${id}');" type="button"> 더보기 </button>`;
+		        html += `<button class="btn btn-outline w-full" onclick="viewMoreFestivalList('\${id}');" type="button"> 더보기 </button>`;
 	        }
 	
 	        $("#" + id).html(html);
@@ -173,7 +186,7 @@
 	 	    pastFestivalview = 6;
 	 	    
 	 	    if (currentFestival.length === 0) {
-	 	        $('#currentFestival').html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500"> 현재 진행중인 행사가 없습니다. </div>`);
+	 	        $('#currentFestival').html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl"> 현재 진행중인 행사가 없습니다. </div>`);
 	 	    } else {
 	 	    	viewFestivalList('currentFestival', currentFestival, currentFestivalview);
 	 	    }
@@ -206,17 +219,26 @@
 		        	} else {
 		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/images/etc.jpg" /></a>`;
 		        	}
-		        	html += `<span>\${festival.title}</span>
-		        			<span>시작일 : \${festival.beginDt}</span>
-		        			<span>종료일 : \${festival.endDt}</span>
-		        			</span>`;
+		        	html += `<span class="mt-3 text-2xl">\${festival.title}</span>`
+		        	
+		        	if(festival.beginDt == festival.endDt) {
+		        		html += `<span class="text-xl">날짜 : \${festival.beginDt}</span>`;
+		        	} else {
+		        		html += ` <span class="text-xl">시작일 : \${festival.beginDt}</span>
+	        			<span class="text-xl">종료일 : \${festival.endDt}</span>`;
+		        	}
+		        	
+		        	html += `
+	        			<span class="mt-6 text-xl flex justify-between"><i class="fa-solid fa-star">&nbsp;\${festival.likePoint}</i><i class="fa-solid fa-eye">&nbsp;\${festival.viewCount}</i></span>
+	        			</span>`;
+        			
 	        	} else {
 			        return false;
 	        	}
 	        })
 	        
 	        if (festivals.length > show) {
-		        html += `<button class="btn btn-outline" onclick="viewMoreFestivalGallery('\${id}');" type="button"> 더보기 </button>`;
+		        html += `<button class="btn btn-outline w-full" onclick="viewMoreFestivalGallery('\${id}');" type="button"> 더보기 </button>`;
 	        }
 	            
 	        $("#" + id).html(html);
@@ -236,7 +258,7 @@
 	    	}
         }
  	    
- 		 // 행사 갤러리형 초기
+ 		// 행사 갤러리형 초기
  	    function galleryMode(mode) {
 			$('.listIcon').find('.img').attr('src', '/resource/images/icon_list.png');
 			$('.galleryIcon').find('.img').attr('src', '/resource/images/icon_gallery_on.png');
@@ -252,7 +274,7 @@
 	 	    pastFestivalview = 6;
  	    	
  	    	if (currentFestival.length === 0) {
- 	 	        $("#currentFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500">  현재 진행중인 행사가 없습니다. </div>`);
+ 	 	        $("#currentFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl">  현재 진행중인 행사가 없습니다. </div>`);
  	 	    } else {
  	 	    	viewFestivalGallery('currentFestival', currentFestival, currentFestivalview);
  	 	    }
@@ -308,6 +330,11 @@
 			
 			form.submit();
 		}
+ 		
+ 		// 배경 이미지 삭제
+ 		$('body').css('--bgImage', `url('')`);
+
+ 		
 	</script>
 
 </section>

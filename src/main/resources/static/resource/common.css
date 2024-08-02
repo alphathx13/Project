@@ -14,12 +14,12 @@
     font-style: normal;
 }
 
-html > body {
+html > body > .ownglyphFont {
 	font-family: 'Ownglyph_ryuttung-Rg';
 	text-underline-position: under;
 }
 
-html > body > .head, .foot {
+html > body > .outfitFont {
 	font-family: 'Outfit';
 	text-underline-position: under;
 }

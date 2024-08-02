@@ -7,34 +7,12 @@
   
 <%@ include file="../../common/head.jsp" %>  
 
-	<style>
-	
-		body {
-			--bgImage: url('/resource/mainPageImage/01.jpg');
-		}
-		
-        body::before {
-	        content: "";
-		    position: fixed;
-		    top: 0;
-		    left: 0;
-		    width: 100%;
-		    height: 100%;
-		    filter: brightness(40%);
-            background-image: var(--bgImage); 
-            background-size: cover; 
-            background-position: center;
-            background-repeat: no-repeat; 
-            z-index: -1;
-            transition: background-image 1.5s ease-in-out;
-        }
-    </style>
-
 
     <section class="py-16 mx-72 text-white">
         <div class="container mx-auto text-center flex flex-col">
             <h1 class="text-4xl font-bold mb-4"> 대전광역시 행사 한눈에 보기</h1>
-            <p class="text-lg">저희 사이트는 대전에서 진행되는 행사에 대한 정보를 제공하고, 사용자들이 정보를 나눌 수 있는 공간입니다.</p>
+            <p class="text-lg">대전에서 진행되는 행사에 대한 정보를 제공합니다.</p>
+            <p class="text-lg">사용자들이 정보를 나눌 수 있는 공간이며,</p>
             <p class="text-lg mb-8">누구나 자유롭게 이용할 수 있습니다.</p>
         </div>
         
@@ -115,7 +93,7 @@
 	                $(this).attr('src', '/resource/images/imageLoadingError.png');
 	        });
     		
-    		// 메인 페이지 이미지 변경
+    		// 배경 이미지 변경
     		const images = [
        			'/resource/mainPageImage/01.jpg',  
        			'/resource/mainPageImage/02.jpg',  
@@ -136,7 +114,7 @@
     	    changeBackgroundImage();
 
     	    // 3초마다 배경 이미지 변경
-    	    setInterval(changeBackgroundImage, 3000);
+    	    setInterval(changeBackgroundImage, 3500);
 		
 		})
     	

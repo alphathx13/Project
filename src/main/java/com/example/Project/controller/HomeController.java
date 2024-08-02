@@ -15,5 +15,10 @@ public class HomeController {
 	public String root() {
 		return "redirect:/user/home/main";
 	}
+	
+	@GetMapping("/test")
+	public String test() {
+		return "/test";
+	}
 
 }

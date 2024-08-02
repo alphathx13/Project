@@ -34,9 +34,31 @@
 	<!-- firebase 설정 -->
 	<script type="module" src="/resource/firebase.js"></script>
 
+	<style>
+		body {
+			--bgImage: url('/resource/mainPageImage/01.jpg');
+		}
+		
+        body::before {
+	        content: "";
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: 100%;
+		    filter: brightness(40%);
+            background-image: var(--bgImage); 
+            background-size: cover; 
+            background-position: center;
+            background-repeat: no-repeat; 
+            z-index: -1;
+            transition: background-image 1.5s ease-in-out;
+        }
+	</style>
+	
 </head>
 <body>
-	<div class="head h-20 flex mx-auto text-3xl bg-orange-400">
+	<div class="head h-20 flex mx-auto text-3xl bg-white outfitFont">
 		<div class="flex ml-4 logo text-6xl">
 			<a href="/" class="h-full flex items-center"> <img class="w-12 h-12" src="/resource/images/homeButton.png" /> </a>
 			<div class="mt-6 ml-2 text-2xl font-bold text-white"></div>
@@ -46,7 +68,7 @@
 			<c:choose>
 				<c:when test="${rq.loginMemberNumber == 0 }">
 					<li class="hover:underline p-4 text-black">
-						<button class="rounded-xl h-12 w-20 bg-white font-bold text-sm text-orange-500 py-2 px-4 border border-orange-500 rounded hover:text-orange-600 hover:scale-105 transition-transform duration-300" onclick="my_modal_1.showModal()">로그인</button>
+						<button class="rounded-xl h-12 w-20 bg-white font-bold text-sm py-2 px-4 border border-black rounded hover:scale-105 transition-transform duration-300" onclick="my_modal_1.showModal()">로그인</button>
 						<dialog id="my_modal_1" class="modal">
 					  		<div class="modal-box text-orange-400">
 					    		<h3 class="text-lg font-bold">Login</h3>
@@ -118,8 +140,8 @@
 				</c:otherwise>
 			</c:choose>
 
-			<li class="hover:underline p-4 ml-4"><a class="h-full px-3 flex items-center hover:text-white transition-colors duration-100" href="/user/festival/list"><span>행사 목록</span></a>
-			<li class="hover:underline p-4 ml-4"><a class="h-full px-3 flex items-center hover:text-white transition-colors duration-100" href="/user/article/list?boardId=1"><span>게시판</span></a>
+			<li class="hover:underline p-4 ml-4"><a class="h-full px-3 flex items-center" href="/user/festival/list"><span>행사 목록</span></a>
+			<li class="hover:underline p-4 ml-4"><a class="h-full px-3 flex items-center" href="/user/article/list?boardId=1"><span>게시판</span></a>
 		</ul>
 	</div>
 
