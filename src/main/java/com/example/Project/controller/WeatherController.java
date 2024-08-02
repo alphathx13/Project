@@ -12,7 +12,6 @@ import java.util.List;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -30,7 +29,7 @@ public class WeatherController {
 	private String updateTime;
 	
 	{
-		updateTime = "20240710";
+		updateTime = "20240802";
 	}
 	
 	private WeatherService weatherService;
@@ -38,17 +37,11 @@ public class WeatherController {
 	public WeatherController(WeatherService weatherService) {
 		this.weatherService = weatherService;
 	}
-//	
-//	@GetMapping("/weatherList")
-//	public String list(Model model) {
-//		model.addAttribute("festivalList", weatherController.weatherList());
-//		return "/list";
-//	}
 	
 	@Value("${custom.api.key}")
 	private String apiKey;
 	
-	@GetMapping("/user/weatherMidUpdate")
+	@GetMapping("/weatherMidUpdate")
 	public String weatherMidUpdate() throws IOException, ParseException {
 		// 강수 업데이트
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"); 
@@ -116,7 +109,6 @@ public class WeatherController {
 	@GetMapping("/weatherShortUpdate")
 	public String weatherShortUpdate() throws IOException, ParseException {
 		String[] category = {"TMP", "SKY", "POP"};
-//		String[] category = {"TMP", "SKY", "POP", "PCP", "SNO"};
 		
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); 
         urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + apiKey); 

@@ -36,3 +36,4 @@ build/
 *.yml
 project-firebase.json
 firebase.js
+index.html

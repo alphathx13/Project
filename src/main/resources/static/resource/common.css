@@ -7,7 +7,19 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Outfit';
+    src: url(https://fonts.gstatic.com/s/outfit/v11/QGYvz_MVcBeNP4NJtEtq.woff2) format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 html > body {
 	font-family: 'Ownglyph_ryuttung-Rg';
+	text-underline-position: under;
+}
+
+html > body > .head, .foot {
+	font-family: 'Outfit';
 	text-underline-position: under;
 }
