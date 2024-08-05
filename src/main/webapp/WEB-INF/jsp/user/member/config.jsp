@@ -53,7 +53,7 @@
 			<br/>
 			<div>회원 이미지 (32x32 사이즈까지 지원)</div>
 			<input id=upload type="file" name="file" value="/resource/images/defaultImg.png"/>
-			<div id='preview' class="flex"> 현재 이미지 : &nbsp;<img class="h-16 w-16 rounded-full" src="/user/member/memberImg/${rq.loginMemberNumber }"> </div>
+			<div id='preview' class="flex"> 현재 이미지 : &nbsp;<img class="h-16 w-16 rounded-full" src="${rq.loginMemberImgPath }"> </div>
 			
 		<div class="tooltip" data-tip="뒤로 가기">
 			<button class="btn btn-outline btn-info" type="button" onclick="history.back();">
@@ -322,6 +322,8 @@
         $('#preview').append(image);
     });
 	
+	// 배경 이미지 삭제
+	$('body').css('--bgImage', `url('')`);
 </script>
 
 

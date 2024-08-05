@@ -69,18 +69,18 @@ public interface FileDao {
 	FileVo getImageFileById(int id);
 
 	@Select("""
-			SELECT savedPath
+			SELECT savedName
 				FROM imgUpload
 				WHERE id = #{id}
 			""")
-	String getImagePathById(int id);
+	String getImageNameById(int id);
 
 	@Select("""
-			SELECT savedPath
+			SELECT savedName
 				FROM fileUpload
 				WHERE id = #{id}
 			""")
-	String getFilePathById(int id);
+	String getFileNameById(int id);
 
 	@Delete("""
 			DELETE FROM imgUpload
@@ -106,5 +106,12 @@ public interface FileDao {
 				WHERE id = #{id}
 			""")
 	FileVo getFileById(int id);
+
+	@Select("""
+			SELECT savedPath
+				FROM memberImg
+				WHERE id = #{memberNumber}
+			""")
+	String getMemberImgPath(int memberNumber);
 
 }

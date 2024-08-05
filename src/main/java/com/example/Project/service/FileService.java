@@ -1,31 +1,36 @@
 package com.example.Project.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.example.Project.dao.FileDao;
 import com.example.Project.vo.FileVo;
 
 @Service
 public class FileService {
 
-	@Value("${file.dir}")
-	private String fileDir;
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucket;
+
+	@Value("${cloud.aws.region.static}")
+	private String region;
 
 	private FileDao fileDao;
+	private AmazonS3Client amazonS3Client;
 
-	public FileService(FileDao fileDao) {
+	public FileService(FileDao fileDao, AmazonS3Client amazonS3Client) {
 		this.fileDao = fileDao;
+		this.amazonS3Client = amazonS3Client;
 	}
 	
 	// 실제 파일 업로드
@@ -35,17 +40,21 @@ public class FileService {
 		String uuid = UUID.randomUUID().toString();
 		String extension = orgName.substring(orgName.lastIndexOf("."));
 		String savedName = uuid + extension;
+		String awsPath = "http://" + bucket + ".s3." + region + ".amazonaws.com";
 		String savedPath;
 		String table;
 		
 		if (type.equals("member")) {
-			savedPath = fileDir + "\\memberImg\\" + savedName;
+			savedName = "memberImg/" + savedName;
+			savedPath = awsPath + "/" + savedName;
 			table = "memberImg";
 		} else if (type.equals("image")) {
-			savedPath = fileDir + "\\imgUpload\\" + savedName;
+			savedName = "imgUpload/" + savedName;
+			savedPath = awsPath + "/" + savedName;
 			table = "imgUpload";
 		} else {
-			savedPath = fileDir + "\\fileUpload\\" + savedName;
+			savedName = "fileUpload/" + savedName;
+			savedPath = awsPath + "/" + savedName;
 			table = "fileUpload";
 		}
 		
@@ -57,14 +66,28 @@ public class FileService {
 			fileDao.fileUpload(orgName, savedName, savedPath);
 		}
 		
-		file.transferTo(new File(savedPath));
+		try {
+		    ObjectMetadata metadata = new ObjectMetadata();
+		    metadata.setContentType(file.getContentType());
+		    metadata.setContentLength(file.getSize());
+		    amazonS3Client.putObject(bucket, savedName, file.getInputStream(), metadata);
+		    
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} catch (AmazonServiceException e) {
+		    // AWS S3에서 발생할 수 있는 예외 처리
+		    e.printStackTrace();
+		} catch (SdkClientException e) {
+		    // AWS S3 클라이언트에서 발생할 수 있는 예외 처리
+		    e.printStackTrace();
+		}
 		
 		if (table.equals("memberImg")) {
 			return fileDao.memberImgLast();
 		} else if (table.equals("imgUpload")) {
 			return fileDao.imgLast();
 		} 
-			
+		
 		return fileDao.fileLast();
 	}
 	
@@ -73,11 +96,6 @@ public class FileService {
 		return fileDao.getImageFileById(id);
 	}
 
-	// 번호로 첨부파일 가져오기
-	public String getFilePathById(int id) {
-		return fileDao.getFilePathById(id);
-	}
-	
 	// 번호로 멤버이미지 삭제
 	public void memberImgDelete(int id) {
 		fileDao.memberImgDelete(id);
@@ -86,40 +104,36 @@ public class FileService {
 	// DB와 서버에서 파일 삭제
 	public void fileAndFileDBDelete(String[] list, String type) {
 		
-		// int[] 배열로 변환
-		int[] numbers = Arrays.stream(list).mapToInt(Integer::parseInt).toArray();
-		
-		System.out.println("type : " + type);
-		for (int k : numbers) {
-			System.out.println(k);
+		if(!list[0].equals("")) {
+			// int[] 배열로 변환
+			int[] numbers = Arrays.stream(list).mapToInt(Integer::parseInt).toArray();
+			
+			// 실제 DB에 저장되어있는 파일 저장위치 가져오기
+	        String[] pathArr = new String[numbers.length];
+	        int i = 0;
+	        for (int id : numbers) {
+	        	if (type.equals("image")) {
+	        		pathArr[i] = fileDao.getImageNameById(id);
+	        	} else {
+	        		pathArr[i] = fileDao.getFileNameById(id);
+	        	}
+	        	i++;
+	        }
+	        
+	        // DB에서 파일 정보 삭제
+	        for (int id : numbers) {
+	        	if (type.equals("image")) {
+	        		fileDao.imageDBDelete(id);
+	        	} else {
+	        		fileDao.fileDBDelete(id);
+	        	}
+	        }
+	        
+	        // S3에서 파일 삭제
+	        for (String filePath : pathArr) {
+	        	amazonS3Client.deleteObject(bucket, filePath);
+	        }
 		}
-		
-		// 실제 DB에 저장되어있는 파일 저장위치 가져오기
-        String[] pathArr = new String[numbers.length];
-        int i = 0;
-        for (int id : numbers) {
-        	if (type.equals("image")) {
-        		pathArr[i] = fileDao.getImagePathById(id);
-        	} else {
-        		pathArr[i] = fileDao.getFilePathById(id);
-        	}
-        	i++;
-        }
-        
-        // DB에서 파일 정보 삭제
-        for (int id : numbers) {
-        	if (type.equals("image")) {
-        		fileDao.imageDBDelete(id);
-        	} else {
-        		fileDao.fileDBDelete(id);
-        	}
-        }
-        
-        // 실제 파일서버에서 파일 삭제
-        for (String filePath : pathArr) {
-        	File file = new File(filePath);
-            file.delete();
-        }
 	}
 
 	public FileVo getFileById(int id) {
@@ -127,9 +141,13 @@ public class FileService {
 	}
 	
 	public void uploadFileDelete(int id) {
-		File file = new File(fileDao.getFilePathById(id));
+		amazonS3Client.deleteObject(bucket, fileDao.getFileNameById(id));
 		fileDao.fileDBDelete(id);
-		file.delete();
+	}
+
+	public String getMemberImgPath(int memberNumber) {
+		return fileDao.getMemberImgPath(memberNumber);
 	}
 	
 }
+

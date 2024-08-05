@@ -910,6 +910,8 @@
 			// ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'LEAVE', roomId : roomId, sender : sender }));
 			connect();
 			
+	 		// 배경 이미지 삭제
+	 		$('body').css('--bgImage', `url('')`);
 		</script>
 		
 		<button onclick="history.back()" class="btn btn-outline btn-info mt-4">뒤로 가기</button>	

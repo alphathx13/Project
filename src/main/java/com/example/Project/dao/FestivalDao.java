@@ -149,7 +149,7 @@ public interface FestivalDao {
 	public Festival festivalDetail(int eventSeq);
 
 	@Update("""
-			UPDATE FestivalList
+			UPDATE festivalList
 				set viewCount = viewCount+1
 				where eventSeq = #{eventSeq};
 			""")
@@ -158,7 +158,7 @@ public interface FestivalDao {
 	@Select("""
 			<script>
 			SELECT COUNT(*)
-				FROM FestivalList
+				FROM festivalList
 				<if test="type != 0">
 					<choose>
 						<when test="type == 1">

@@ -15,11 +15,11 @@
 }
 
 html > body > .ownglyphFont {
-	font-family: 'Ownglyph_ryuttung-Rg';
+	font-family: 'Ownglyph_ryuttung-Rg', sans-serif;
 	text-underline-position: under;
 }
 
 html > body > .outfitFont {
-	font-family: 'Outfit';
+	font-family: 'Outfit', sans-serif;
 	text-underline-position: under;
 }

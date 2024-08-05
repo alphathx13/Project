@@ -33,7 +33,8 @@ build/
 .vscode/
 
 ### config
-*.yml
+application.yml
 project-firebase.json
 firebase.js
 index.html
+testtest.jsp

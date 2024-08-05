@@ -118,7 +118,7 @@ public class FestivalController {
 	}
 	
 	// 이건 테스트용으로 남겨둔것
-	@GetMapping("/user/festival/festivalUpdate")
+	@GetMapping("/festival/festivalUpdate")
 	public String festivalUpdate() throws IOException, ParseException {
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/6300000/eventDataService/eventDataListJson"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + apiKey); /*Service Key*/
@@ -157,7 +157,7 @@ public class FestivalController {
         		festivalService.update(festival);
         	}
         }
-        return "/user/home/main";
+        return "/test";
 	}
 	
 	

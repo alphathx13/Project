@@ -247,10 +247,4 @@ public class Scheduler {
     	memberService.memberDelete();
     }
     
-    // 종료된 행사 채팅방 삭제
-    @Scheduled(cron = "0 0 6 * * *")
-	public void chatRoomDelete() {
-    	chatRoomRepository.findAllRoom();
-    }
-    
 }

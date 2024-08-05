@@ -10,11 +10,10 @@
 	}
 </style>
 
-<section class="mx-56 mt-8 text-lg text-center ownglyphFont">
+<section class="mx-56 mt-8 text-lg text-center">
 	<div style="height: 400px;" class="visual custom-bg flex flex-col text-white">
 		<div class="grow"></div>
-		<div class="text-4xl ownglyphFont"> 즐거운 문화생활의 시작</div>
-		<div class="text-6xl mb-4"> 행사 안내</div>
+		<div class="text-6xl mb-4 outfitFont"> 즐거운 문화생활의 시작</div>
 	</div>
 	
 	<div class="mt-4 flex justify-end">
@@ -27,7 +26,7 @@
 		</div>
 	</div>
 
-	<div class="font-bold text-blue-500 text-4xl">현재 진행중인 행사
+	<div class="font-bold text-blue-500 text-2xl text-left mb-4">- 현재 진행중인 행사
 		<c:if test="${currentFestivalCount != 0}">
 			<span> : ${currentFestivalCount }개 </span>
 		</c:if>
@@ -35,7 +34,7 @@
 	<div id="currentFestival"></div>
 	<br/><br/>
 
-	<div class="font-bold text-purple-500 text-4xl">진행예정 행사
+	<div class="font-bold text-purple-500 text-2xl text-left mb-4 ">- 진행예정 행사
 		<c:if test="${futureFestivalCount != 0}">
 			<span> : ${futureFestivalCount }개 </span>
 		</c:if>
@@ -43,7 +42,7 @@
 	<div id="futureFestival"></div>
 	<br/><br/>
 	
-	<div class="font-bold text-red-500 text-4xl">종료된 행사</div>
+	<div class="font-bold text-red-500 text-2xl text-left mb-4">- 종료된 행사</div>
 	<div id="pastFestival"></div>
 	
 	<div class="search text-black mt-4">
@@ -206,30 +205,35 @@
 
 		// 행사 갤러리형
  	    function viewFestivalGallery(id, festivals, show) {
- 	    	var html = `<div class="container gallery flex flex-wrap mx-auto px-3">`;
+ 	    	var html = `<div class="container gallery flex flex-wrap mx-auto">`;
 	            
 	        $.each(festivals, function(index, festival) {
 	        	if (index < show) {
-	        		html += `<span class="flex flex-col basis-1/3 px-4 mb-4">`;
+	        		html += `<span class="flex flex-col basis-1/3 px-4 mb-4"><span class="border border-gray-400 rounded-2xl">`;
 		        	
-		        	if (festival.themeCdNm == '공연') {
-		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/images/festival.jpg" /></a>`;
-		        	} else if (festival.themeCdNm == '전시') {
-		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/images/exhibition.jpg" /></a>`;
+		        	if (index % 6 == 0) {
+		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/festivalTempImg/festivalTempImg1.jpg" />`;
+		        	} else if (index % 6 == 1) {
+		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/festivalTempImg/festivalTempImg2.jpg" />`;
+		        	} else if (index % 6 == 2) {
+		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/festivalTempImg/festivalTempImg3.jpg" />`;
+		        	} else if (index % 6 == 3) {
+		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/festivalTempImg/festivalTempImg4.jpg" />`;
+		        	} else if (index % 6 == 4) {
+		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/festivalTempImg/festivalTempImg5.jpg" />`;
 		        	} else {
-		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/images/etc.jpg" /></a>`;
+		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/festivalTempImg/festivalTempImg6.jpg" />`;
 		        	}
-		        	html += `<span class="mt-3 text-2xl">\${festival.title}</span>`
+		        	html += `<br/><span class="mt-3 text-2xl">\${festival.title}</span><br/>`
 		        	
 		        	if(festival.beginDt == festival.endDt) {
-		        		html += `<span class="text-xl">날짜 : \${festival.beginDt}</span>`;
+		        		html += `<span class="text-xl"><i class="fa-regular fa-clock"></i> \${festival.beginDt}</span>`;
 		        	} else {
-		        		html += ` <span class="text-xl">시작일 : \${festival.beginDt}</span>
-	        			<span class="text-xl">종료일 : \${festival.endDt}</span>`;
+		        		html += ` <span class="text-xl"><i class="fa-regular fa-clock"></i> \${festival.beginDt} ~ \${festival.endDt} </span> `;
 		        	}
 		        	
 		        	html += `
-	        			<span class="mt-6 text-xl flex justify-between"><i class="fa-solid fa-star">&nbsp;\${festival.likePoint}</i><i class="fa-solid fa-eye">&nbsp;\${festival.viewCount}</i></span>
+	        			<span class="mt-3 mb-3 text-xl flex justify-center"><span><span><i class="fa-solid fa-eye">&nbsp;\${festival.viewCount}</i><i class="ml-4 fa-solid fa-star">&nbsp;\${festival.likePoint}</i></span></span></span></a></span>
 	        			</span>`;
         			
 	        	} else {
@@ -333,7 +337,6 @@
  		
  		// 배경 이미지 삭제
  		$('body').css('--bgImage', `url('')`);
-
  		
 	</script>
 

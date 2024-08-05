@@ -37,6 +37,8 @@
 			var imgNumber = JSON.stringify(imgArray); 
 			document.querySelector('input[name="imgUpload"]').value = imgNumber;
 		}	
+		
+		$('body').css('--bgImage', `url('')`);
 	</script>
 	
 <%@ include file="../../common/foot.jsp"%>

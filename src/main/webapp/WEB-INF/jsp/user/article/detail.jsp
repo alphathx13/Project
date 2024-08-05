@@ -147,25 +147,30 @@
 		<!-- 첨부파일 조회 -->
 		<script>
 		$(document).ready(function(){
-			$.ajax({
-				url : '/user/file/getFileById',
-				type : 'POST',
-				data : {
-					file : '${article.fileList}'
-				},
-				dataType : 'json',
-				success : function(result) {
-					$.each(result, function(index, item) {
-						$('.uploadFile').append(`<div> <a href="\${item.savedPath}"> \${item.originName} </a> </div>`);
-					})
-				},
-				error : function(xhr, status, error) {
-					console.log(error);
-				}
-			})
+
+			if(${article.fileList != ''}) {
+				$.ajax({
+					url : '/user/file/getFileById',
+					type : 'POST',
+					data : {
+						file : '${article.fileList}'
+					},
+					dataType : 'json',
+					success : function(result) {
+						$('.uploadFile').append('첨부파일');
+						$.each(result, function(index, item) {
+							$('.uploadFile').append(`<div> <a href="\${item.savedPath}"> \${item.originName} </a> </div>`);
+						})
+					},
+					error : function(xhr, status, error) {
+						console.log(error);
+					}
+				})
+				
+			}
 		})
 		</script>	
-		<div class="uploadFile"> 첨부파일 </div>	
+		<div class="uploadFile"></div>	
 			
 		<!--  댓글 조회 / 수정 / 삭제 / 조회 -->
 		<script>
@@ -321,6 +326,8 @@
 				
 				return true;
 			}
+			
+			$('body').css('--bgImage', `url('')`);
 			
 		</script>	
 		

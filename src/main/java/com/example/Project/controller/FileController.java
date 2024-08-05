@@ -58,7 +58,6 @@ public class FileController {
 	@PostMapping("/user/file/getFileById")
 	@ResponseBody
 	public List<FileVo> getFileById(String file) {
-
 		List<FileVo> fileList = new ArrayList<>();
 		
 		for (String str : file.split(",\\s*")) {
@@ -66,16 +65,6 @@ public class FileController {
 		}
 
 		return fileList;
-	}
-	
-	// 서버에서 이미지 불러오기
-	@GetMapping("/user/file/images/{id}")
-	@ResponseBody
-	public Resource images(@PathVariable("id") int id, Model model) throws IOException {
-		
-		String imagePath = fileService.getImageFileById(id).getSavedPath();
-		
-		return new UrlResource("file:" + imagePath);
 	}
 	
 	// 첨부파일 삭제

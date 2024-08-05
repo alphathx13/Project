@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import com.example.Project.service.FileService;
 import com.example.Project.util.Util;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,24 +23,32 @@ public class Rq {
 	@Getter
 	private String loginMemberNn;
 	@Getter
+	private int loginMemberImg;
+	@Getter
+	private String loginMemberImgPath;
+	@Getter
 	private HttpServletResponse response;
 	private HttpSession session;
-
-	public Rq(HttpServletRequest request, HttpServletResponse response) {
-		
+	
+	public Rq(HttpServletRequest request, HttpServletResponse response, FileService fileService) {
 		this.response = response;
 		this.session = request.getSession();
 
 		int loginMemberNumber = 0;
 		String loginMemberNn = "";
+		int loginMemberImg = 0;
+		String loginMemberImgPath = "";
 
 		if (session.getAttribute("loginMemberNumber") != null) {
 			loginMemberNumber = (int) session.getAttribute("loginMemberNumber");
 			loginMemberNn = (String) session.getAttribute("loginMemberNn");
+			loginMemberImg = (int) session.getAttribute("loginMemberImg");
 		}
 		
 		this.loginMemberNumber = loginMemberNumber;
 		this.loginMemberNn = loginMemberNn;
+		this.loginMemberImg = loginMemberImg;
+		this.loginMemberImgPath = fileService.getMemberImgPath(loginMemberImg);
 		
 		request.setAttribute("rq", this);
 
@@ -58,11 +67,14 @@ public class Rq {
 	public void login(Member member) {
 		session.setAttribute("loginMemberNumber", member.getId());
 		session.setAttribute("loginMemberNn", member.getNickname());
+		session.setAttribute("loginMemberImg", member.getMemberImg());
 	}
 
 	public void logout() {
 		this.session.removeAttribute("loginMemberNumber");
 		this.session.removeAttribute("loginMemberNn");
+		this.session.removeAttribute("loginMemberImg");
+		this.session.removeAttribute("loginMemberImgPath");
 	}
 	
 	public void init() {

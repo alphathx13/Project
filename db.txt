@@ -127,8 +127,8 @@ CREATE TABLE `member`(
     id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
     , regDate DATETIME NOT NULL
     , updateDate DATETIME NOT NULL
-    , checkJoin INT(1) NOT NULL
-    , loginType VARCHAR(20) NOT NULL
+    , checkJoin INT NOT NULL
+    , loginType VARCHAR(20) NOT NULL DEFAULT 'email'
     , uid VARCHAR(50) 
     , loginId VARCHAR(20) 
     , loginPw VARCHAR(100) 
@@ -136,12 +136,11 @@ CREATE TABLE `member`(
     , nickname VARCHAR(20) NOT NULL
     , cellphone VARCHAR(20) NOT NULL
     , email VARCHAR(50) NOT NULL
-    , memberImg int(10) NOT NULL
+    , memberImg INT NOT NULL
     , authLevel INT UNSIGNED NOT NULL DEFAULT 2 COMMENT '권한 레벨 (일반 = 2, 관리자 = 1)'
     , delStatus INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '탈퇴 여부 (탈퇴 전 = 0, 탈퇴 신청 = 1, 탈퇴 신청진행중 = 2)'
     , delDate DATETIME COMMENT '탈퇴 날짜'
     , delReason TEXT COMMENT '탈퇴 사유'
-    , memberImg INT(10) NOT NULL
 );
 
 ALTER TABLE `member` CONVERT TO CHARSET utf8;
@@ -233,7 +232,7 @@ CREATE TABLE imgUpload(
     , regDate DATETIME NOT NULL
     , originName VARCHAR(50) NOT NULL
     , savedName VARCHAR(100) NOT NULL
-    , savedPath VARCHAR(100) NOT NULL
+    , savedPath VARCHAR(200) NOT NULL
 );
 
 CREATE TABLE fileUpload(
@@ -241,7 +240,7 @@ CREATE TABLE fileUpload(
     , regDate DATETIME NOT NULL
     , originName VARCHAR(50) NOT NULL
     , savedName VARCHAR(100) NOT NULL
-    , savedPath VARCHAR(100) NOT NULL
+    , savedPath VARCHAR(200) NOT NULL
 );
 
 CREATE TABLE article (
@@ -250,9 +249,9 @@ CREATE TABLE article (
     , updateDate DATETIME NOT NULL
     , title VARCHAR(100) NOT NULL
     , `body` TEXT NOT NULL
-    , memberNumber INT(100) NOT NULL
-    , boardId INT(20) UNSIGNED NOT NULL
-    , viewCount INT(10) UNSIGNED NOT NULL DEFAULT 0
+    , memberNumber INT NOT NULL
+    , boardId INT UNSIGNED NOT NULL
+    , viewCount INT UNSIGNED NOT NULL DEFAULT 0
     , imageList TEXT
     , fileList TEXT
 );

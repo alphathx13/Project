@@ -61,10 +61,6 @@ public class MemberController {
 	@Value("${custom.naver.baseUrl}")
 	private String baseUrl;
 
-	// 이미지 DB 위치
-	@Value("${file.dir}")
-	private String fileDir;
-
 	public MemberController(MemberService memberService, FileService fileService, Rq rq) {
 		this.memberService = memberService;
 		this.fileService = fileService;
@@ -92,14 +88,14 @@ public class MemberController {
 		
 		memberService.checkJoin(loginId, pwSecure(pwSecure(loginPw)), name, nickname, cellphone, email, memberImg);
 
-		try {
-			memberService.sendCheckJoinEmail(memberService.getMemberByCellphone(cellphone).getId(), email);
-		} catch (Exception e) {
-			System.out.println("에러코드 : " + e);
-			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
-			fileService.memberImgDelete(memberService.getMemberByCellphone(cellphone).getMemberImg());
-			return Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
-		}
+//		try {
+//			memberService.sendCheckJoinEmail(memberService.getMemberByCellphone(cellphone).getId(), email);
+//		} catch (Exception e) {
+//			System.out.println("에러코드 : " + e);
+//			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
+//			fileService.memberImgDelete(memberService.getMemberByCellphone(cellphone).getMemberImg());
+//			return Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
+//		}
 		
 		return Util.jsReplace("회원 가입 이메일이 전송되었습니다. 이메일을 확인해주세요.", "/user/home/main");
 	}

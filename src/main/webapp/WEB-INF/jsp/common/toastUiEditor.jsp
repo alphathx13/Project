@@ -53,6 +53,15 @@
 	
 	$(document).ready(function() {
 		
+		// 업로드 이벤트
+		$('.imageUpload').on('click', function() {
+			$('#imageInput').click();
+		});
+		
+		$('.fileUpload').on('click', function() {
+			$('#fileInput').click();
+		});
+		
 		hideImageIcon();
 		$(window).resize(hideImageIcon);
 		
@@ -92,8 +101,9 @@
 	            cache: false,
 	            timeout: 600000,
 	            success: function(result) {
+	            	console.log(result);
 	            	$.each(result, function(index, item) {
-		                $('.toastui-editor-contents').append(`<img src="/user/file/images/\${item.id}" contenteditable="false"></p>`);
+		                $('.toastui-editor-contents').append(`<img src="\${item.savedPath}" contenteditable="false"></p>`);
 		                imgArray.push(item.id);
 	            	})
 	            	
@@ -134,15 +144,6 @@
 	function hideImageIcon() {
 		$('.image.toastui-editor-toolbar-icons').css('display', 'none');
 	}
-	
-	// 업로드 이벤트
-	$('.imageUpload').on('click', function() {
-		$('#imageInput').click();
-	});
-	
-	$('.fileUpload').on('click', function() {
-		$('#fileInput').click();
-	});
 	
 	// DB에서 첨부파일 가져오기
 	function loadFileList() {
@@ -186,7 +187,9 @@
 	            dataType : 'json',
 	            success: function(response) {
 	            	$.each(response, function(index, item) {
-	        	    	$('#fileNames').append(`\${item.originName} <button type="button" class="text-red-500" onclick="uploadFileDelete(\${item.id});"> X </button><br>`);
+		            	if (item != null) {
+	        	    		$('#fileNames').append(`\${item.originName} <button type="button" class="text-red-500" onclick="uploadFileDelete(\${item.id});"> X </button><br>`);
+		            	}
 	            	});
 	            },
 	            error: function(error) {

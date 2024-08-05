@@ -154,7 +154,7 @@ public class ArticleController {
 		// 불러온 FileList를 배열로 변환해서 전달
 		String[] fileList = article.getFileList().split(",");
 		String[] imageList = article.getImageList().split(",");
-		
+
 		fileService.fileAndFileDBDelete(fileList, "file");
 		fileService.fileAndFileDBDelete(imageList, "image");
 
