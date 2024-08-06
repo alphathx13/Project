@@ -123,7 +123,8 @@ public interface MemberDao {
 	@Update("""
 			UPDATE `member`
 				SET delStatus = 0,
-				delReason = NULL
+					, delDate = NULL
+					, delReason = NULL
 				WHERE id = #{id};
 			""")
 	public void withdrawalCancel(int id);

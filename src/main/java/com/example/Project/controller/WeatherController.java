@@ -26,10 +26,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 public class WeatherController {
 	
+	
 	private String updateTime;
 	
 	{
-		updateTime = "20240802";
+		updateTime = "20240806";
 	}
 	
 	private WeatherService weatherService;
@@ -170,6 +171,9 @@ public class WeatherController {
         
         return "/user/home/main";
 	}
+	
+	
+	// 여기 위로 싹다 필요 없음
 	
 	@GetMapping("/user/weather/weatherMidView")
 	@ResponseBody

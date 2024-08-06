@@ -81,7 +81,7 @@ public interface FileDao {
 				WHERE id = #{id}
 			""")
 	String getFileNameById(int id);
-
+	
 	@Delete("""
 			DELETE FROM imgUpload
 				WHERE id = #{id}
@@ -110,8 +110,8 @@ public interface FileDao {
 	@Select("""
 			SELECT savedPath
 				FROM memberImg
-				WHERE id = #{memberNumber}
+				WHERE id = #{id}
 			""")
-	String getMemberImgPath(int memberNumber);
+	String getMemberImgPath(int id);
 
 }

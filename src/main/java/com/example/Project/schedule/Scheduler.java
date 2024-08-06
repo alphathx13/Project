@@ -240,10 +240,7 @@ public class Scheduler {
 	public void memberDelete() {
     	List<Integer> memberImgList = memberService.getDeleteMemberImg();
 
-        for (int id : memberImgList) {
-        	fileService.memberImgDelete(id);
-        }
-    	
+    	fileService.memberImgDelete(memberImgList);
     	memberService.memberDelete();
     }
     

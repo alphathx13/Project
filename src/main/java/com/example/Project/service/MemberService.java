@@ -1,25 +1,22 @@
 package com.example.Project.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.example.Project.dao.MemberDao;
 import com.example.Project.vo.Member;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 @Service
 public class MemberService {
 
 	private MemberDao memberDao;
-	private JavaMailSender javaMailSender;
+	private AWSSESService emailSender;
 
-	public MemberService(MemberDao memberDao, JavaMailSender javaMailSender) {
+	public MemberService(MemberDao memberDao, AWSSESService emailSender) {
 		this.memberDao = memberDao;
-		this.javaMailSender = javaMailSender;
+		this.emailSender = emailSender;
 	}
 
 	public void checkJoin(String loginId, String loginPw, String name, String nickname, String cellphone, String email, int memberImg) {
@@ -84,18 +81,23 @@ public class MemberService {
 	
     public void sendPasswordRecoveryEmail(String email, String tempPassword) {
         String subject = "임시 패스워드 발송";
-        String text = "<html>"
+        String html = "<html>"
                     + "<body>"
                     + "<h3>임시 패스워드 : " + tempPassword + "</h3>"
-                    + "<a style='display:inline-block;padding:10px;border-radius:10px;border:5px solid black;font-size:4rem;color:inherit;text-decoration:none;' href='http://localhost:8081/' target='_blank'>로그인 하러가기</a>"
+                    + "<a style='display:inline-block;padding:10px;border-radius:10px;border:5px solid black;font-size:4rem;color:inherit;text-decoration:none;' href='http://localhost:8000/' target='_blank'>로그인 하러가기</a>"
                     + "</body>"
                     + "</html>";
-        sendEmail(email, subject, text);
+        
+        List<String> to = new ArrayList<String>();
+        to.add("email");
+        
+        emailSender.send(to, subject, html);
+        
     }
 
 	public void sendWithdrawalEmail(Member member) {
 		String subject = "탈퇴 메일 발송";
-        String text = "<html>"
+        String html = "<html>"
                     + "<body>"
                     + "<h3>" + member.getNickname() + "님 지금까지 현 사이트를 이용해주셔서 감사합니다." + "</h3>"
                     + "<h3> 아래버튼을 누르면 회원탈퇴가 이루어집니다. </h3>"
@@ -103,38 +105,32 @@ public class MemberService {
                     + "<a style='display:inline-block;padding:10px;border-radius:10px;border:5px solid black;font-size:4rem;color:inherit;text-decoration:none;' href='http://localhost:8000/user/member/doWithdrawal?id=" + member.getId() +  "' target='_blank'>회원탈퇴</a>"
                     + "</body>"
                     + "</html>";
-        sendEmail(member.getEmail(), subject, text);
+        
+        List<String> to = new ArrayList<String>();
+        to.add(member.getEmail());
+        
+        emailSender.send(to, subject, html);
+        
 	}
 	
 	public void sendCheckJoinEmail(int id, String email) {
 		String subject = "가입 메일 발송";
-        String text = "<html>"
+        String html = "<html>"
                     + "<body>"
                     + "<h3> 회원가입을 환영합니다. </h3>"
                     + "<a style='display:inline-block;padding:10px;border-radius:10px;border:5px solid black;font-size:4rem;color:inherit;text-decoration:none;' href='http://localhost:8000/user/member/doJoin?id=" + id +  "' target='_blank'>회원가입</a>"
                     + "</body>"
                     + "</html>";
-        sendEmail(email, subject, text);
+        
+        List<String> to = new ArrayList<String>();
+        to.add("email");
+        
+        emailSender.send(to, subject, html);
 		
 	}
 	
 	public void memberJoinFail(int id) {
 		memberDao.memberJoinFail(id);
-	}
-	
-	public void sendEmail(String to, String subject, String text) {
-		MimeMessage message = javaMailSender.createMimeMessage();
-		
-		try {
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-			helper.setTo(to);
-			helper.setSubject(subject);
-			helper.setText(text, true);
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
-		
-		javaMailSender.send(message);
 	}
 	
 	// 주기적으로 멤버 삭제처리

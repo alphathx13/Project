@@ -10,7 +10,7 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 
 @Configuration
-public class AwsSesConfig {
+public class AWSSESConfig {
 
     @Value("${custom.AWS.accessKey}")
     private String accessKey;

@@ -718,7 +718,7 @@
 							<div class="chat chat-start">
 								<div class="chat-image avatar">
 							    <div class="w-10 rounded-full">
-							    	<img src="/user/member/memberImg/\${recv.sender }" />
+							    	<img src="/user/file/memberImg/\${recv.sender }" />
 							    </div>
 							  </div>
 							  <div class="chat-header">
@@ -733,7 +733,7 @@
 							<div class="chat chat-end">
 							  <div class="chat-image avatar">
 							    <div class="w-10 rounded-full">
-							  	  <img src="/user/member/memberImg/\${recv.sender }" />
+							  	  <img src="/user/file/memberImg/\${recv.sender }" />
 							    </div>
 							  </div>
 							  <div class="chat-header">
@@ -805,12 +805,13 @@
 	                },
 	                success: function(response) {
 	                	$.each(response, function(index, recv) {
+	                		console.log(recv.sender);
 	                		if (recv.sender != '${rq.loginMemberNumber}') {
 	        					var li = $('<li>').addClass('list-group-item').html(`
 	        							<div class="chat chat-start">
 	        								<div class="chat-image avatar">
 	        							    <div class="w-10 rounded-full">
-	        							    	<img src="/user/member/memberImg/\${recv.sender }" />
+	        							    	<img src="/user/file/memberImg/\${recv.sender }" />
 	        							    </div>
 	        							  </div>
 	        							  <div class="chat-header">
@@ -825,7 +826,7 @@
 	        							<div class="chat chat-end">
 	        							  <div class="chat-image avatar">
 	        							    <div class="w-10 rounded-full">
-	        							   		<img src="/user/member/memberImg/\${recv.sender }" />
+	        							   		<img src="/user/file/memberImg/\${recv.sender }" />
 	        							    </div>
 	        							  </div>
 	        							  <div class="chat-header">

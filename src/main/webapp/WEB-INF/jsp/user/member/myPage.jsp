@@ -104,20 +104,3 @@
 
 
 <%@ include file="../../common/foot.jsp"%>
-
-<!--
-
-
-
-	
-
- 
-			if (window.confirm("정말 회원을 탈퇴하시겠습니까?")) {
-				form.submit();
-				alert("회원탈퇴가 진행중입니다.");
-		    } else {
-		    	return;
-		    }
-
-
- -->

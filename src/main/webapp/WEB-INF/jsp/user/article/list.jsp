@@ -64,7 +64,7 @@
 						          <div class="flex items-center gap-3">
 						            <div class="avatar">
 						              <div class="mask mask-squircle h-6 w-6">
-						                <img src="/user/member/memberImg/${article.memberNumber }"/>
+						                <img src="/user/file/memberImg/${article.memberNumber }"/>
 						              </div>
 						            </div>
 						            <div>

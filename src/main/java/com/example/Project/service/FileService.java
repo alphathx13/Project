@@ -2,6 +2,7 @@ package com.example.Project.service;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -111,6 +112,7 @@ public class FileService {
 			// 실제 DB에 저장되어있는 파일 저장위치 가져오기
 	        String[] pathArr = new String[numbers.length];
 	        int i = 0;
+	        
 	        for (int id : numbers) {
 	        	if (type.equals("image")) {
 	        		pathArr[i] = fileDao.getImageNameById(id);
@@ -135,6 +137,32 @@ public class FileService {
 	        }
 		}
 	}
+	
+	// DB와 서버에서 파일 삭제
+	public void memberImgDelete(List<Integer> memberImgList) {
+		
+		if (memberImgList.size() == 0)
+			return;
+		
+		// 실제 DB에 저장되어있는 파일 저장위치 가져오기
+        String[] pathArr = new String[memberImgList.size()];
+        
+        int i = 0;
+        for (Integer id : memberImgList) {
+        	pathArr[i] = fileDao.getMemberImgPath(id);
+        	i++;
+        }
+        
+        // DB에서 파일 정보 삭제
+        for (Integer id : memberImgList) {
+        	fileDao.memberImgDelete(id);
+        }
+        
+        // S3에서 파일 삭제
+        for (String filePath : pathArr) {
+        	amazonS3Client.deleteObject(bucket, filePath);
+        }
+	}
 
 	public FileVo getFileById(int id) {
 		return fileDao.getFileById(id);
@@ -148,6 +176,6 @@ public class FileService {
 	public String getMemberImgPath(int memberNumber) {
 		return fileDao.getMemberImgPath(memberNumber);
 	}
-	
+
 }
 

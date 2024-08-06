@@ -129,7 +129,7 @@
 				<c:otherwise>
 					<div class="mt-4 dropdown dropdown-end">
 						<div tabindex="0" role="button">
-							<img class="h-12 w-12 rounded-full" src="${rq.loginMemberImgPath }" />						
+							<img class="h-12 w-12 rounded-full" src="/user/file/memberImg/${rq.loginMemberNumber}" />						
 						</div>
 						<ul tabindex="0"
 							class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 shadow w-32 text-black font-bold mt-">

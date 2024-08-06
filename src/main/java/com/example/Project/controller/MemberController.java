@@ -12,17 +12,10 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,6 +29,10 @@ import com.example.Project.util.Util;
 import com.example.Project.vo.Member;
 import com.example.Project.vo.ResultData;
 import com.example.Project.vo.Rq;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -88,14 +85,14 @@ public class MemberController {
 		
 		memberService.checkJoin(loginId, pwSecure(pwSecure(loginPw)), name, nickname, cellphone, email, memberImg);
 
-//		try {
-//			memberService.sendCheckJoinEmail(memberService.getMemberByCellphone(cellphone).getId(), email);
-//		} catch (Exception e) {
-//			System.out.println("에러코드 : " + e);
-//			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
-//			fileService.memberImgDelete(memberService.getMemberByCellphone(cellphone).getMemberImg());
-//			return Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
-//		}
+		try {
+			memberService.sendCheckJoinEmail(memberService.getMemberByCellphone(cellphone).getId(), email);
+		} catch (Exception e) {
+			System.out.println("에러코드 : " + e);
+			memberService.memberJoinFail(memberService.getMemberByCellphone(cellphone).getId());
+			fileService.memberImgDelete(memberService.getMemberByCellphone(cellphone).getMemberImg());
+			return Util.jsReplace("회원 가입 과정에서 문제가 발생하였습니다. 가입절차를 다시 진행해주세요.", "/user/home/main");
+		}
 		
 		return Util.jsReplace("회원 가입 이메일이 전송되었습니다. 이메일을 확인해주세요.", "/user/home/main");
 	}
@@ -256,14 +253,14 @@ public class MemberController {
 	@GetMapping("/user/member/doWithdrawal")
 	@ResponseBody
 	public String doWithdrawal(int id) {
-		Member member = memberService.getMemberById(rq.getLoginMemberNumber());
+		
+		Member member = memberService.getMemberById(id);
 		
 		if (member.getDelStatus() != 1) {
 			return Util.jsReplace("비정상적인 접근입니다.", "/");
 		}
 		
 		memberService.doWithdrawal(id);
-		fileService.memberImgDelete(member.getMemberImg());
 		return Util.jsReplace("탈퇴신청 정상적으로 이루어졌습니다. 탈퇴후 일주일동안 탈퇴를 취소할 수 있습니다.", "/");
 	}
 	
@@ -421,16 +418,6 @@ public class MemberController {
 		memberService.doPasswordModify(member.getId(), pwSecure(pwSecure(tempPassword)));
 
 		return Util.jsReplace("회원님의 이메일주소로 임시 패스워드가 발송되었습니다", "login");
-	}
-	
-	// 회원 이미지 가져오기
-	@GetMapping("/user/member/memberImg/{id}")
-	@ResponseBody
-	public Resource fileLoad(@PathVariable("id") int id, Model model) throws IOException {
-		
-		String memberImgPath = memberService.getMemberImg(id);
-		
-		return new UrlResource("file:" + memberImgPath);
 	}
 	
 	// 네이버 코드 받아오기
