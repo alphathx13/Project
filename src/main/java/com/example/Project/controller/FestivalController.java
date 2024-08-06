@@ -64,6 +64,9 @@ public class FestivalController {
 		model.addAttribute("currentFestivalCount", festivalService.festivalListCount(1));
 		model.addAttribute("futureFestivalCount", festivalService.festivalListCount(2));
 
+		model.addAttribute("searchText", searchText);
+		model.addAttribute("searchType", searchType);
+
 		return "/user/festival/list";
 	}
 	

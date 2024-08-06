@@ -10,10 +10,10 @@
 	}
 </style>
 
-<section class="mx-56 mt-8 text-lg text-center">
+<section class="mx-56 mt-8 text-lg text-center ownglyphFont">
 	<div style="height: 400px;" class="visual custom-bg flex flex-col text-white">
 		<div class="grow"></div>
-		<div class="text-6xl mb-4 outfitFont"> 즐거운 문화생활의 시작</div>
+		<div class="text-6xl mb-4"> 즐거운 문화생활의 시작</div>
 	</div>
 	
 	<div class="mt-4 flex justify-end">
@@ -45,17 +45,17 @@
 	<div class="font-bold text-red-500 text-2xl text-left mb-4">- 종료된 행사</div>
 	<div id="pastFestival"></div>
 	
-	<div class="search text-black mt-4">
+	<div class="search font-bold mt-4">
 		<form class = "flex justify-center" action="" method="get" onsubmit="emptyCheck(this); return false;"> 
 			<select data-value="${searchType }" class="select select-bordered h-4 mr-1" name="searchType">
 				<option value="" selected disabled> 검색항목 </option>
-				<option value="1"> 제목 </option>
-				<option value="2"> 내용 </option>
-				<option value="3"> 제목+내용 </option>
+				<option value="1" <c:if test="${searchType == '1'}">selected</c:if>> 제목 </option>
+				<option value="2" <c:if test="${searchType == '2'}">selected</c:if>> 내용 </option>
+				<option value="3" <c:if test="${searchType == '3'}">selected</c:if>> 제목+내용 </option>
 			</select>
 			<input type="hidden" value="helloWorld" name ="test"/>
 			<label class="input input-bordered flex items-center gap-2">
-				<input maxlength="20" type="text" value="${searchText }" class="grow" name ="searchText" placeholder="Search" />
+				<input id="searchInput" maxlength="20" type="text" value="${searchText }" class="grow" name ="searchText" placeholder="Search" />
 				<button>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" fill="currentColor" class="h-4 w-4 opacity-70">
 						<path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"  clip-rule="evenodd" />
@@ -66,6 +66,7 @@
 	</div>
 
 	<script>
+	
 		// 전역으로 사용할 데이터
 	    var currentFestival;
  	    var currentFestivalview ;
@@ -178,11 +179,11 @@
  				cookieChange();
 			
 		    currentFestival = ${currentFestival};
-	 	    currentFestivalview = 6;
+	 	    currentFestivalview = 3;
 	 	    futureFestival = ${futureFestival}
-	 	    futureFestivalview = 6;
+	 	    futureFestivalview = 3;
 	 	    pastFestival = ${pastFestival}; 
-	 	    pastFestivalview = 6;
+	 	    pastFestivalview = 3;
 	 	    
 	 	    if (currentFestival.length === 0) {
 	 	        $('#currentFestival').html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl"> 현재 진행중인 행사가 없습니다. </div>`);
@@ -205,11 +206,12 @@
 
 		// 행사 갤러리형
  	    function viewFestivalGallery(id, festivals, show) {
- 	    	var html = `<div class="container gallery flex flex-wrap mx-auto">`;
+ 	    	var html = `<div class="container gallery flex flex-wrap mx-auto font-bold">`;
 	            
 	        $.each(festivals, function(index, festival) {
+	        	
 	        	if (index < show) {
-	        		html += `<span class="flex flex-col basis-1/3 px-4 mb-4"><span class="border border-gray-400 rounded-2xl">`;
+	        		html += `<span class="flex flex-col basis-1/3 px-4 mb-4"><span class="border border-gray-400 rounded-2xl hover:bg-gray-300">`;
 		        	
 		        	if (index % 6 == 0) {
 		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/festivalTempImg/festivalTempImg1.jpg" />`;
@@ -224,12 +226,14 @@
 		        	} else {
 		        		html += `<a href="detail?eventSeq=\${festival.eventSeq}"><img class="rounded-2xl" src="/resource/festivalTempImg/festivalTempImg6.jpg" />`;
 		        	}
-		        	html += `<br/><span class="mt-3 text-2xl">\${festival.title}</span><br/>`
+		        	
+		        	html += `<br/><span>\${festival.themeCdNm}</span>`;
+		        	html += `<br/><span class="mt-3 text-2xl">\${festival.title}</span><br/>`;
 		        	
 		        	if(festival.beginDt == festival.endDt) {
 		        		html += `<span class="text-xl"><i class="fa-regular fa-clock"></i> \${festival.beginDt}</span>`;
 		        	} else {
-		        		html += ` <span class="text-xl"><i class="fa-regular fa-clock"></i> \${festival.beginDt} ~ \${festival.endDt} </span> `;
+		        		html += `<span class="text-xl"><i class="fa-regular fa-clock"></i> \${festival.beginDt} ~ \${festival.endDt} </span> `;
 		        	}
 		        	
 		        	html += `
@@ -242,7 +246,7 @@
 	        })
 	        
 	        if (festivals.length > show) {
-		        html += `<button class="btn btn-outline w-full" onclick="viewMoreFestivalGallery('\${id}');" type="button"> 더보기 </button>`;
+		        html += `<div class="w-full"><button class="btn btn-outline w-1/2" onclick="viewMoreFestivalGallery('\${id}');" type="button"> 더보기 </button></div>`;
 	        }
 	            
 	        $("#" + id).html(html);
@@ -271,26 +275,26 @@
  				cookieChange();
  			
 		    currentFestival = ${currentFestival};
-	 	    currentFestivalview = 6;
+	 	    currentFestivalview = 3;
 	 	    futureFestival = ${futureFestival}
-	 	    futureFestivalview = 6;
+	 	    futureFestivalview = 3;
 	 	    pastFestival = ${pastFestival}; 
-	 	    pastFestivalview = 6;
+	 	    pastFestivalview = 3;
  	    	
  	    	if (currentFestival.length === 0) {
- 	 	        $("#currentFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl">  현재 진행중인 행사가 없습니다. </div>`);
+ 	 	        $("#currentFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl">  <br/> 현재 진행중인 행사가 없습니다. </div>`);
  	 	    } else {
  	 	    	viewFestivalGallery('currentFestival', currentFestival, currentFestivalview);
  	 	    }
  		
  	 	    if (futureFestival.length === 0) {
- 	 	        $("#futureFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500">  진행예정 행사가 없습니다. </div>`);
+ 	 	        $("#futureFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500"> <br/> 진행예정 행사가 없습니다. </div>`);
  	 	    } else {
  	 	    	viewFestivalGallery('futureFestival', futureFestival, futureFestivalview);
  	 	    }
  		
  	 	    if (pastFestival.length === 0) {
- 	 	        $("#pastFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500">  진행한 행사가 없습니다. </div>`);
+ 	 	        $("#pastFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500"> <br/> 진행한 행사가 없습니다. </div>`);
  	 	    } else {
  	 	    	viewFestivalGallery('pastFestival', pastFestival, pastFestivalview);
  	 	    }

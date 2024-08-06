@@ -1,6 +1,7 @@
 package com.example.Project.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -110,16 +111,14 @@ public class FileService {
 			int[] numbers = Arrays.stream(list).mapToInt(Integer::parseInt).toArray();
 			
 			// 실제 DB에 저장되어있는 파일 저장위치 가져오기
-	        String[] pathArr = new String[numbers.length];
-	        int i = 0;
+			List<String> pathList = new ArrayList<>();
 	        
 	        for (int id : numbers) {
 	        	if (type.equals("image")) {
-	        		pathArr[i] = fileDao.getImageNameById(id);
+	        		pathList.add(fileDao.getImageNameById(id));
 	        	} else {
-	        		pathArr[i] = fileDao.getFileNameById(id);
+	        		pathList.add(fileDao.getFileNameById(id));
 	        	}
-	        	i++;
 	        }
 	        
 	        // DB에서 파일 정보 삭제
@@ -132,36 +131,33 @@ public class FileService {
 	        }
 	        
 	        // S3에서 파일 삭제
-	        for (String filePath : pathArr) {
+	        for (String filePath : pathList) {
 	        	amazonS3Client.deleteObject(bucket, filePath);
 	        }
 		}
 	}
 	
-	// DB와 서버에서 파일 삭제
+	// DB와 서버에서 회원이미지 삭제
 	public void memberImgDelete(List<Integer> memberImgList) {
 		
 		if (memberImgList.size() == 0)
 			return;
 		
-		// 실제 DB에 저장되어있는 파일 저장위치 가져오기
-        String[] pathArr = new String[memberImgList.size()];
+		List<String> pathList = new ArrayList<>();
         
-        int i = 0;
         for (Integer id : memberImgList) {
-        	pathArr[i] = fileDao.getMemberImgPath(id);
-        	i++;
+        	pathList.add(fileDao.getMemberImgPath(id));
         }
         
-        // DB에서 파일 정보 삭제
-        for (Integer id : memberImgList) {
-        	fileDao.memberImgDelete(id);
+        // DB 및 S3에서 회원이미지 삭제
+        for (int j = 0; j < memberImgList.size(); j++) {
+        	if (memberImgList.get(j) == 1)
+        		continue;
+        	
+        	fileDao.memberImgDelete(memberImgList.get(j));
+        	amazonS3Client.deleteObject(bucket, pathList.get(j));
         }
         
-        // S3에서 파일 삭제
-        for (String filePath : pathArr) {
-        	amazonS3Client.deleteObject(bucket, filePath);
-        }
 	}
 
 	public FileVo getFileById(int id) {

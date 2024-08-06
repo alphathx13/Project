@@ -32,13 +32,11 @@ import com.example.Project.vo.FileVo;
 @Controller
 public class FileController {
 
-	private AmazonS3Client amazonS3Client;
 	private MemberService memberService;
 	private FileService fileService;
 
-	public FileController(FileService fileService, AmazonS3Client amazonS3Client, MemberService memberService) {
+	public FileController(FileService fileService, MemberService memberService) {
 		this.fileService = fileService;
-		this.amazonS3Client = amazonS3Client;
 		this.memberService = memberService;
 	}
 
