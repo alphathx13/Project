@@ -26,7 +26,7 @@
 		</div>
 	</div>
 
-	<div class="font-bold text-blue-500 text-2xl text-left mb-4">- 현재 진행중인 행사
+	<div class="font-bold text-blue-500 text-3xl text-left mb-4"><i class="fa-solid fa-caret-right"></i><span class="">&nbsp;&nbsp;진행중인 행사</span> 
 		<c:if test="${currentFestivalCount != 0}">
 			<span> : ${currentFestivalCount }개 </span>
 		</c:if>
@@ -34,7 +34,7 @@
 	<div id="currentFestival"></div>
 	<br/><br/>
 
-	<div class="font-bold text-purple-500 text-2xl text-left mb-4 ">- 진행예정 행사
+	<div class="font-bold text-purple-500 text-3xl text-left mb-4"><i class="mt-3 fa-solid fa-caret-right"></i><span class="">&nbsp;&nbsp;진행예정 행사</span> 
 		<c:if test="${futureFestivalCount != 0}">
 			<span> : ${futureFestivalCount }개 </span>
 		</c:if>
@@ -42,12 +42,16 @@
 	<div id="futureFestival"></div>
 	<br/><br/>
 	
-	<div class="font-bold text-red-500 text-2xl text-left mb-4">- 종료된 행사</div>
+	<div class="font-bold text-red-500 text-3xl text-left mb-4"><i class="mt-3 fa-solid fa-caret-right"></i><span class="">&nbsp;&nbsp;진행종료 행사</span>
+		<c:if test="${pastFestivalCount != 0}">
+			<span> : ${pastFestivalCount }개 </span>
+		</c:if>
+	</div>
 	<div id="pastFestival"></div>
 	
 	<div class="search font-bold mt-4">
 		<form class = "flex justify-center" action="" method="get" onsubmit="emptyCheck(this); return false;"> 
-			<select data-value="${searchType }" class="select select-bordered h-4 mr-1" name="searchType">
+			<select data-value="${searchType }" class="select select-bordered h-4 mr-1 text-lg" name="searchType">
 				<option value="" selected disabled> 검색항목 </option>
 				<option value="1" <c:if test="${searchType == '1'}">selected</c:if>> 제목 </option>
 				<option value="2" <c:if test="${searchType == '2'}">selected</c:if>> 내용 </option>
@@ -55,7 +59,7 @@
 			</select>
 			<input type="hidden" value="helloWorld" name ="test"/>
 			<label class="input input-bordered flex items-center gap-2">
-				<input id="searchInput" maxlength="20" type="text" value="${searchText }" class="grow" name ="searchText" placeholder="Search" />
+				<input id="searchInput" maxlength="20" type="text" value="${searchText }" class="grow text-xl" name ="searchText" placeholder="검색하려는 내용을 입력하세요" />
 				<button>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" fill="currentColor" class="h-4 w-4 opacity-70">
 						<path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"  clip-rule="evenodd" />
@@ -114,7 +118,7 @@
 	                            <col width="100" />
 	                        </colgroup>
 	                        <thead>
-	                            <tr>
+	                            <tr class="text-xl">
 	                                <th>행사 테마</th>
 	                                <th>행사 제목</th>
 	                                <th>시작 날짜</th>
@@ -123,7 +127,7 @@
 	                                <th>조회수</th>
 	                            </tr>
 	                        </thead>
-	                        <tbody>`;
+	                        <tbody class="text-xl">`;
 	
 	        $.each(festivals, function(index, festival) {
 	        	if (index < show) {
@@ -150,7 +154,7 @@
 	        `;
 	        
 	        if (festivals.length > show) {
-		        html += `<button class="btn btn-outline w-full" onclick="viewMoreFestivalList('\${id}');" type="button"> 더보기 </button>`;
+		        html += `<button class="btn btn-outline w-full text-xl" onclick="viewMoreFestivalList('\${id}');" type="button"> 더보기 </button>`;
 	        }
 	
 	        $("#" + id).html(html);
@@ -246,7 +250,7 @@
 	        })
 	        
 	        if (festivals.length > show) {
-		        html += `<div class="w-full"><button class="btn btn-outline w-1/2" onclick="viewMoreFestivalGallery('\${id}');" type="button"> 더보기 </button></div>`;
+		        html += `<div class="w-full"><button class="btn btn-outline w-1/2 text-xl" onclick="viewMoreFestivalGallery('\${id}');" type="button"> 더보기 </button></div>`;
 	        }
 	            
 	        $("#" + id).html(html);
@@ -338,9 +342,6 @@
 			
 			form.submit();
 		}
- 		
- 		// 배경 이미지 삭제
- 		$('body').css('--bgImage', `url('')`);
  		
 	</script>
 

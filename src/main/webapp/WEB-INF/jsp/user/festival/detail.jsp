@@ -4,29 +4,36 @@
 
 <%@ include file="../../common/head.jsp" %>  
 
+
+
 <c:set var="pageTitle" value="행사 소개" />
 
-	<section class="mt-8 text-lg flex flex-col text-center">
+	<section class="mt-8 mx-56 text-lg flex flex-col border border-gray-300 rounded-xl ownglyphFont">
 		<div class="flex justify-center">
 			<table class="w-full table table-xl table-pin-rows table-pin-cols text-xl">
 				<colgroup>
-					<col width=200/>
-					<col width=200/>
-					<col width=200/>
-					<col width=200/>
-					<col width=220/>
+					<col width=/>
+					<col width=/>
+					<col width=/>
 				</colgroup>
 				<tr>
-					<td colspan="5" class="text-center">${festival.title }</td>
+					<td colspan="5" class="text-center text-2xl font-bold">${festival.title }</td>
 				</tr>
-				<tr class="text-base">
-					<td>시작일 : ${festival.beginDt }</td>
-					<td>종료일 : ${festival.endDt }</td>
-					<td>시작시간 : ${festival.beginTm }</td>
-					<td>종료시간 : ${festival.endTm }</td>
+				<tr class="text-xl font-bold">
+					<td>
+						<c:choose>
+						    <c:when test="${festival.beginDt == festival.endDt }">
+						    	행사일 : ${festival.beginDt }
+						    </c:when> 
+						    <c:otherwise>
+						    	행사기간 : ${festival.beginDt } ~ ${festival.endDt }
+						    </c:otherwise>
+						</c:choose>
+					</td>
+					<td>행사시간 : ${festival.beginTm } ~ ${festival.endTm }</td>
 					<td><i class="fa-solid fa-eye"></i> ${festival.viewCount } </td>
 				</tr>
-				<tr>
+				<tr class="text-xl font-bold">
 					<td colspan="3">장소 : ${festival.placeCdNm }</td>
 					<td colspan="2">
 						<c:if test="${festival.placeDetail != null }">
@@ -35,13 +42,18 @@
 					</td>
 				</tr>
 				<tr class="">
-					<td colspan="4" class="">${festival.contents }</td>
+			    	<td colspan="4" class="">${festival.contents }</td>
 				</tr>
 			</table>
 		</div>
 		
+		<br/><br/>
+		
 		<!-- 카카오맵 -->
-		<div id="map" style="width:600px; height:350px;"></div>
+		<div class="flex flex-col items-center">
+			<span class="font-bold"> 찾아오시는 길</span>
+			<div id="map" class="border border-black rounded-xl" style="width:600px; height:350px;"></div>
+		</div>
 		<script>
 			const kakaoKey = '${kakaoKey}';
 		</script>
@@ -113,7 +125,20 @@
 			
 		</script>
 		
-		<!-- 추천관련 -->
+		<!-- 행사 추천, 카카오톡 링크 -->
+		<div class="mt-8 h-16 flex justify-center">
+			<div class="festivalLikeTooltip tooltip w-20 h-full" data-tip="">
+				<button class="festivalLikeBtn btn btn-outline w-full h-full text-xl" onclick = "festivalLikeBtnChange();" type="button">
+					<i class="festivalStar"><div class="festivalLikePoint text-xl">${festival.likePoint }</div></i>
+				</button>
+			</div>
+			<div class="ml-8 tooltip" data-tip="카카오톡 공유하기">
+				<a id="kakao-link-btn" href="javascript:kakaoShare()">
+		    	<img class="w-16" src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" />
+		    	</a>
+		    </div>
+		</div>	
+		<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 		<script>
 			$(document).ready(function(){
 				
@@ -183,147 +208,42 @@
 					})
 				}
 			}
-		</script>
-
-		<div class="h-16">
-			<div class="festivalLikeTooltip tooltip w-20 h-full" data-tip="">
-				<button class="festivalLikeBtn btn btn-outline w-full h-full text-xl" onclick = "festivalLikeBtnChange();" type="button">
-					<i class="festivalStar"><div class="festivalLikePoint text-xl">${festival.likePoint }</div></i>
-				</button>
-			</div>
-		</div>	
-	
-	
-	
-		<!-- 날씨표기 -->
 		
-		<div class="flex justify-center">
-			<table class="table">
-				<colgroup>
-					<col width="60"/>
-					<col width="60"/>
-					<col width="60"/>
-					<col width="60"/>
-				</colgroup>
-			    <thead>
-		     		<tr>
-		     			<td></td>
-		     			<td>오늘</td>
-		     			<td>내일</td>
-		     			<td>모레</td>
-		     		</tr>
-		    	</thead>
-		    	<tbody>
-		    		<tr class="6시"></tr>
-		   			<tr class="9시"></tr>
-		   			<tr class="12시"></tr>
-		   			<tr class="15시"></tr>
-		   			<tr class="18시"></tr>
-		    	</tbody>
-			</table>
-		</div>
-		
-		<div class="flex justify-center">
-			<table class="table">
-				<colgroup>
-					<col width="60"/>
-					<col width="60"/>
-					<col width="60"/>
-					<col width="60"/>
-					<col width="60"/>
-					<col width="60"/>
-				</colgroup>
-			    <thead>
-		     		<tr class="midDate"><td></td></tr>
-		    	</thead>
-		    	<tbody>
-		    		<tr class="temp"></tr>
-		   			<tr class="am"></tr>
-		   			<tr class="cloud"></tr>
-		    	</tbody>
-			</table>
-		</div>
-
-		<script>
-			$(document).ready(function(){
+			Kakao.init('${kakaoKey}');
+			const currentUrl = window.location.href;
+			
+			function kakaoShare() {
+				Kakao.Link.sendDefault({
+				  objectType: 'feed',
+				  content: {
+				    title: '${festival.title}',
+				    description: '테마 : ${festival.themeCdNm} / 장소 : ${festival.placeCdNm}',
+				    imageUrl:
+				      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6Lqd0DpY_4JKFhXxaZq0nt5iImKM5D2Gcg&s',
+				    link: {
+				      mobileWebUrl: currentUrl,
+				      webUrl: currentUrl,
+				    },
+				  },
+	
+				  buttons: [
+				    {
+				      title: '웹으로 이동',
+				      link: {
+				        mobileWebUrl: currentUrl,
+				        webUrl: currentUrl,
+				      },
+				    }
+				  ],
+				});
 				
-		  		var today = new Date();
-		  		
-		  		for (var i = 3; i <= 7; i++) {
-		  		    var futureDate = new Date(today);
-		  		    futureDate.setDate(today.getDate() + i);
-	
-		  		    var month = futureDate.getMonth() + 1;
-		  		    var day = futureDate.getDate();
-	
-		  		  	$('.midDate').append(`<td>\${month}/\${day}</td>`);
-		  		}
-		  		
-		  		// 단기 날씨
-		  		$.ajax({
-					url : '/user/weather/weatherShortView',
-					type : 'GET',
-					dataType : 'json',
-					success : function(data) {
-						var dataNum = 0;
-						for (var num = 6; num <= 18; num+=3) {
-							$('.' + num + '시').html(`
-									<td>\${num}시</td>
-									<td>\${data[dataNum].fcstValue}도/\${data[dataNum+2].fcstValue}%/\${data[dataNum+1].fcstValue}</td>
-									<td>\${data[dataNum+15].fcstValue}도/\${data[dataNum+17].fcstValue}%/\${data[dataNum+16].fcstValue}</td>
-									<td>\${data[dataNum+30].fcstValue}도/\${data[dataNum+32].fcstValue}%/\${data[dataNum+31].fcstValue}</td>
-									`);
-							dataNum += 3;
-						}
-					},
-					error : function(xhr, status, error) {
-						console.log(error);
-					}
-				})
-		  		
-				// 중기 날씨
-				$.ajax({
-					url : '/user/weather/weatherMidView',
-					type : 'GET',
-					dataType : 'json',
-					success : function(data) {
-						
-						$('.temp').html(`
-							<th> 최저/최고 온도</th>
-							<th>\${data.taMin3}도 / \${data.taMax3}도</th>
-							<th>\${data.taMin4}도 / \${data.taMax4}도</th>
-							<th>\${data.taMin5}도 / \${data.taMax5}도</th>
-							<th>\${data.taMin6}도 / \${data.taMax6}도</th>
-							<th>\${data.taMin7}도 / \${data.taMax7}도</th>
-								`);
-	
-						$('.am').html(`
-							<th> 오전/오후 강수확률 </th>
-							<th>\${data.rnSt3Am} % / \${data.rnSt3Pm} %</th>
-							<th>\${data.rnSt4Am} % / \${data.rnSt4Pm} %</th>
-							<th>\${data.rnSt5Am} % / \${data.rnSt5Pm} %</th>
-							<th>\${data.rnSt6Am} % / \${data.rnSt6Pm} %</th>
-							<th>\${data.rnSt7Am} % / \${data.rnSt7Pm} %</th>
-								`);
-						
-						$('.cloud').html(`
-							<th> 오전/오후 날씨 </th>
-							<th>\${data.wf3Am} / \${data.wf3Pm}</th>
-							<th>\${data.wf4Am} / \${data.wf4Pm}</th>
-							<th>\${data.wf5Am} / \${data.wf5Pm}</th>
-							<th>\${data.wf6Am} / \${data.wf6Pm}</th>
-							<th>\${data.wf7Am} / \${data.wf7Pm}</th>
-								`);
-					},
-					error : function(xhr, status, error) {
-						console.log(error);
-					}
-				})
-	
-			})
+			}
 		</script>
 	
 	
+	
+		<!--  댓글 기능 -->		
+		<section class="reply mt-8 text-lg"></section>	
 		<script>
 			$(document).ready(function(){
 				replyLoad('festival', ${festival.eventSeq });
@@ -351,15 +271,15 @@
 											<table class="table table-lg">
 												<colgroup>
 													<col width="30"/>
-													<col width="30"/>
+													<col width="300"/>
 													<col width=""/>
 													<col width="200"/>
 													<col width="10"/>
 													<col width="10"/>
 												</colgroup>
 											<thead>
-												<tr>
-													<th>추천수</th>
+												<tr class="text-xl font-bold text-center">
+													<th>댓글 추천</th>
 													<th>작성자</th>
 													<th>내용</th>
 													<th>작성일시</th>
@@ -380,14 +300,14 @@
 										<tr>
 											<td>
 												<div class="replyLikeTooltip tooltip w-20 h-full" data-tip="">
-													<button check="\${item.id}" class="replyLikeBtn btn btn-outline w-full h-full text-xl" onclick = "replyLikeBtnChange();" type="button">
+													<button check="\${item.id}" class="replyLikeBtn btn btn-outline h-full text-xl" onclick = "replyLikeBtnChange();" type="button">
 														<i class="replyStar"><div class="replyLikePoint text-xl">\${item.likePoint }</div></i>
 													</button>
 												</div>
 											</td>
-											<td>\${item.nickname}</td>
+											<td><span class="flex text-xl items-center font-bold"><img class="w-10 h-10 rounded" src="/user/file/memberImg/\${item.memberId}"/> &nbsp;&nbsp; \${item.nickname}</td></span>
 											<td>
-												<div class="\${item.id}R">\${item.body}	</div>
+												<div class="\${item.id}R text-xl">\${item.body}	</div>
 												<div class="\${item.id}"></div>
 											</td>
 											<td>\${date}
@@ -570,66 +490,80 @@
 			
 		</script>	
 		
-		<section class="reply mt-8 text-lg"></section>	
-		
 	 	<c:if test="${rq.loginMemberNumber != 0 }">
 			<div class="container mx-auto px-3">
 				<form action="../reply/doWrite" method="post" onsubmit="if(replyForm_onSubmit(this)) { if(confirm('댓글을 작성하시겠습니까?')) form.submit();} return false;">
 					<input type="hidden" name="relId" value="${festival.eventSeq }"/>
 					<input type="hidden" name="relTypeCode" value="festival"/>
 					<div class="mt-4 reply-border p-4 text-left">
-						<div class="mb-2">${rq.loginMemberNn }</div>
-						<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="body" placeholder="댓글을 입력하세요."></textarea>
-						<div class="flex justify-end"><button class="btn btn-outline btn-sm">댓글 작성</button></div>
+						<div class="mb-2 font-bold">${rq.loginMemberNn }</div>
+						<textarea maxlength=300 class="textarea textarea-bordered textarea-lg w-full" name="replyBody" placeholder="댓글을 입력하세요."></textarea>
+						<div class="flex justify-end"><button class="btn btn-outline text-xl">댓글 작성</button></div>
 					</div>
 				</form>
 			</div>
 		</c:if>
 	
-		<!-- 카톡 링크 -->
-		<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-		<script type="text/javascript">
-			Kakao.init('${kakaoKey}');
-			
-			function kakaoShare() {
-				Kakao.Link.sendDefault({
-				  objectType: 'feed',
-				  content: {
-				    title: '${festival.title}',
-				    description: '테마 : ${festival.themeCdNm} / 장소 : ${festival.placeCdNm}',
-				    imageUrl:
-				      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6Lqd0DpY_4JKFhXxaZq0nt5iImKM5D2Gcg&s',
-				    link: {
-				      mobileWebUrl: 'https://www.naver.com',
-				      webUrl: 'https://www.naver.com',
-				    },
-				  },
-	
-				  buttons: [
-				    {
-				      title: '웹으로 이동',
-				      link: {
-				        mobileWebUrl: 'https://www.naver.com',
-				        webUrl: 'https://www.naver.com',
-				      },
-				    }
-				  ],
-				});
-			}
-		</script>
-	
-		<div>
-			<a id="kakao-link-btn" href="javascript:kakaoShare()">
-	    	<img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" />
-	    	</a>
-	    </div>
+		<!-- 채팅창 및 날씨 -->
+		<div class="flex">
+			<div class="w-1/3">
+				<div class="container overflow-auto max-h-96" id="chat"></div>
+				<div class="chatOther"></div>
+			</div>
+			<div class="w-1/5">
+				<div class="userList text-center text-3xl font-bold"></div>
+				<ul id="onlineUsers" class="text-2xl font-bold text-center"></ul>
+			</div>
+			<div class="grow text-center font-bold text-2xl">날씨
+				<div class="flex justify-center">
+					<table class="table">
+						<colgroup>
+							<col width="60"/>
+							<col width="60"/>
+							<col width="60"/>
+							<col width="60"/>
+						</colgroup>
+					    <thead>
+				     		<tr class="text-xl">
+				     			<td></td>
+				     			<td>오늘</td>
+				     			<td>내일</td>
+				     			<td>모레</td>
+				     		</tr>
+				    	</thead>
+				    	<tbody>
+				    		<tr class="6시"></tr>
+				   			<tr class="9시"></tr>
+				   			<tr class="12시"></tr>
+				   			<tr class="15시"></tr>
+				   			<tr class="18시"></tr>
+				    	</tbody>
+					</table>
+				</div>
 		
-		<!-- 채팅방 -->
-		<div class="w-96">
-			<div class="container overflow-auto max-h-96" id="chat"></div>
-			<div class="chatOther"></div>
-			<div class="userList"></div>
-			<ul id="onlineUsers"></ul>
+				<div class="flex justify-center">
+					<table class="table">
+						<colgroup>
+							<col width="70"/>
+							<col width="70"/>
+							<col width="70"/>
+							<col width="70"/>
+							<col width="70"/>
+							<col width="70"/>
+						</colgroup>
+					    <thead>
+				     		<tr class="midDate text-xl">
+				     			<td></td>
+				     		</tr>
+				    	</thead>
+				    	<tbody>
+				    		<tr class="temp"></tr>
+				   			<tr class="am"></tr>
+				   			<tr class="cloud"></tr>
+				    	</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 		
 		<script src="/webjars/sockjs-client/1.5.1/sockjs.min.js"></script>
@@ -662,26 +596,104 @@
 	                updateOnlineUsers();
 	            }, 500);
 				
+				$(document).ready(function(){
+					
+			  		var today = new Date();
+			  		
+			  		for (var i = 3; i <= 7; i++) {
+			  		    var futureDate = new Date(today);
+			  		    futureDate.setDate(today.getDate() + i);
+		
+			  		    var month = futureDate.getMonth() + 1;
+			  		    var day = futureDate.getDate();
+		
+			  		  	$('.midDate').append(`<td>\${month}/\${day}</td>`);
+			  		}
+			  		
+			  		// 단기 날씨
+			  		$.ajax({
+						url : '/user/weather/weatherShortView',
+						type : 'GET',
+						dataType : 'json',
+						success : function(data) {
+							
+							console.log(data);
+							
+							var dataNum = 0;
+							for (var num = 6; num <= 18; num+=3) {
+								$('.' + num + '시').html(`
+										<td>\${num}시</td>
+										<td>\${data[dataNum].fcstValue}도/\${data[dataNum+2].fcstValue}%/\${data[dataNum+1].fcstValue}</td>
+										<td>\${data[dataNum+15].fcstValue}도/\${data[dataNum+17].fcstValue}%/\${data[dataNum+16].fcstValue}</td>
+										<td>\${data[dataNum+30].fcstValue}도/\${data[dataNum+32].fcstValue}%/\${data[dataNum+31].fcstValue}</td>
+										`);
+								dataNum += 3;
+							}
+						},
+						error : function(xhr, status, error) {
+							console.log(error);
+						}
+					})
+			  		
+					// 중기 날씨
+					$.ajax({
+						url : '/user/weather/weatherMidView',
+						type : 'GET',
+						dataType : 'json',
+						success : function(data) {
+							
+							$('.temp').html(`
+								<th> 최저/최고 온도</th>
+								<th>\${data.taMin3}도 / \${data.taMax3}도</th>
+								<th>\${data.taMin4}도 / \${data.taMax4}도</th>
+								<th>\${data.taMin5}도 / \${data.taMax5}도</th>
+								<th>\${data.taMin6}도 / \${data.taMax6}도</th>
+								<th>\${data.taMin7}도 / \${data.taMax7}도</th>
+									`);
+		
+							$('.am').html(`
+								<th> 오전/오후 강수확률 </th>
+								<th>\${data.rnSt3Am} % / \${data.rnSt3Pm} %</th>
+								<th>\${data.rnSt4Am} % / \${data.rnSt4Pm} %</th>
+								<th>\${data.rnSt5Am} % / \${data.rnSt5Pm} %</th>
+								<th>\${data.rnSt6Am} % / \${data.rnSt6Pm} %</th>
+								<th>\${data.rnSt7Am} % / \${data.rnSt7Pm} %</th>
+									`);
+							
+							$('.cloud').html(`
+								<th> 오전/오후 날씨 </th>
+								<th>\${data.wf3Am}/\${data.wf3Pm}</th>
+								<th>\${data.wf4Am}/\${data.wf4Pm}</th>
+								<th>\${data.wf5Am}/\${data.wf5Pm}</th>
+								<th>\${data.wf6Am}/\${data.wf6Pm}</th>
+								<th>\${data.wf7Am}/\${data.wf7Pm}</th>
+									`);
+						},
+						error : function(xhr, status, error) {
+							console.log(error);
+						}
+					})
+		
+				})
+				
 			})
 			
 			// 채팅창 불러오기
 			function chatBox(){
 				$('#chat').html(`
-						<div class="font-bold text-blue-500"> 채팅방 </div>
+						<div class="font-bold text-4xl text-center"> 채팅방 </div>
 						<ul id="messageList" class="list-group">
 						</ul>
 						<br/><br/>
 						`);
 				$('.chatOther').html(`
-						<div class="input-group w-96">
+						<div class="input-group">
 							<textarea maxlength=300 id="messageInput" onkeypress="handleKeyPress(event)" class="form-control textarea textarea-bordered textarea-lg w-full" name="replyBody" placeholder="채팅을 입력하세요."></textarea>
-							<div class="input-group-append">
-								<button class="btn btn-primary" type="button" onclick="sendMessage()">보내기</button>
-							</div>
+							<button class="mt-4 btn btn-outline w-full" type="button" onclick="sendMessage()">보내기</button>
 						</div>
 						`);
 				$('.userList').html(`
-						<h1> 현재 접속 중인 사용자 목록</h1>
+						<h1> 해당 행사를 보고있는 이용자</h1>
 						`);
 				messageInputElement = document.getElementById('messageInput');
 				messageListElement = document.getElementById('messageList');
@@ -702,7 +714,7 @@
 			// 채팅받기
 			function recvMessage(recv) {
 				if (recv.type != 'TALK') {
-					var li = $('<li>').addClass('list-group-item font-bold').text(recv.nickname + recv.message);
+					var li = $('<li>').addClass('list-group-item text-2xl font-bold text-center').text(recv.nickname + ' ' + recv.message);
 				    
 					if (recv.type == 'ENTER') {
 				    	li.addClass('text-blue-500');
@@ -767,10 +779,10 @@
 							userId : sender
 						},
 						success: function(response) {
-						 },
-						 error: function(error) {
-						     console.error(error);
-						 }
+						},
+						error: function(error) {
+							console.error(error);
+						}
 					});	
 
 					// 이전 채팅내역 불러오기
@@ -805,7 +817,6 @@
 	                },
 	                success: function(response) {
 	                	$.each(response, function(index, recv) {
-	                		console.log(recv.sender);
 	                		if (recv.sender != '${rq.loginMemberNumber}') {
 	        					var li = $('<li>').addClass('list-group-item').html(`
 	        							<div class="chat chat-start">
@@ -814,9 +825,9 @@
 	        							    	<img src="/user/file/memberImg/\${recv.sender }" />
 	        							    </div>
 	        							  </div>
-	        							  <div class="chat-header">
+	        							  <div class="chat-header text-lg">
 	        							    \${recv.nickname}
-	        							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
+	        							    <time class="text-xs">\${recv.timestamp.substring(5)}</time>
 	        							  </div>
 	        							  <div class="chat-bubble">\${recv.message}</div>
 	        							</div>
@@ -829,9 +840,9 @@
 	        							   		<img src="/user/file/memberImg/\${recv.sender }" />
 	        							    </div>
 	        							  </div>
-	        							  <div class="chat-header">
+	        							  <div class="chat-header text-lg">
 	        							  \${recv.nickname}
-	        							    <time class="text-xs opacity-50">\${recv.timestamp.substring(5)}</time>
+	        							    <time class="text-xs">\${recv.timestamp.substring(5)}</time>
 	        							  </div>
 	        							  <div class="chat-bubble">\${recv.message}</div>
 	        							</div>
@@ -874,7 +885,12 @@
 	                	var onlineUser = Array.from(response);
 	                    $("#onlineUsers").empty();
 	                    $.each(onlineUser, function(index, user) {
-	                        var li = $("<li>").text(user);
+	                    	if(user == '${rq.loginMemberNn}') {
+			                    var li = `<li class="text-blue-500">\${user} <나></li>`;
+	                    	} else {
+			                    var li = `<li>\${user}</li>`;
+	                    	}
+	                    	
 	                        $("#onlineUsers").append(li);
 	                    });
 	                },
@@ -907,16 +923,22 @@
 			window.onbeforeunload = function() {
 			    leaveRoom(roomId);
 			};
-			// stompClient.send("/pub/chat/" + roomId + "/disconnect", {}, JSON.stringify({ sender: sender }));
-			// ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'LEAVE', roomId : roomId, sender : sender }));
+
 			connect();
+
 			
-	 		// 배경 이미지 삭제
-	 		$('body').css('--bgImage', `url('')`);
+			
 		</script>
-		
-		<button onclick="history.back()" class="btn btn-outline btn-info mt-4">뒤로 가기</button>	
 	
 	</section>
 	
+	<div class="mx-56">
+		<button onclick="history.back()" class="btn btn-outline btn-info mt-4 w-full">뒤로 가기</button>
+	</div>	
+		
 <%@ include file="../../common/foot.jsp" %>  
+
+<!-- 
+// stompClient.send("/pub/chat/" + roomId + "/disconnect", {}, JSON.stringify({ sender: sender }));
+// ws.send("/pub/chat/message", {}, JSON.stringify({ type : 'LEAVE', roomId : roomId, sender : sender }));
+-->

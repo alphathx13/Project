@@ -63,6 +63,7 @@ public class FestivalController {
 
 		model.addAttribute("currentFestivalCount", festivalService.festivalListCount(1));
 		model.addAttribute("futureFestivalCount", festivalService.festivalListCount(2));
+		model.addAttribute("pastFestivalCount", festivalService.festivalListCount(3));
 
 		model.addAttribute("searchText", searchText);
 		model.addAttribute("searchType", searchType);
@@ -113,7 +114,11 @@ public class FestivalController {
 			response.addCookie(cookie);
 		}
 		
-		model.addAttribute("festival", festivalService.festivalDetail(eventSeq));
+		Festival festival = festivalService.festivalDetail(eventSeq);
+		festival.setBeginTm(festival.getBeginTm().substring(0, 2) + ":" + festival.getBeginTm().substring(2));
+		festival.setEndTm(festival.getEndTm().substring(0, 2) + ":" + festival.getEndTm().substring(2));
+		
+		model.addAttribute("festival", festival);
 		model.addAttribute("kakaoKey", kakaoKey);
 		model.addAttribute("weatherMid", eventSeq);
 		
@@ -125,7 +130,7 @@ public class FestivalController {
 	public String festivalUpdate() throws IOException, ParseException {
 		StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/6300000/eventDataService/eventDataListJson"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + apiKey); /*Service Key*/
-        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("500", "UTF-8")); /**/
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("50", "UTF-8")); /**/
         urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /**/
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -160,7 +165,8 @@ public class FestivalController {
         		festivalService.update(festival);
         	}
         }
-        return "/test";
+        
+        return "/";
 	}
 	
 	

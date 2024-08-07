@@ -309,7 +309,6 @@ public class MemberController {
 	@GetMapping("/user/member/cellphoneDupCheck")
 	@ResponseBody
 	public ResultData<Boolean> cellphoneDupCheck(String cellphone){
-		
 		Member member = memberService.getMemberByCellphone(cellphone);
 		
 		if (member != null) {
@@ -322,7 +321,6 @@ public class MemberController {
 	@GetMapping("/user/member/emailDupCheck")
 	@ResponseBody
 	public ResultData<Boolean> emailDupCheck(String email){
-		
 		Member member = memberService.getMemberByEmail(email);
 		
 		if (member != null) {
@@ -335,7 +333,6 @@ public class MemberController {
 	@GetMapping("/user/member/loginPwDupCheck")
 	@ResponseBody
 	public ResultData<Boolean> loginPwDupCheck(String loginId, String loginPw){
-		
 		boolean check = memberService.passCheck(loginId, pwSecure(pwSecure(loginPw)));
 		
 		if (check == true) {
@@ -347,7 +344,6 @@ public class MemberController {
 	
 	// 실제 암호화 담당
 	public String pwSecure (String pwd) {
-		
 		String result = "";
 		
 		try {

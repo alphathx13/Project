@@ -27,7 +27,7 @@ public class ReplyController {
 	@PostMapping("/user/reply/doWrite")
 	@ResponseBody
 	public String doWrite(String replyBody, String relTypeCode, int relId) {
-
+		
 		replyService.writeReply(rq.getLoginMemberNumber(), replyBody, relTypeCode, relId);
 
 		if (relTypeCode.equals("festival"))

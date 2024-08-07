@@ -17,8 +17,6 @@
 </section>
 
 <script>
-	// 배경 이미지 삭제
-	$('body').css('--bgImage', `url('')`);
 </script>
 
 <%@ include file="../../common/foot.jsp"%>

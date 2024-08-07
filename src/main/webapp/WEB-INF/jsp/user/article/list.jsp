@@ -140,16 +140,7 @@
 					&nbsp;&nbsp;<a class="join-item btn btn-sm" href="?cPage=${tPage }${baseUri }"> 끝으로</a>&nbsp;&nbsp;
 				</c:if>
 
-				<form action="" method="get" onsubmit="pageCheck(this); return false;"> 
-					<input type="hidden" name ="boardId" value="${param.boardId }"/>
-					<input type="hidden" name ="itemsInPage" value="${itemsInPage }"/>
-					<input type="hidden" name ="searchType" value="${searchType }"/>
-					<input type="hidden" name ="searchText" value="${searchText }"/>
-					<label class="input input-bordered flex items-center gap-2">
-						<input maxlength="10" type="text" class="input grow" name ="cPage" placeholder="페이지" />
-						<button> 이동 </button>
-					</label>
-				</form>
+				
 				
 			</div>
 		</div>
@@ -174,10 +165,22 @@
 		
 		form.submit();
 	}
-	
-	// 배경 이미지 삭제
-	$('body').css('--bgImage', `url('')`);
 	</script>
 
 	
 <%@ include file="../../common/foot.jsp" %>  
+
+<!-- 
+<form action="" method="get" onsubmit="pageCheck(this); return false;"> 
+					<input type="hidden" name ="boardId" value="${param.boardId }"/>
+					<input type="hidden" name ="itemsInPage" value="${itemsInPage }"/>
+					<input type="hidden" name ="searchType" value="${searchType }"/>
+					<input type="hidden" name ="searchText" value="${searchText }"/>
+					<label class="input input-bordered flex items-center gap-2">
+						<input maxlength="10" type="text" class="input grow" name ="cPage" placeholder="페이지" />
+						<button> 이동 </button>
+					</label>
+				</form>
+
+
+ -->

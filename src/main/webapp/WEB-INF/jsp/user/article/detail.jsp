@@ -170,7 +170,7 @@
 			}
 		})
 		</script>	
-		<div class="uploadFile"></div>	
+		<div class="mt-4 uploadFile text-2xl"></div>	
 			
 		<!--  댓글 조회 / 수정 / 삭제 / 조회 -->
 		<script>
@@ -326,8 +326,6 @@
 				
 				return true;
 			}
-			
-			$('body').css('--bgImage', `url('')`);
 			
 		</script>	
 		

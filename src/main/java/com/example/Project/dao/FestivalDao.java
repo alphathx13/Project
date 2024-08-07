@@ -168,7 +168,7 @@ public interface FestivalDao {
 							WHERE DATEDIFF(beginDt, CURRENT_DATE()) > 0
 						</when>
 						<otherwise>
-							WHERE DATEDIFF(CURRENT_DATE(), f.endDt) > 0
+							WHERE DATEDIFF(CURRENT_DATE(), endDt) > 0
 						</otherwise>
 					</choose>
 				</if>

@@ -4,6 +4,28 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js"></script>
+
+<style>
+	body {
+		--bgImage: url('/resource/mainPageImage/01.jpg');
+	}
+	
+	body::before {
+		content: "";
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		filter: brightness(40%);
+		background-image: var(--bgImage);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		z-index: -1;
+		transition: background-image 1.5s ease-in-out;
+	}
+</style>
   
 <%@ include file="../../common/head.jsp" %>  
 
@@ -23,6 +45,7 @@
         <div class="item-5 mt-32 flex"></div>
         <div class="item-6 mt-32 flex"></div>
         <div class="item-7 mt-32 flex"></div>
+        <div class="item-8 mt-32 flex"></div>
 
     </section>
     
@@ -74,8 +97,8 @@
     	
     	// 이미지 넣기
     	function image(imageLink, link) {
-    		return `<div style="height:400px;" class="mx-2 w-1/2 flex justify-center"> 
-						<a href="\${link}"><img class="h-full image transition-transform duration-300 ease-in-out hover:scale-125" src="\${imageLink}" alt="fallback_image" /></a> 
+    		return `<div style="height:400px;" class="mx-2 w-1/2 flex items-center"> 
+						<a href="\${link}"><img class="image transition-transform duration-300 ease-in-out hover:scale-125 rounded-xl" src="\${imageLink}" alt="fallback_image" /></a> 
 					</div>
 					`;
     	}
@@ -92,12 +115,13 @@
     	// 소개 항목 그리기
     	$(document).ready(function() {
     		mainPageItem(1, '행사 일정 확인', '현재 진행중인 행사들을 확인하실 수 있습니다. <br/> 행사에 대한 기본적인 정보를 볼 수 있습니다.', '/resource/homeContentsImg/1.png', '/user/festival/list');
-    		mainPageItem(2, '진행 예정 / 종료 행사', '진행 예정인 행사 및 과거에 진행했던 행사를 확인하실 수 있습니다. <br/>  ', '/resource/homeContentsImg/2.png', '/user/festival/list');
-    		mainPageItem(3, '행사 검색', '행사의 제목, 내용을 검색으로 관심있는 행사를 확인할 수 있습니다.', '/resource/homeContentsImg/3.png', '/user/festival/list');
-    		mainPageItem(4, '행사 내용 확인', '행사 상세페이지에서는 진행중인 설명과 장소, 시간를 확인하실 수 있습니다.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTo4AQOUitqLbtcEvdfbB9cFryEQCES3TQf6w&s', '/');
-    		mainPageItem(5, '날씨 확인', '날씨 정보 제공으로, 방문하려는 날의 날씨를 확인할 수 있습니다.', 'https://newsimg.hankookilbo.com/2019/04/29/201904291390027161_3.jpg', '/');
-    		mainPageItem(6, '의견 나누기', '댓글을 통해 해당 행사에 대한 의견을 나눌 수 있습니다.', 'https://m.segye.com/content/image/2024/04/17/20240417511930.JPG', '/');
-    		mainPageItem(7, '실시간 채팅', '실시간 채팅방으로 이용자분들과 의견을 나눌 수 있습니다.', 'https://www.palnews.co.kr/news/photo/201801/92969_25283_5321.jpg', '/');
+    		mainPageItem(2, '진행 예정 / 종료 행사', '진행 예정인 행사 및 과거에 진행된 행사를 확인하실 수 있습니다. <br/>  ', '/resource/homeContentsImg/2.png', '/user/festival/list');
+    		mainPageItem(3, '행사 검색', '검색을 통해 관심있는 행사를 찾으실 수 있습니다.', '/resource/homeContentsImg/3.png', '/user/festival/list');
+    		mainPageItem(4, '행사 상세정보', '상세페이지에서 장소, 시간, 세부사항을 확인하실 수 있습니다.', '/resource/homeContentsImg/4.png', '/');
+    		mainPageItem(5, '날씨 정보', '방문하려고하는 행사 날짜의 날씨를 한눈에 확인할 수 있습니다.', '/resource/homeContentsImg/5.png', '/');
+    		mainPageItem(6, '장소, 추천, 공유', '행사장 위치를 지도로 보실 수있으며, 해당 행사에 대한 추천 및 공유가 가능합니다.', '/resource/homeContentsImg/6.png', '/user/festival/list');
+    		mainPageItem(7, '의견 나누기', '댓글을 통해 해당 행사에 대한 의견을 나눌 수 있습니다. 이용자들간 댓글 추천이 가능하며, 많은 사람들이 추천한 댓글을 확인할 수 있습니다.', '/resource/homeContentsImg/7.png', '/user/festival/list');
+    		mainPageItem(8, '실시간 채팅', '실시간 채팅을 통해 이용자분들간 대화가 가능합니다.', '/resource/homeContentsImg/8.png', '/user/festival/list');
 
     		$('.image').on('error', function() {
 	                $(this).attr('src', '/resource/images/imageLoadingError.png');
@@ -123,8 +147,8 @@
     	    // 초기 배경 이미지 설정
     	    changeBackgroundImage();
 
-    	    // 3초마다 배경 이미지 변경
-    	    setInterval(changeBackgroundImage, 3500);
+    	    // 2.5초마다 배경 이미지 변경
+    	    setInterval(changeBackgroundImage, 2500);
 		
 		})
     	
@@ -132,7 +156,6 @@
       
 <%@ include file="../../common/foot.jsp" %>  
 
-
 <!-- 
-
+행사 예시는 12968
  -->
