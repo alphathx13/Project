@@ -8,7 +8,7 @@ import java.util.UUID;
 public class Util{
 	
 	public static String today() {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		return LocalDate.now().format(formatter);
 	}
 	

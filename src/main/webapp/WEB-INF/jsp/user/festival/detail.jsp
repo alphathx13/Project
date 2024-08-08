@@ -507,7 +507,7 @@
 		<!-- 채팅창 및 날씨 -->
 		<div class="flex">
 			<div class="w-1/3">
-				<div class="container overflow-auto max-h-96" id="chat"></div>
+				<div class="container overflow-auto max-h-96 text-center" id="chat"></div>
 				<div class="chatOther"></div>
 			</div>
 			<div class="w-1/5">
@@ -582,6 +582,82 @@
 			
 			// 로그인 확인
 			$(document).ready(function(){
+		  		var today = new Date();
+		  		
+		  		for (var i = 3; i <= 7; i++) {
+		  		    var futureDate = new Date(today);
+		  		    futureDate.setDate(today.getDate() + i);
+	
+		  		    var month = futureDate.getMonth() + 1;
+		  		    var day = futureDate.getDate();
+	
+		  		  	$('.midDate').append(`<td>\${month}/\${day}</td>`);
+		  		}
+		  		
+		  		// 단기 날씨
+		  		$.ajax({
+					url : '/user/weather/weatherShortView',
+					type : 'GET',
+					dataType : 'json',
+					success : function(data) {
+						
+						console.log(data);
+						
+						var dataNum = 0;
+						for (var num = 6; num <= 18; num+=3) {
+							$('.' + num + '시').html(`
+									<td>\${num}시</td>
+									<td>\${data[dataNum].fcstValue}도/\${data[dataNum+2].fcstValue}%/\${data[dataNum+1].fcstValue}</td>
+									<td>\${data[dataNum+15].fcstValue}도/\${data[dataNum+17].fcstValue}%/\${data[dataNum+16].fcstValue}</td>
+									<td>\${data[dataNum+30].fcstValue}도/\${data[dataNum+32].fcstValue}%/\${data[dataNum+31].fcstValue}</td>
+									`);
+							dataNum += 3;
+						}
+					},
+					error : function(xhr, status, error) {
+						console.log(error);
+					}
+				})
+		  		
+				// 중기 날씨
+				$.ajax({
+					url : '/user/weather/weatherMidView',
+					type : 'GET',
+					dataType : 'json',
+					success : function(data) {
+						
+						$('.temp').html(`
+							<th> 최저/최고 온도</th>
+							<th>\${data.taMin3}도 / \${data.taMax3}도</th>
+							<th>\${data.taMin4}도 / \${data.taMax4}도</th>
+							<th>\${data.taMin5}도 / \${data.taMax5}도</th>
+							<th>\${data.taMin6}도 / \${data.taMax6}도</th>
+							<th>\${data.taMin7}도 / \${data.taMax7}도</th>
+								`);
+	
+						$('.am').html(`
+							<th> 오전/오후 강수확률 </th>
+							<th>\${data.rnSt3Am} % / \${data.rnSt3Pm} %</th>
+							<th>\${data.rnSt4Am} % / \${data.rnSt4Pm} %</th>
+							<th>\${data.rnSt5Am} % / \${data.rnSt5Pm} %</th>
+							<th>\${data.rnSt6Am} % / \${data.rnSt6Pm} %</th>
+							<th>\${data.rnSt7Am} % / \${data.rnSt7Pm} %</th>
+								`);
+						
+						$('.cloud').html(`
+							<th> 오전/오후 날씨 </th>
+							<th>\${data.wf3Am}/\${data.wf3Pm}</th>
+							<th>\${data.wf4Am}/\${data.wf4Pm}</th>
+							<th>\${data.wf5Am}/\${data.wf5Pm}</th>
+							<th>\${data.wf6Am}/\${data.wf6Pm}</th>
+							<th>\${data.wf7Am}/\${data.wf7Pm}</th>
+								`);
+					},
+					error : function(xhr, status, error) {
+						console.log(error);
+					}
+				})
+				
 				updateOnlineUsers();
 				
 				if (${rq.loginMemberNumber == 0}) {
@@ -595,86 +671,6 @@
 				setInterval(function() {
 	                updateOnlineUsers();
 	            }, 500);
-				
-				$(document).ready(function(){
-					
-			  		var today = new Date();
-			  		
-			  		for (var i = 3; i <= 7; i++) {
-			  		    var futureDate = new Date(today);
-			  		    futureDate.setDate(today.getDate() + i);
-		
-			  		    var month = futureDate.getMonth() + 1;
-			  		    var day = futureDate.getDate();
-		
-			  		  	$('.midDate').append(`<td>\${month}/\${day}</td>`);
-			  		}
-			  		
-			  		// 단기 날씨
-			  		$.ajax({
-						url : '/user/weather/weatherShortView',
-						type : 'GET',
-						dataType : 'json',
-						success : function(data) {
-							
-							console.log(data);
-							
-							var dataNum = 0;
-							for (var num = 6; num <= 18; num+=3) {
-								$('.' + num + '시').html(`
-										<td>\${num}시</td>
-										<td>\${data[dataNum].fcstValue}도/\${data[dataNum+2].fcstValue}%/\${data[dataNum+1].fcstValue}</td>
-										<td>\${data[dataNum+15].fcstValue}도/\${data[dataNum+17].fcstValue}%/\${data[dataNum+16].fcstValue}</td>
-										<td>\${data[dataNum+30].fcstValue}도/\${data[dataNum+32].fcstValue}%/\${data[dataNum+31].fcstValue}</td>
-										`);
-								dataNum += 3;
-							}
-						},
-						error : function(xhr, status, error) {
-							console.log(error);
-						}
-					})
-			  		
-					// 중기 날씨
-					$.ajax({
-						url : '/user/weather/weatherMidView',
-						type : 'GET',
-						dataType : 'json',
-						success : function(data) {
-							
-							$('.temp').html(`
-								<th> 최저/최고 온도</th>
-								<th>\${data.taMin3}도 / \${data.taMax3}도</th>
-								<th>\${data.taMin4}도 / \${data.taMax4}도</th>
-								<th>\${data.taMin5}도 / \${data.taMax5}도</th>
-								<th>\${data.taMin6}도 / \${data.taMax6}도</th>
-								<th>\${data.taMin7}도 / \${data.taMax7}도</th>
-									`);
-		
-							$('.am').html(`
-								<th> 오전/오후 강수확률 </th>
-								<th>\${data.rnSt3Am} % / \${data.rnSt3Pm} %</th>
-								<th>\${data.rnSt4Am} % / \${data.rnSt4Pm} %</th>
-								<th>\${data.rnSt5Am} % / \${data.rnSt5Pm} %</th>
-								<th>\${data.rnSt6Am} % / \${data.rnSt6Pm} %</th>
-								<th>\${data.rnSt7Am} % / \${data.rnSt7Pm} %</th>
-									`);
-							
-							$('.cloud').html(`
-								<th> 오전/오후 날씨 </th>
-								<th>\${data.wf3Am}/\${data.wf3Pm}</th>
-								<th>\${data.wf4Am}/\${data.wf4Pm}</th>
-								<th>\${data.wf5Am}/\${data.wf5Pm}</th>
-								<th>\${data.wf6Am}/\${data.wf6Pm}</th>
-								<th>\${data.wf7Am}/\${data.wf7Pm}</th>
-									`);
-						},
-						error : function(xhr, status, error) {
-							console.log(error);
-						}
-					})
-		
-				})
 				
 			})
 			
@@ -933,7 +929,7 @@
 	</section>
 	
 	<div class="mx-56">
-		<button onclick="history.back()" class="btn btn-outline btn-info mt-4 w-full">뒤로 가기</button>
+		<button onclick="history.back()" class="btn btn-outline btn-info mt-4 w-full"><i class="fa-solid fa-arrow-left-long"></i></button>
 	</div>	
 		
 <%@ include file="../../common/foot.jsp" %>  

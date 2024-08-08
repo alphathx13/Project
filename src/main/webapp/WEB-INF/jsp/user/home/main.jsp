@@ -117,11 +117,11 @@
     		mainPageItem(1, '행사 일정 확인', '현재 진행중인 행사들을 확인하실 수 있습니다. <br/> 행사에 대한 기본적인 정보를 볼 수 있습니다.', '/resource/homeContentsImg/1.png', '/user/festival/list');
     		mainPageItem(2, '진행 예정 / 종료 행사', '진행 예정인 행사 및 과거에 진행된 행사를 확인하실 수 있습니다. <br/>  ', '/resource/homeContentsImg/2.png', '/user/festival/list');
     		mainPageItem(3, '행사 검색', '검색을 통해 관심있는 행사를 찾으실 수 있습니다.', '/resource/homeContentsImg/3.png', '/user/festival/list');
-    		mainPageItem(4, '행사 상세정보', '상세페이지에서 장소, 시간, 세부사항을 확인하실 수 있습니다.', '/resource/homeContentsImg/4.png', '/');
-    		mainPageItem(5, '날씨 정보', '방문하려고하는 행사 날짜의 날씨를 한눈에 확인할 수 있습니다.', '/resource/homeContentsImg/5.png', '/');
-    		mainPageItem(6, '장소, 추천, 공유', '행사장 위치를 지도로 보실 수있으며, 해당 행사에 대한 추천 및 공유가 가능합니다.', '/resource/homeContentsImg/6.png', '/user/festival/list');
-    		mainPageItem(7, '의견 나누기', '댓글을 통해 해당 행사에 대한 의견을 나눌 수 있습니다. 이용자들간 댓글 추천이 가능하며, 많은 사람들이 추천한 댓글을 확인할 수 있습니다.', '/resource/homeContentsImg/7.png', '/user/festival/list');
-    		mainPageItem(8, '실시간 채팅', '실시간 채팅을 통해 이용자분들간 대화가 가능합니다.', '/resource/homeContentsImg/8.png', '/user/festival/list');
+    		mainPageItem(4, '행사 상세정보', '상세페이지에서 행사에 대한 상세정보를 확인하실 수 있습니다.', '/resource/homeContentsImg/4.png', '/');
+    		mainPageItem(5, '날씨 정보', '실시간 날씨 업데이트로 행사방문시의 날씨를 확인할 수 있습니다.', '/resource/homeContentsImg/5.png', '/');
+    		mainPageItem(6, '장소, 추천, 공유', '행사장 위치의 지도를 확인하실 수 있으며, 해당 행사에 대한 추천 및 카카오톡 공유가 가능합니다.', '/resource/homeContentsImg/6.png', '/user/festival/list');
+    		mainPageItem(7, '의견 나누기', '댓글을 통해 해당 행사에 대한 의견을 나눌 수 있습니다. 댓글 추천을 통해 많은 사람들이 추천한 댓글을 확인할 수 있습니다.', '/resource/homeContentsImg/7.png', '/user/festival/list');
+    		mainPageItem(8, '실시간 채팅', '실시간 채팅을 통해 이용자간 실시간 대화가 가능합니다.', '/resource/homeContentsImg/8.png', '/user/festival/list');
 
     		$('.image').on('error', function() {
 	                $(this).attr('src', '/resource/images/imageLoadingError.png');

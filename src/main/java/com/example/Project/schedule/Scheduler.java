@@ -54,7 +54,7 @@ public class Scheduler {
 	@Value("${custom.api.key}")
 	private String apiKey;
 	
-	@Scheduled(cron = "5 0 0 * * *")
+	@Scheduled(cron = "0 5 0 * * *")
 	public void dateUpdate() {
 		date = Util.today();
 	}
@@ -189,7 +189,6 @@ public class Scheduler {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
-        System.out.println("Response code: " + conn.getResponseCode());
         BufferedReader rd;
         if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));

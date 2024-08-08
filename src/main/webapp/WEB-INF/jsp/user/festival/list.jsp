@@ -190,19 +190,19 @@
 	 	    pastFestivalview = 3;
 	 	    
 	 	    if (currentFestival.length === 0) {
-	 	        $('#currentFestival').html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl"> 현재 진행중인 행사가 없습니다. </div>`);
+	 	        $('#currentFestival').html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl"> <br/> 현재 진행중인 행사가 없습니다. </div>`);
 	 	    } else {
 	 	    	viewFestivalList('currentFestival', currentFestival, currentFestivalview);
 	 	    }
 		
 	 	    if (futureFestival.length === 0) {
-	 	        $('#futureFestival').html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500"> 진행예정 행사가 없습니다. </div>`);
+	 	        $('#futureFestival').html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl"> <br/> 진행예정 행사가 없습니다. </div>`);
 	 	    } else {
 	 	    	viewFestivalList('futureFestival', futureFestival, futureFestivalview);
 	 	    }
 		
 	 	    if (pastFestival.length === 0) {
-	 	        $('#pastFestival').html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500"> 진행한 행사가 없습니다. </div>`);
+	 	        $('#pastFestival').html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl"> <br/> 진행한 행사가 없습니다. </div>`);
 	 	    } else {
 	 	    	viewFestivalList('pastFestival', pastFestival, pastFestivalview);
 	 	    }
@@ -292,13 +292,13 @@
  	 	    }
  		
  	 	    if (futureFestival.length === 0) {
- 	 	        $("#futureFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500"> <br/> 진행예정 행사가 없습니다. </div>`);
+ 	 	        $("#futureFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl"> <br/> 진행예정 행사가 없습니다. </div>`);
  	 	    } else {
  	 	    	viewFestivalGallery('futureFestival', futureFestival, futureFestivalview);
  	 	    }
  		
  	 	    if (pastFestival.length === 0) {
- 	 	        $("#pastFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500"> <br/> 진행한 행사가 없습니다. </div>`);
+ 	 	        $("#pastFestival").html(`<div class="flex justify-center"><img class="h-32" src="/resource/images/festivalListX.png" alt="/resource/images/imageLoadingError.png" /></div><div class="text-red-500 text-3xl"> <br/> 진행한 행사가 없습니다. </div>`);
  	 	    } else {
  	 	    	viewFestivalGallery('pastFestival', pastFestival, pastFestivalview);
  	 	    }
