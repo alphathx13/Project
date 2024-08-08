@@ -172,8 +172,21 @@ public interface FestivalDao {
 						</otherwise>
 					</choose>
 				</if>
+				<if test="searchText != ''">
+					<choose>
+						<when test="searchType == 1">
+							and title like CONCAT('%', #{searchText}, '%')
+						</when>
+						<when test="searchType == 2">
+							and contents like CONCAT('%', #{searchText}, '%')
+						</when>
+						<otherwise>
+							and (title like CONCAT('%', #{searchText}, '%') or contents like CONCAT('%', #{searchText}, '%'))
+						</otherwise>
+					</choose>
+				</if>
 			</script>
 			""")
-	public int festivalListCount(int type);
+	public int festivalListCount(int type, int searchType, String searchText);
 
 }

@@ -42,8 +42,8 @@ public class FestivalService {
 		festivalDao.viewCountPlus(eventSeq);
 	}
 
-	public int festivalListCount(int type) {
-		return festivalDao.festivalListCount(type);
+	public int festivalListCount(int type, int searchType, String searchText) {
+		return festivalDao.festivalListCount(type, searchType, searchText);
 	}
 	
 	public void imageDelete(String path) {

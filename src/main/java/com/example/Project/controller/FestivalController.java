@@ -61,9 +61,9 @@ public class FestivalController {
 		model.addAttribute("futureFestival", futureFestival);
 		model.addAttribute("pastFestival", pastFestival);
 
-		model.addAttribute("currentFestivalCount", festivalService.festivalListCount(1));
-		model.addAttribute("futureFestivalCount", festivalService.festivalListCount(2));
-		model.addAttribute("pastFestivalCount", festivalService.festivalListCount(3));
+		model.addAttribute("currentFestivalCount", festivalService.festivalListCount(1, searchType, searchText));
+		model.addAttribute("futureFestivalCount", festivalService.festivalListCount(2, searchType, searchText));
+		model.addAttribute("pastFestivalCount", festivalService.festivalListCount(3, searchType, searchText));
 
 		model.addAttribute("searchText", searchText);
 		model.addAttribute("searchType", searchType);

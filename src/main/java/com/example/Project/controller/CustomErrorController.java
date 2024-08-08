@@ -18,10 +18,10 @@ public class CustomErrorController {
         if (status != null) {
             Integer statusCode = Integer.valueOf(status.toString());
             if (statusCode == HttpStatus.NOT_FOUND.value()) {
-                return "error/404"; // 'src/main/webapp/WEB-INF/jsp/error/404.jsp' 파일을 렌더링
+                return "error/404"; // '/jsp/error/404.jsp'
             }
             else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-                return "error/500"; // 'src/main/webapp/WEB-INF/jsp/error/500.jsp' 파일을 렌더링
+                return "error/500"; // '/jsp/error/500.jsp'
             }
         }
         

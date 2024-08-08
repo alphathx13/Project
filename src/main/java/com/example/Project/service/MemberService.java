@@ -80,53 +80,29 @@ public class MemberService {
 	}
 	
     public void sendPasswordRecoveryEmail(String email, String tempPassword) {
-        String subject = "임시 패스워드 발송";
-        String html = "<html>"
-                    + "<body>"
-                    + "<h3>임시 패스워드 : " + tempPassword + "</h3>"
-                    + "<a style='display:inline-block;padding:10px;border-radius:10px;border:5px solid black;font-size:4rem;color:inherit;text-decoration:none;' href='http://localhost:8000/' target='_blank'>로그인 하러가기</a>"
-                    + "</body>"
-                    + "</html>";
         
-        List<String> to = new ArrayList<String>();
-        to.add("email");
+        List<String> receivers = new ArrayList<String>();
+        receivers.add(email);
         
-        emailSender.send(to, subject, html);
+        emailSender.passRecoveryMailSend(tempPassword, receivers);
         
     }
 
 	public void sendWithdrawalEmail(Member member) {
-		String subject = "탈퇴 메일 발송";
-        String html = "<html>"
-                    + "<body>"
-                    + "<h3>" + member.getNickname() + "님 지금까지 현 사이트를 이용해주셔서 감사합니다." + "</h3>"
-                    + "<h3> 아래버튼을 누르면 회원탈퇴가 이루어집니다. </h3>"
-                    + "<h3> 회원탈퇴시 일주일 내로 탈퇴신청을 취소하실 수 있습니다. </h3>"
-                    + "<a style='display:inline-block;padding:10px;border-radius:10px;border:5px solid black;font-size:4rem;color:inherit;text-decoration:none;' href='http://localhost:8000/user/member/doWithdrawal?id=" + member.getId() +  "' target='_blank'>회원탈퇴</a>"
-                    + "</body>"
-                    + "</html>";
         
-        List<String> to = new ArrayList<String>();
-        to.add(member.getEmail());
+        List<String> receivers = new ArrayList<String>();
+        receivers.add(member.getEmail());
         
-        emailSender.send(to, subject, html);
+        emailSender.withdrawalMailSend(member.getId(), receivers);
         
 	}
 	
 	public void sendCheckJoinEmail(int id, String email) {
-		String subject = "가입 메일 발송";
-        String html = "<html>"
-                    + "<body>"
-                    + "<h3> 회원가입을 환영합니다. </h3>"
-                    + "<a style='display:inline-block;padding:10px;border-radius:10px;border:5px solid black;font-size:4rem;color:inherit;text-decoration:none;' href='http://localhost:8000/user/member/doJoin?id=" + id +  "' target='_blank'>회원가입</a>"
-                    + "</body>"
-                    + "</html>";
-        
-        List<String> to = new ArrayList<String>();
-        to.add("email");
-        
-        emailSender.send(to, subject, html);
 		
+        List<String> receivers = new ArrayList<String>();
+        receivers.add(email);
+        
+        emailSender.welcomeMailSend(id, receivers);
 	}
 	
 	public void memberJoinFail(int id) {

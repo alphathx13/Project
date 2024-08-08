@@ -526,4 +526,11 @@ public class MemberController {
 
 	}
 	
+	// testtest
+	@GetMapping("/test")
+	public String test() {
+		memberService.sendPasswordRecoveryEmail("alphathx13@gmail.com", "helloWorld");
+		return "/";
+	}
+	
 }
