@@ -54,7 +54,7 @@ public class Scheduler {
 	@Value("${custom.api.key}")
 	private String apiKey;
 	
-	@Scheduled(cron = "0 5 0 * * *")
+	@Scheduled(cron = "0 5 1 * * *")
 	public void dateUpdate() {
 		date = Util.today();
 	}
@@ -174,6 +174,7 @@ public class Scheduler {
     // 단기 날씨 업데이트
     @Scheduled(cron = "0 5 5 * * *")
 	public void weatherShortUpdate() throws IOException, ParseException {
+    	
 		String[] category = {"TMP", "SKY", "POP"};
 		
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"); 
